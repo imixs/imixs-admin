@@ -50,9 +50,9 @@ public class EntityController {
 	private String filename = null;
 
 	private int row = 0, count = 10;
-	private String updateField=null;
+	private String updateField = null;
 	private String updateValue = null;
-	private String updateFieldType=null;
+	private String updateFieldType = null;
 	private boolean endOfList;
 	private String loginfo = "";
 
@@ -62,10 +62,9 @@ public class EntityController {
 	public final String COOKIE_JNDI_NAMES = "imixs.workflow.adminclient.jndinames";
 	private final String DEPRECATED_NO_VERSION = "DEPRECATED-NO-VERSION";
 
-	
-	private final static Logger logger = Logger.getLogger(EntityController.class
-			.getName());
-	
+	private final static Logger logger = Logger
+			.getLogger(EntityController.class.getName());
+
 	public String getGlobalJNDIName() {
 		return globalJNDIName;
 	}
@@ -80,6 +79,11 @@ public class EntityController {
 		return module;
 	}
 
+	/**
+	 * This method lookups the entity Service based on the global jndi name
+	 * 
+	 * @param module
+	 */
 	public void setModule(String module) {
 
 		this.module = module;
@@ -87,14 +91,27 @@ public class EntityController {
 			return;
 		try {
 			// building the global jndi name....
-			globalJNDIName = "java:global/"
-					+ module
-					+ "/EntityService!org.imixs.workflow.jee.ejb.EntityServiceRemote";
+
+			// if name starts with java:global/
+			if (!module.startsWith("java:global/")) {
+				module = "java:global/" + module;
+			}
+
+			globalJNDIName = module;
+
+			// test if name ends with EntityService
+			if (!globalJNDIName
+					.endsWith("/EntityService!org.imixs.workflow.jee.ejb.EntityServiceRemote")) {
+				globalJNDIName += "/EntityService!org.imixs.workflow.jee.ejb.EntityServiceRemote";
+			}
+
+			logger.info("[Imixs-Admin] globalJNDIName=" + globalJNDIName);
 			InitialContext ic = new InitialContext();
 			entityService = (EntityServiceRemote) ic.lookup(globalJNDIName);
 
 			indexList = null;
 			setModuleCookie(module);
+			logger.info("[Imixs-Admin] connection ok!");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -153,8 +170,6 @@ public class EntityController {
 	public void setQuery(String query) {
 		this.query = query;
 	}
-	
-	
 
 	public String getUpdateField() {
 		return updateField;
@@ -450,7 +465,7 @@ public class EntityController {
 	 * 
 	 * @param event
 	 * @throws AccessDeniedException
-	 *
+	 * 
 	 */
 	public String deleteModelAction(String currentModelVersion)
 			throws AccessDeniedException {
@@ -513,7 +528,7 @@ public class EntityController {
 	public void doResetSearchResult(ActionEvent event) {
 		entities = null;
 	}
-	
+
 	/**
 	 * This method starts a new EQL query and update the results with the
 	 * updateValue in the field updateField
@@ -559,15 +574,16 @@ public class EntityController {
 					vNewValueList.addElement(sValue);
 				}
 			}
-			
-			logger.info("[ImixsAdminClient]   update Field: "+updateField);
-			logger.info("[ImixsAdminClient]   new Value: "+vNewValueList);
+
+			logger.info("[ImixsAdminClient]   update Field: " + updateField);
+			logger.info("[ImixsAdminClient]   new Value: " + vNewValueList);
 
 			entities = null;
 			Collection<ItemCollection> col = entityService.findAllEntities(
 					query, row, count);
-			
-			logger.info("[ImixsAdminClient]   updating " + col.size() + " entries....");
+
+			logger.info("[ImixsAdminClient]   updating " + col.size()
+					+ " entries....");
 			for (ItemCollection aworkitem : col) {
 
 				// update spcific field value
@@ -575,14 +591,13 @@ public class EntityController {
 
 				entityService.save(aworkitem);
 			}
-			
+
 			logger.info("[ImixsAdminClient]   bulk update successfull!");
 		}
 		// return "search";
 
 	}
-	
-	
+
 	/**
 	 * This method starts a new EQL query and removes the results
 	 * 
@@ -593,12 +608,13 @@ public class EntityController {
 
 			if (query == null | "".equals(query))
 				return;
-			
+
 			logger.info("[ImixsAdminClient] Starting bulk delete....");
 			entities = null;
 			Collection<ItemCollection> col = entityService.findAllEntities(
 					query, row, count);
-			logger.info("[ImixsAdminClient]   deleteing " + col.size() + " entries....");
+			logger.info("[ImixsAdminClient]   deleteing " + col.size()
+					+ " entries....");
 			for (ItemCollection aworkitem : col) {
 				entityService.remove(aworkitem);
 			}
@@ -639,8 +655,8 @@ public class EntityController {
 						hasMoreData = false;
 					startpos = startpos + col.size();
 					totalcount = totalcount + col.size();
-					logger.info("[ImixsAdminClient] ExportWorktiems - read " + totalcount
-							+ " entries....");
+					logger.info("[ImixsAdminClient] ExportWorktiems - read "
+							+ totalcount + " entries....");
 
 					for (ItemCollection aworkitem : col) {
 						// Jetzt die Daten exporieren....
