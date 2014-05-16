@@ -3,7 +3,7 @@
 	<groupId>org.imixs.workflow</groupId>
 	<artifactId>imixs-admin</artifactId>
 	<packaging>war</packaging>
-	<name>Imixs Workflow JEE Admin Client</name>
+	<name>Imixs Workflow Web Admin Tool</name>
 	<version>3.1.2</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
