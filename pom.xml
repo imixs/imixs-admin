@@ -6,14 +6,7 @@
 	<packaging>war</packaging>
 	<name>Imixs Workflow Web Admin Tool</name>
 	<version>3.2.0</version>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<org.imixs.workflow.version>3.1.7</org.imixs.workflow.version>
-	</properties>
-
-
 	<description>Imixs Workflow Web Admin Tool</description>
-
 	<url>http://www.imixs.org/websites/imixs-org.nsf/chapter/api</url>
 	<organization>
 		<name>Imixs Software Solutions GmbH</name>
@@ -35,22 +28,14 @@
 			</roles>
 			<timezone>2</timezone>
 		</developer>
-
-
 	</developers>
-
-
-
 	<scm>
 		<url>https://github.com/imixs/imixs-admin.git</url>
 	</scm>
-
 	<issueManagement>
 		<system>GitHub</system>
 		<url>https://github.com/imixs/imixs-admin/issues</url>
 	</issueManagement>
-
-
 	<licenses>
 		<license>
 			<name>GNU General Public License</name>
@@ -58,6 +43,29 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+
+
+
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<org.imixs.workflow.version>3.1.7</org.imixs.workflow.version>
+	</properties>
+
+	<profiles>
+		<!-- wildfly profile to add a empty persistence.xml -->
+		<profile>
+			<id>wildfly</id>
+			<build>
+				<resources>
+					<resource>
+						<directory>${basedir}/src/main/webapp_wildfly</directory>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+	</profiles>
+
 	<build>
 		<resources>
 			<!-- enable resource filtering -->
@@ -84,7 +92,7 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.4</version>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>

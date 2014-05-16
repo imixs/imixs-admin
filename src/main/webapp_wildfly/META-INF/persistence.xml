@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0"
+	xmlns="http://java.sun.com/xml/ns/persistence">
+
+
+
+	<!-- eclipselink -->
+	<persistence-unit name="org.imixs.workflow.jee.jpa">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+	</persistence-unit>
+
+
+
+</persistence>
