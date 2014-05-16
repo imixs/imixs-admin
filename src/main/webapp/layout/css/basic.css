@@ -1,8 +1,7 @@
 /* Start Reset */
-
 * {
 	padding: 0;
-	margin:0;
+	margin: 0;
 }
 
 /* End Reset */ /**********************************************
@@ -14,9 +13,8 @@ html,body,div,p,h1,h2,h3,ul,ol,span,a,table,td,form,img,li {
 	line-height: 18px;
 }
 
-input, button, textarea, td, th {
+input,button,textarea,td,th {
 	padding: 0.1em;
-	
 }
 
 body {
@@ -34,7 +32,7 @@ h1 {
 	font-weight: bold;
 	margin-bottom: 0.3em;
 	margin-top: 1.3em;
-	color:#f2c40c;
+	color: #f2c40c;
 }
 
 h2 {
@@ -42,10 +40,8 @@ h2 {
 	font-weight: bold;
 	margin-bottom: 1.3em;
 	margin-top: 0.3em;
-	color:#30332E;
+	color: #30332E;
 }
-
-
 
 h3 {
 	font-size: 14px;
@@ -54,10 +50,6 @@ h3 {
 	margin-top: 1.3em;
 	color: #30332E;
 }
-
-
-
-
 
 a {
 	color: #508AB5;
@@ -177,8 +169,7 @@ a:hover {
 #imixs-nav ul {
 	list-style-type: none;
 	margin: 0px 0 10px 0;
-	padding:2px 0 3px;
-	
+	padding: 2px 0 3px;
 	background: #EEE;
 }
 
@@ -195,15 +186,16 @@ a:hover {
 
 #imixs-nav li:HOVER {
 	background: #fff;
-	padding-top:5px;
+	padding-top: 5px;
 	padding-bottom: 5px;
 }
 
 #imixs-nav li a {
 	color: #2D302C;
-	
 }
-#imixs-nav li a:HOVER  {
+
+#imixs-nav li a:HOVER {
+	
 }
 
 #imixs-topcontent {
@@ -226,8 +218,7 @@ a:hover {
 
 #imixs-topcontent h1 {
 	font-size: 23px;
-	line-height:26px;
-	
+	line-height: 26px;
 	margin: 2px 0 3px 85px;
 	color: #80887B;
 }
@@ -255,7 +246,6 @@ a:hover {
 	border: 0px dashed silver;
 }
 
-
 /*** DL Definitonen ****/
 #imixs-content dl {
 	clear: both;
@@ -269,7 +259,7 @@ a:hover {
 #imixs-content dl dd {
 	float: left;
 	width: 640px;
-	margin-bottom: 0.7em; 
+	margin-bottom: 0.7em;
 }
 
 #imixs-content dl.columns-2 {
@@ -285,23 +275,26 @@ a:hover {
 }
 
 .legende {
-	margin:5px 0 0 20px;
-	font-size:10px;
+	margin: 5px 0 0 20px;
+	font-size: 10px;
 }
 
 .legende li {
-	font-size:10px;
+	font-size: 10px;
 }
 
 .form-table {
 	
 }
+
 .form-table tr {
 	vertical-align: top;
 }
+
 .form-table tr td {
-	padding-right:60px;
+	padding-right: 60px;
 }
+
 #imixs-footer {
 	clear: both;
 	color: #999;
@@ -323,4 +316,34 @@ a:hover {
 	list-style: none;
 	display: inline;
 	margin: 0em 0em 0em 1.5em;
+}
+
+#modulename_suggestlist {
+	width: 400px;
+	min-height: 50px;
+	margin-top: -5px;
+	padding: 0;
+	position: absolute;;
+	z-index: 99;
+	cursor: pointer;
+}
+
+.modulename-input {
+	width: 400px;
+}
+
+.ui-combobox {
+	position: relative;
+	display: inline-block;
+}
+
+#modulename_btn {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	margin-left: -1px;
+	padding: 0;
+	/* adjust styles for module_suggestlistIE 6/7 */
+	*height: 1.7em;
+	*top: 0.1em;
 }

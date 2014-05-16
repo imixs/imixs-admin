@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.imixs.workflow</groupId>
 	<artifactId>imixs-admin</artifactId>
@@ -8,9 +9,9 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<org.imixs.workflow.version>3.1.7</org.imixs.workflow.version>
-    </properties>
-	
-	
+	</properties>
+
+
 	<description>Imixs Workflow Web Admin Tool</description>
 
 	<url>http://www.imixs.org/websites/imixs-org.nsf/chapter/api</url>
@@ -37,19 +38,19 @@
 
 
 	</developers>
-	
-	
-	
+
+
+
 	<scm>
 		<url>https://github.com/imixs/imixs-admin.git</url>
 	</scm>
-	
+
 	<issueManagement>
 		<system>GitHub</system>
 		<url>https://github.com/imixs/imixs-admin/issues</url>
 	</issueManagement>
 
-	
+
 	<licenses>
 		<license>
 			<name>GNU General Public License</name>
@@ -58,6 +59,13 @@
 		</license>
 	</licenses>
 	<build>
+		<resources>
+			<!-- enable resource filtering -->
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		<plugins>
 			<!-- use JDK 1.6 settings for compiling -->
 			<plugin>
@@ -71,11 +79,18 @@
 			</plugin>
 
 
-			<plugin> 
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.4</version>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
 				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
 
@@ -95,9 +110,9 @@
 			<version>${org.imixs.workflow.version}</version>
 		</dependency>
 	</dependencies>
-	
-	
-	
+
+
+
 	<!-- Distributen Management oss.sonatype.org -->
 	<distributionManagement>
 		<snapshotRepository>
@@ -111,7 +126,7 @@
 			<url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
-	
-	
-	
+
+
+
 </project>
