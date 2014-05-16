@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>jQuery UI Example Page</title>
+<link type="text/css" href="jquery-ui-1.8.20.custom.css"
+	rel="stylesheet" />
+<script type="text/javascript" src="jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="jquery-ui-1.8.20.custom.min.js"></script>
+
+
+
+<style>
+#modulename_suggestlist {
+	width: 400px;
+	height: 200px;
+	margin-top: -2px;
+	padding: 0;
+	z-index: 61;
+	position: absolute;;
+}
+
+.modulename-input {
+	width: 400px;
+}
+
+.ui-combobox {
+	position: relative;
+	display: inline-block;
+}
+
+#modulename_btn {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	margin-left: -1px;
+	padding: 0;
+	/* adjust styles for module_suggestlistIE 6/7 */
+	*height: 1.7em;
+	*top: 0.1em;
+}
+</style>
+<script>
+	$(function() {
+
+		$("#modulename_btn").button({
+			icons : {
+				primary : "ui-icon-triangle-1-s"
+			},
+			text : false
+		}).removeClass("ui-corner-all").addClass(
+				"ui-corner-right ui-button-icon");
+
+		// set effect from select menu value
+		$("#modulename_btn").click(function() {
+			$("#modulename_suggestlist").toggle();
+			$("#modulename_btn").blur();
+			return false;
+		});
+
+		// hide module selection....
+		 $('html').click(function() {
+			 $( "#modulename_suggestlist" ).hide();
+			 });
+
+			 $('#modulename_suggestlist').click(function(event){
+			     event.stopPropagation();
+			 });
+			 
+			 
+			 
+		$("#modulename_suggestlist").menu();
+		
+
+		$("#modulename_suggestlist").menu().click(function( event ) {
+		
+			//alert($(event.target).text());
+			$('#modulename_input').val($(event.target).text());
+			$("#modulename_suggestlist").hide();
+			return;
+		});
+			
+		$("#modulename_suggestlist").hide();
+
+	});
+</script>
+
+</head>
+<body>
+	<h1>Welcome to jQuery UI!</h1>
+
+	<div class="ui-widget">
+		<span class="ui-combobox"> 
+		<input id="modulename_input" type="text"
+			class="ui-state-default ui-widget ui-widget-content ui-corner-left modulename-input" /><button id="modulename_btn">module</button>
+		</span>
+	</div>
+
+
+	<div style="z-index:1;" >
+		<ul id="modulename_suggestlist" >
+			<li id="l1"><a>test Servcie JNDI Name</a></li>
+			<li id="l2"><a href="">test</a></li>
+
+		</ul>
+	</div>
+	
+	<br />
+	hi
+
+
+</body>
+</html>
+
+

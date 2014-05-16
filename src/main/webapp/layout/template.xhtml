@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+
+
+<h:head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta content="text/javascript" http-equiv="Content-Script-Type" />
+<meta content="text/css" http-equiv="Content-Style-Type" />
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+<meta content="Imixs Workflow" name="keywords" />
+
+
+<title>#{global.application_title}</title>
+<link
+	href="#{facesContext.externalContext.requestContextPath}/layout/css/basic.css"
+	charset="UTF-8" type="text/css" rel="stylesheet" />
+	
+	
+	<link type="text/css" href="#{facesContext.externalContext.requestContextPath}/layout/jquery/jquery-ui-1.8.20.custom.css" rel="stylesheet" />
+		<script type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/layout/jquery/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/layout/jquery/jquery-ui-1.8.20.custom.min.js"></script>
+		
+		<script type="text/javascript">
+			$(function(){
+				$("input:submit,input:reset,input:button,button").button();
+				
+				$("input,textarea").addClass("ui-state-default");
+				
+				$( "#search-tabs" ).tabs();
+				
+				  
+			});
+			
+			
+			
+			
+			
+			$.fn.styleTable = function(options) {
+				var defaults = {
+					css : 'styleTable'
+				};
+				options = $.extend(defaults, options);
+
+				return this.each(function() {
+
+					input = $(this);
+					input.addClass(options.css);
+
+					input.find("tr").live(
+							'mouseover mouseout',
+							function(event) {
+								if (event.type == 'mouseover') {
+									$(this).children("td").addClass(
+											"ui-state-hover");
+
+								} else {
+									$(this).children("td").removeClass(
+											"ui-state-hover");
+								}
+							});
+
+					input.find("th").addClass("ui-state-default");
+					input.find("td").addClass("ui-widget-content");
+
+					input.find("td").css("font-weight", "normal");
+
+					input.find("tr").each(function() {
+						$(this).children("td:not(:first)").addClass("first");
+						$(this).children("th:not(:first)").addClass("first");
+					});
+				});
+			};
+			
+			
+			
+
+			$(document).ready(function() {
+				$(".imixsdatatable").styleTable();
+			});
+		</script>
+</h:head>
+<h:body>
+
+
+
+	<f:view>
+		<f:loadBundle basename="bundle.global" var="global" />
+
+
+
+		<div id="imixs-contentWrapper">
+
+			<div id="imixs-servicenav">
+				<ul>
+					<li><a href="http://www.imixs.org" target="_blank">imixs.og</a></li>
+					<li><a href="http://www.imixs.com" target="_blank">imixs.com</a></li>
+
+					<li></li>
+
+				</ul>
+			</div>
+
+			<div id="imixs-header">
+				<div id="imixs-logo"></div>
+				<div id="imixs-branding">
+					<span class="imixs-brandingtext1">Imixs Workflow</span> <span
+						class="imixs-brandingtext3">...the open source workflow
+						technology for business applications</span>
+					<p>
+						<span class="imixs-brandingtext2">Admin Client</span>
+					</p>
+				</div>
+			</div>
+
+
+
+
+
+			<div id="imixs-nav">
+
+				<ui:insert name="nav">
+					<ui:include src="nav.xhtml" />
+				</ui:insert>
+			</div>
+
+
+
+
+			<div id="imixs-content">
+			
+			
+				<ui:insert name="content">
+					<h2>Default Content</h2>
+				</ui:insert>
+			</div>
+
+			<div id="imixs-footer">
+				<ui:insert name="footer">
+					<ui:include src="footer.xhtml" />
+				</ui:insert>
+			</div>
+		</div>
+	</f:view>
+</h:body>
+
+
+
+</html>

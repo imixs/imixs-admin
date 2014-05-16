@@ -1,0 +1,58 @@
+<f:subview xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p>
+		A bulk update will update all entities defined by the current JPQL
+		Statement from the Database. <br /> NOTE: Complex queries can take a
+		long time.
+	</p>
+
+	<h:panelGrid columns="2" styleClass="form-table">
+
+		<h:panelGroup>
+			<h3>
+				<h:outputText value="Field-Name:" />
+			</h3>
+			<h:inputText value="#{entityController.updateField}" />
+
+			<h3>
+				<h:outputText value="Field-Type (0-3):" />
+			</h3>
+			<h:inputText value="#{entityController.updateFieldType}" />
+
+			<ul class="legende">
+				<li><h:graphicImage url="/layout/img/index_typ_0.gif" /> <h:outputText
+						value="     0 = TEXT " /></li>
+				<li><h:graphicImage url="/layout/img/index_typ_1.gif" /> <h:outputText
+						value="     1 = INT " /></li>
+				<li><h:graphicImage url="/layout/img/index_typ_2.gif" /> <h:outputText
+						value="     2 = DOUBLE " /></li>
+				<li><h:graphicImage url="/layout/img/index_typ_3.gif" /> <h:outputText
+						value="     3 = CALENDAR " /> <br />(Format: dd/MM/yyyy:hh:mm:ss
+					- e.g: 25.12.2011:12:30:00)</li>
+			</ul>
+
+		</h:panelGroup>
+		<h:panelGroup>
+			<h3>
+				<h:outputText value="New Value:  " />
+			</h3>
+
+			<h:inputTextarea style="width:240px; height:120px"
+				value="#{entityController.updateValue}" />
+
+			<br />
+			<span class="legende"> Enter multiple values in separate
+				lines.</span>
+		</h:panelGroup>
+	</h:panelGrid>
+	<h:commandButton value="start bulk update" actionListener="#{entityController.doBulkUpdate}"
+		onclick="return confirm('Start Bulk-Update now?');" id="update_button" />
+
+
+
+
+</f:subview>

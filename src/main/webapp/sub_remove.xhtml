@@ -1,0 +1,21 @@
+<f:subview xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p>
+		A bulk delete will permanently remove all entities defined by the
+		current JPQL Statement from the Database. <br /> NOTE: Complex
+		queries can take a long time. <br />
+	</p>
+
+
+	<h:commandButton value="start bulk delete"
+		actionListener="#{entityController.doBulkDelete}"
+		onclick="return confirm('Start Bulk-Delete now?');" id="update_button" />
+
+
+
+
+</f:subview>

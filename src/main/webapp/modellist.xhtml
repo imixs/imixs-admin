@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/layout/template.xhtml">
+
+	<ui:define name="content">
+		
+		<f:view>
+			<h:form id="dataForm">
+
+				<h1>Workflow Models</h1>
+
+
+				<h2>Model List:</h2>
+
+
+				<h:dataTable class="imixsdatatable"
+					value="#{entityController.models}" var="entity">
+					
+
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="last update" />
+							</f:facet>
+							<h:outputText value="#{entity['$modified']}"/>
+						</h:column>
+
+
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="Version" />
+							</f:facet>
+							<h:outputText value="#{entity['$modelversion']}" />
+
+						</h:column>
+
+						<h:column>
+							<h:commandLink onclick="return confirm('Delete model #{entity['$modelversion']} ?');"
+								action="#{entityController.deleteModelAction(entity['$modelversion'])}">
+								<h:graphicImage url="/layout/img/remove.gif"
+						style="border: 0 none;" />
+							</h:commandLink>
+
+						</h:column>
+
+
+					</h:dataTable>
+
+
+
+
+
+
+			</h:form>
+		</f:view>
+	</ui:define>
+</ui:composition>
