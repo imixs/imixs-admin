@@ -4,9 +4,10 @@
 	<artifactId>imixs-admin</artifactId>
 	<packaging>war</packaging>
 	<name>Imixs Workflow Web Admin Tool</name>
-	<version>3.1.2</version>
+	<version>3.2.0</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<org.imixs.workflow.version>3.1.7</org.imixs.workflow.version>
     </properties>
 	
 	
@@ -47,23 +48,7 @@
 		<system>GitHub</system>
 		<url>https://github.com/imixs/imixs-admin/issues</url>
 	</issueManagement>
-	<mailingLists>
-		<mailingList>
-			<name>development</name>
-			<post>dev@imixs-workflow.dev.java.net</post>
-			<subscribe>dev-subscribe@imixs-workflow.dev.java.net</subscribe>
-			<unsubscribe>dev-unsubscribe@imixs-workflow.dev.java.net</unsubscribe>
-			<archive>https://imixs-workflow.dev.java.net/servlets/SummarizeList?listName=dev</archive>
-		</mailingList>
 
-		<mailingList>
-			<name>users</name>
-			<post>users@imixs-workflow.dev.java.net</post>
-			<subscribe>users-subscribe@imixs-workflow.dev.java.net</subscribe>
-			<unsubscribe>users-unsubscribe@imixs-workflow.dev.java.net</unsubscribe>
-			<archive>https://imixs-workflow.dev.java.net/servlets/SummarizeList?listName=users</archive>
-		</mailingList>
-	</mailingLists>
 	
 	<licenses>
 		<license>
@@ -74,7 +59,7 @@
 	</licenses>
 	<build>
 		<plugins>
-			<!-- use JDK 1.5 settings for compiling -->
+			<!-- use JDK 1.6 settings for compiling -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -84,15 +69,16 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-			<!-- relase management -->
-			<plugin>
+
+
+			<plugin> 
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.4</version>
 				<configuration>
-					<tagBase>https://svn.java.net/svn/imixs-workflow~svn/imixs-workflow-adminclient/tags</tagBase>
-					<mavenExecutorId>forked-path</mavenExecutorId>
 				</configuration>
 			</plugin>
+
 		</plugins>
 	</build>
 	<dependencies>
@@ -106,7 +92,7 @@
 		<dependency>
 			<groupId>org.imixs.workflow</groupId>
 			<artifactId>imixs-workflow-engine</artifactId>
-			<version>3.1.2</version>
+			<version>${org.imixs.workflow.version}</version>
 		</dependency>
 	</dependencies>
 	
@@ -127,32 +113,5 @@
 	</distributionManagement>
 	
 	
-	<profiles>
-		<profile>
-			<id>release-sign-artifacts</id>
-			<activation>
-				<property>
-					<name>performRelease</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+	
 </project>
