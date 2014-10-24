@@ -693,6 +693,7 @@ public class EntityController {
 	public String importEntities() {
 		int JUNK_SIZE = 100;
 		long totalcount = 0;
+		long errorCount = 0;
 		int icount = 0;
 		loginfo = "";
 
@@ -751,16 +752,24 @@ public class EntityController {
 					} catch (java.io.EOFException eofe) {
 						break;
 					} catch (ClassNotFoundException e) {
-						e.printStackTrace();
-						loginfo += "Error: " + e.getMessage();
+						errorCount++;
+						logger.warning("[ImixsAdminClient] error importing workitem at position "
+								+ (totalcount + errorCount)
+								+ " Error: "
+								+ e.getMessage());
 					} catch (AccessDeniedException e) {
-						e.printStackTrace();
-						loginfo += "Error: " + e.getMessage();
+						errorCount++;
+						logger.warning("[ImixsAdminClient] error importing workitem at position "
+								+ (totalcount + errorCount)
+								+ " Error: "
+								+ e.getMessage());
 					}
 				}
 				loginfo += "Import successfull! " + totalcount
-						+ " Entities imported from " + filename + ".";
+						+ " Entities imported. " + errorCount
+						+ " Errors.  Import FileName:" + filename;
 
+				logger.info(loginfo);
 				doResetSearchResult(null);
 
 				in.close();
@@ -768,6 +777,7 @@ public class EntityController {
 			} catch (IOException ex) {
 				loginfo = "Export Error : " + ex.getMessage();
 
+				logger.severe(loginfo);
 				ex.printStackTrace();
 			}
 		}
