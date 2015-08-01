@@ -1,0 +1,28 @@
+<div class="row">
+	<h1>Query:</h1>
+	<div data-ben-controller="worklistController"
+		class="imixs-form-section">
+		<dl>
+			<dt>JPQL:</dt>
+			<dd>
+				<textarea
+					placeholder="SELECT entity FROM Entity entity ORDER BY entity.modified DESC"
+					data-ben-model="query"></textarea>
+			</dd>
+
+
+
+		</dl>
+
+
+		<input type="button" value="Search"
+			onclick="worklistController.loadWorklist()" class="btn" />
+
+
+	</div>
+	
+	<hr />
+
+</div>
+
+
