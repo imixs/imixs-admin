@@ -19,10 +19,30 @@
 			onclick="worklistController.loadWorklist()" class="btn" />
 
 
-	</div>
-	
-	<hr />
 
+		<hr />
+		<!--  Result list -->
+
+		<div>
+
+			<table>
+				<thead>
+					<tr>
+						<th>creator</th>
+						<th>processid</th>
+					</tr>
+				</thead>
+				<tbody data-ben-foreach="view">
+					<tr>
+						<td><span data-ben-model="getItem(model,'namcreator')"></span></td>
+
+						<td><span data-ben-model="getItem(model,'$processid')"></span></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+	</div>
 </div>
 
 

@@ -11,14 +11,15 @@ function layoutSection(templ, context) {
  ******************************************************************************/
 
 var RestService = function() {
-	this.baseURL;
+	this.baseURL = "http://localhost:8080/backlog-rest";
 };
 
 /* WorklistController */
-var Worklist= function() {
-	this.query;
+var Worklist = function() {
+	this.query = "SELECT entity FROM Entity entity ORDER BY entity.modified DESC";
 	this.view;
 };
+Worklist.prototype = new ItemCollection();
 
 // WorklistView.prototype = new ItemCollection();
 
@@ -36,7 +37,6 @@ var worklistController = benJS.createController("worklistController",
 var contentTemplate = benJS.createTemplate("content");
 contentTemplate.afterLoad.add(layoutSection);
 
-
 restServiceController.connect = function() {
 	this.pull();
 	QueryRoute.route();
@@ -46,14 +46,39 @@ worklistController.loadWorklist = function() {
 	worklistController.pull();
 	console.debug("load worklist: '" + worklistController.model.query + "'...");
 
-	var url=restServiceController.model.baseURL;
-	url=url+"/workflow/";
-	$.getJSON(url, function(data) {
-		console.debug("worklist loaded");
-		this.model.view = data;
-		// change route...
-	//	ProjectRoute.route();
+	var url = restServiceController.model.baseURL;
+	url = url + "/workflow/worklistbyquery/" + worklistController.model.query;
+//	$.getJSON(url, function(data) {
+//		console.debug("worklist loaded");
+//		worklistController.model.view = data.entity;
+//		//QueryRoute.route();
+//
+//	});
 
+	$.ajax({
+		type : "GET",
+		url : url,
+		dataType : "xml",
+		success : function(response) {
+		
+			
+			
+			//json = $.xml2json(response);
+			json=xml2json(response);
+			
+			// get only entity
+//			json=json.collection;
+//			console.log(json);
+//			console.log("-- String --");
+//			console.log(JSON.stringify(json));
+//			
+			
+			worklistController.model.view=json.collection.entity;
+			QueryRoute.route();
+		},
+		error : function() {
+			alert("An error occurred while processing XML file.");
+		}
 	});
 
 }
@@ -70,7 +95,6 @@ var RestServiceRoute = benJS.createRoute('restservice-route', {
 RestServiceRoute.beforeRoute.add(function(router) {
 	restServiceController.pull();
 });
-
 
 RestServiceRoute.afterRoute.add(function(router) {
 	$("#imixs-nav ul li").removeClass('active');
