@@ -24,7 +24,6 @@
 		<!--  Result list -->
 
 		<div>
-
 			<table>
 				<thead>
 					<tr>
@@ -34,6 +33,7 @@
 				</thead>
 				<tbody data-ben-foreach="view">
 					<tr>
+						<td><span data-ben-model="getItem(model,'$uniqueid')"></span></td>
 						<td><span data-ben-model="getItem(model,'namcreator')"></span></td>
 
 						<td><span data-ben-model="getItem(model,'$processid')"></span></td>
