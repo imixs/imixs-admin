@@ -1,7 +1,7 @@
 function layoutSection(templ, context) {
 	// $(context).i18n();
 	// $(context).imixsLayout();
-
+	$("#imixs-error").hide();
 };
 
 /*******************************************************************************
@@ -18,6 +18,16 @@ var RestService = function() {
 var Worklist = function() {
 	this.query = "SELECT entity FROM Entity entity ORDER BY entity.modified DESC";
 	this.view;
+	this.start = 0;
+	this.count = 10;
+
+	/* return summary or txtnam */
+	this.getSummary = function(model) {
+		var val = this.getItem(model, "txtworkflowsummary");
+		if (!val)
+			url = this.getItem(model, "txtname");
+		return val;
+	}
 };
 Worklist.prototype = new ItemCollection();
 
@@ -48,36 +58,24 @@ worklistController.loadWorklist = function() {
 
 	var url = restServiceController.model.baseURL;
 	url = url + "/workflow/worklistbyquery/" + worklistController.model.query;
-//	$.getJSON(url, function(data) {
-//		console.debug("worklist loaded");
-//		worklistController.model.view = data.entity;
-//		//QueryRoute.route();
-//
-//	});
+	url = url + "?start=" + worklistController.model.start + "&count="
+			+ worklistController.model.count;
 
 	$.ajax({
 		type : "GET",
 		url : url,
 		dataType : "xml",
 		success : function(response) {
-		
-			
-			
-			//json = $.xml2json(response);
-			json=xml2json(response);
-			
-			// get only entity
-//			json=json.collection;
-//			console.log(json);
-//			console.log("-- String --");
-//			console.log(JSON.stringify(json));
-//			
-			
-			worklistController.model.view=json.collection.entity;
+			json = xml2json(response);
+
+			worklistController.model.view = json.collection.entity;
 			QueryRoute.route();
 		},
-		error : function() {
-			alert("An error occurred while processing XML file.");
+		error : function(jqXHR, error, errorThrown) {
+
+			message = errorThrown;
+			$("#error-message").text(message);
+			$("#imixs-error").show();
 		}
 	});
 
@@ -118,5 +116,6 @@ $(document).ready(function() {
 	});
 
 	RestServiceRoute.route();
+	$("#imixs-error").hide();
 
 });

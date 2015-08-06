@@ -213,6 +213,18 @@ dd textarea {
 	padding: 0 10px 10px 0;
 }
 
+#imixs-error {
+	margin:20px 0;
+	color:#fff;
+}
+#imixs-error p{
+	color:#fff;
+	margin: 10px;
+}
+
+#imixs-error .ui-icon {
+	margin: 0.2em;
+}
 
 @media screen and (max-width: 768px) {
 	.imixs-form-section-2 dl {

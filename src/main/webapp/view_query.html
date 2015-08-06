@@ -1,42 +1,81 @@
 <div class="row">
 	<h1>Query:</h1>
-	<div data-ben-controller="worklistController"
-		class="imixs-form-section">
-		<dl>
-			<dt>JPQL:</dt>
-			<dd>
-				<textarea
-					placeholder="SELECT entity FROM Entity entity ORDER BY entity.modified DESC"
-					data-ben-model="query"></textarea>
-			</dd>
+	<div data-ben-controller="worklistController">
+
+		<div class="imixs-form-section">
+			<dl>
+				<dt>JPQL:</dt>
+				<dd>
+					<textarea
+						placeholder="SELECT entity FROM Entity entity ORDER BY entity.modified DESC"
+						data-ben-model="query"></textarea>
+				</dd>
+			</dl>
+		</div>
+		<div class="imixs-form-section-3">
+
+			<dl>
+				<dt>Start:</dt>
+				<dd>
+					<input type="text" placeholder="0" data-ben-model="start"></input>
+				</dd>
+			</dl>
+			<dl>
+				<dt>Count:</dt>
+				<dd>
+					<input type="text" placeholder="10" data-ben-model="count"></input>
+				</dd>
+			</dl>
+
+		</div>
+
+		<div class="imixs-form-section">
+			<input type="button" value="Search"
+				onclick="worklistController.loadWorklist()" class="btn" />
+
+
+		</div>
 
 
 
-		</dl>
-
-
-		<input type="button" value="Search"
-			onclick="worklistController.loadWorklist()" class="btn" />
-
-
-
-		<hr />
+		<!-- Error message -->
+		<div id="imixs-error" style="">
+			<div class="ui-state-error ui-corner-all" >
+				<p>
+					<span class="ui-icon ui-icon-alert"
+						style="float: left; margin-right: .3em;"></span> <strong>Error:</strong>
+					<p id="error-message" />
+				</p>
+			</div>
+		</div>
+		
+		
 		<!--  Result list -->
 
 		<div>
 			<table>
 				<thead>
 					<tr>
-						<th>creator</th>
-						<th>processid</th>
+						<th>ID</th>
+						<th>Created</th>
+						<th>Modified</th>
+						<th>Summary</th>
+						<th>Status</th>
 					</tr>
 				</thead>
 				<tbody data-ben-foreach="view">
 					<tr>
-						<td><span data-ben-model="getItem(model,'$uniqueid')"></span></td>
-						<td><span data-ben-model="getItem(model,'namcreator')"></span></td>
+						<td><span data-ben-model="getItem(model,'$uniqueid')" /> (<span
+							data-ben-model="getItem(model,'$version')" />)</td>
+						<td><span data-ben-model="getItem(model,'$created')" /> by <span
+							data-ben-model="getItem(model,'namcreator')"></span></td>
 
-						<td><span data-ben-model="getItem(model,'$processid')"></span></td>
+						<td><span data-ben-model="getItem(model,'$modified')" /> by
+							<span data-ben-model="getItem(model,'namcurrenteditor')"></span></td>
+
+						<td><span data-ben-model="getSummary(model)"></span></td>
+
+						<td><span data-ben-model="getItem(model,'txtworkflowstatus')" /></td>
 					</tr>
 				</tbody>
 			</table>
