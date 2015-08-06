@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row imixs-view">
 	<h1>Query:</h1>
 	<div data-ben-controller="worklistController">
 
@@ -40,16 +40,16 @@
 
 		<!-- Error message -->
 		<div id="imixs-error" style="">
-			<div class="ui-state-error ui-corner-all" >
+			<div class="ui-state-error ui-corner-all">
 				<p>
 					<span class="ui-icon ui-icon-alert"
 						style="float: left; margin-right: .3em;"></span> <strong>Error:</strong>
-					<p id="error-message" />
 				</p>
+				<p id="error-message" />
 			</div>
 		</div>
-		
-		
+
+
 		<!--  Result list -->
 
 		<div>
@@ -65,7 +65,8 @@
 				</thead>
 				<tbody data-ben-foreach="view">
 					<tr>
-						<td><span data-ben-model="getItem(model,'$uniqueid')" /> (<span
+						<td><a href="javascript:;" onclick="workitemController.loadWorkitem(this)">
+						<span data-ben-model="getItem(model,'$uniqueid')" /></a> (<span
 							data-ben-model="getItem(model,'$version')" />)</td>
 						<td><span data-ben-model="getItem(model,'$created')" /> by <span
 							data-ben-model="getItem(model,'namcreator')"></span></td>

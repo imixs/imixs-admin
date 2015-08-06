@@ -1,0 +1,44 @@
+<div class="row">
+
+
+	<div data-ben-controller="workitemController">
+
+		<h1>Workitem:</h1>
+
+
+
+
+		<!-- Error message -->
+		<div id="imixs-error" style="">
+			<div class="ui-state-error ui-corner-all">
+				<p>
+					<span class="ui-icon ui-icon-alert"
+						style="float: left; margin-right: .3em;"></span> <strong>Error:</strong>
+				</p>
+				<p id="error-message" />
+			</div>
+		</div>
+
+
+		<table>
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Created</th>
+					<th>Modified</th>
+					<th>Summary</th>
+					<th>Status</th>
+				</tr>
+			</thead>
+			<tbody data-ben-foreach="getFieldlist()">
+				<tr>
+					<td>Feld=<span data-ben-data="."></span></td>
+				</tr>
+			</tbody>
+		</table>
+
+
+	</div>
+</div>
+
+

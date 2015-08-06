@@ -213,6 +213,10 @@ dd textarea {
 	padding: 0 10px 10px 0;
 }
 
+.imixs-view a , .imixs-view a  span{
+	color: #428bca;
+}
+
 #imixs-error {
 	margin:20px 0;
 	color:#fff;

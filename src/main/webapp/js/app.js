@@ -31,7 +31,27 @@ var Worklist = function() {
 };
 Worklist.prototype = new ItemCollection();
 
-// WorklistView.prototype = new ItemCollection();
+
+
+/* WorklistController */
+var Workitem = function() {
+	this.id='';
+	this.entity=null;
+	
+	/* return an array with all fieldnames */
+	this.getFieldlist = function() {
+		var list=new Array();
+		// iterate over all controllers
+		$.each(this.entity.item, function(index, item) {
+			if (item.name) {
+				list.push(item.name);
+			}
+		});
+		return list;
+	}
+};
+Workitem.prototype = new ItemCollection();
+
 
 /*******************************************************************************
  * 
@@ -43,15 +63,14 @@ var restServiceController = benJS.createController("restServiceController",
 		new RestService());
 var worklistController = benJS.createController("worklistController",
 		new Worklist());
-
-var contentTemplate = benJS.createTemplate("content");
-contentTemplate.afterLoad.add(layoutSection);
+var workitemController = benJS.createController("workitemController",
+		new Workitem());
 
 restServiceController.connect = function() {
 	this.pull();
 	QueryRoute.route();
 }
-/* Custom method to load a single project */
+/* Custom method to load a worklist */
 worklistController.loadWorklist = function() {
 	worklistController.pull();
 	console.debug("load worklist: '" + worklistController.model.query + "'...");
@@ -81,9 +100,54 @@ worklistController.loadWorklist = function() {
 
 }
 
+
+/* Custom method to load a single workite */
+workitemController.loadWorkitem = function(context) {
+	
+	var entry=$('span',context);
+	if (entry.length==1) {
+		
+		var id= $(entry).text();
+		
+		workitemController.model.id=id;
+	}
+	
+	console.debug("load workitem: '" + workitemController.model.id + "'...");
+
+	var url = restServiceController.model.baseURL;
+	url = url + "/workflow/workitem/" + workitemController.model.id;
+
+	$.ajax({
+		type : "GET",
+		url : url,
+		dataType : "xml",
+		success : function(response) {
+			json = xml2json(response);
+
+			workitemController.model.entity = json.entity;
+			WorkitemRoute.route();
+		},
+		error : function(jqXHR, error, errorThrown) {
+
+			message = errorThrown;
+			$("#error-message").text(message);
+			$("#imixs-error").show();
+		}
+	});
+
+}
+
+
+
+
+
+
+
+
+
 /*******************************************************************************
  * 
- * ROUTES
+ * ROUTES & TEMPLATES
  * 
  ******************************************************************************/
 var RestServiceRoute = benJS.createRoute('restservice-route', {
@@ -107,6 +171,31 @@ QueryRoute.afterRoute.add(function(router) {
 	$("#imixs-nav ul li").removeClass('active');
 	$("#imixs-nav ul li:nth-child(2)").addClass('active');
 });
+
+
+var WorkitemRoute = benJS.createRoute('workitem-route', {
+	"content" : "view_workitem.html"
+});
+
+
+WorkitemRoute.beforeRoute.add(function(router) {
+
+});
+
+
+WorkitemRoute.afterRoute.add(function(router) {
+	$("#imixs-nav ul li").removeClass('active');
+	$("#imixs-nav ul li:nth-child(1)").addClass('active');
+});
+
+
+var contentTemplate = benJS.createTemplate("content");
+contentTemplate.afterLoad.add(layoutSection);
+
+
+
+
+
 
 $(document).ready(function() {
 
