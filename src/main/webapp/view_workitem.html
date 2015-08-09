@@ -23,16 +23,20 @@
 		<table>
 			<thead>
 				<tr>
-					<th>ID</th>
-					<th>Created</th>
-					<th>Modified</th>
-					<th>Summary</th>
-					<th>Status</th>
+					<th>Field</th>
+					<th>Value</th>
 				</tr>
 			</thead>
-			<tbody data-ben-foreach="getFieldlist()">
+			<tbody data-ben-foreach="getSortedItemlist()">
 				<tr>
-					<td>Feld=<span data-ben-data="."></span></td>
+					<td><span style="font-weight:bold;" data-ben-model="name"></span></td>
+					<td><span data-ben-foreach="value"> 
+					<span style="font-weight:bold;"
+							data-ben-model="model['xsi:type']"></span> :<span
+							data-ben-model="model['$']"></span><br />
+
+					</span></td>
+
 				</tr>
 			</tbody>
 		</table>

@@ -31,27 +31,25 @@ var Worklist = function() {
 };
 Worklist.prototype = new ItemCollection();
 
-
-
 /* WorklistController */
 var Workitem = function() {
-	this.id='';
-	this.entity=null;
-	
-	/* return an array with all fieldnames */
-	this.getFieldlist = function() {
-		var list=new Array();
-		// iterate over all controllers
-		$.each(this.entity.item, function(index, item) {
-			if (item.name) {
-				list.push(item.name);
-			}
+	this.id = '';
+	this.entity = null;
+
+	/* return all items sorted by name */
+	this.getSortedItemlist = function() {
+
+		return this.entity.item.sort(function(a, b) {
+			if (a.name > b.name)
+				return 1;
+			else if (a.name < b.name)
+				return -1;
+			else
+				return 0;
 		});
-		return list;
 	}
 };
 Workitem.prototype = new ItemCollection();
-
 
 /*******************************************************************************
  * 
@@ -100,18 +98,17 @@ worklistController.loadWorklist = function() {
 
 }
 
-
 /* Custom method to load a single workite */
 workitemController.loadWorkitem = function(context) {
-	
-	var entry=$('span',context);
-	if (entry.length==1) {
-		
-		var id= $(entry).text();
-		
-		workitemController.model.id=id;
+
+	var entry = $('span', context);
+	if (entry.length == 1) {
+
+		var id = $(entry).text();
+
+		workitemController.model.id = id;
 	}
-	
+
 	console.debug("load workitem: '" + workitemController.model.id + "'...");
 
 	var url = restServiceController.model.baseURL;
@@ -136,14 +133,6 @@ workitemController.loadWorkitem = function(context) {
 	});
 
 }
-
-
-
-
-
-
-
-
 
 /*******************************************************************************
  * 
@@ -172,30 +161,21 @@ QueryRoute.afterRoute.add(function(router) {
 	$("#imixs-nav ul li:nth-child(2)").addClass('active');
 });
 
-
 var WorkitemRoute = benJS.createRoute('workitem-route', {
 	"content" : "view_workitem.html"
 });
 
-
 WorkitemRoute.beforeRoute.add(function(router) {
 
 });
-
 
 WorkitemRoute.afterRoute.add(function(router) {
 	$("#imixs-nav ul li").removeClass('active');
 	$("#imixs-nav ul li:nth-child(1)").addClass('active');
 });
 
-
 var contentTemplate = benJS.createTemplate("content");
 contentTemplate.afterLoad.add(layoutSection);
-
-
-
-
-
 
 $(document).ready(function() {
 
