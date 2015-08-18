@@ -1,0 +1,117 @@
+<div class="row imixs-view">
+	<h1>Bulk-Update:</h1>
+	<div data-ben-controller="worklistController">
+
+
+		<div class="imixs-form-section">
+			<p>A bulk update will update all entities defined by the current
+				JPQL Statement from the Database. NOTE: Complex queries can take a
+				long time.</p>
+
+
+			<dl>
+				<dt>JPQL:</dt>
+				<dd>
+					<textarea
+						placeholder="SELECT entity FROM Entity entity ORDER BY entity.modified DESC"
+						data-ben-model="query"></textarea>
+				</dd>
+			</dl>
+		</div>
+		<div class="imixs-form-section-3">
+
+			<dl>
+				<dt>Start:</dt>
+				<dd>
+					<input type="text" placeholder="0" data-ben-model="start"></input>
+				</dd>
+			</dl>
+			<dl>
+				<dt>Count:</dt>
+				<dd>
+					<input type="text" placeholder="10" data-ben-model="count"></input>
+				</dd>
+			</dl>
+
+		</div>
+
+
+
+
+		<!-- Error message -->
+		<div id="imixs-error" style="">
+			<div class="ui-state-error ui-corner-all">
+				<p>
+					<span class="ui-icon ui-icon-alert"
+						style="float: left; margin-right: .3em;"></span> <strong>Error:</strong>
+				</p>
+				<p id="error-message" />
+			</div>
+		</div>
+
+
+		<!--  Bulk update -->
+		<hr />
+		<div class="imixs-form-section-3">
+
+			<dl>
+				<dt>Field Name:</dt>
+				<dd>
+					<input type="text" data-ben-model="fieldName"></input>
+				</dd>
+			</dl>
+			<dl>
+				<dt>Field Type:</dt>
+				<dd>
+					<select data-ben-model="fieldType">
+						<option>xs:string</option>
+						<option>xs:int</option>
+						<option>xs:boolean</option>
+						<option>xs:dateTime</option>
+
+					</select>
+				</dd>
+			</dl>
+
+			<dl style="clear: left">
+				<dt>New Value:</dt>
+				<dd>
+					<textarea data-ben-model="newValue"></textarea>
+				</dd>
+			</dl>
+
+
+			<dl style="clear: left">
+				<dt>Workflow Activity ID:</dt>
+				<dd>
+					<input type="text" data-ben-model="$activityid"></input>
+				</dd>
+			</dl>
+
+		</div>
+
+
+		<div class="imixs-form-section">
+			<input type="button" value="Start Update"
+				onclick="worklistController.bulkUpdate()" class="btn" />
+
+
+		</div>
+		
+		
+		<!-- processing log -->
+		<div id="imixs-log" style="">
+			<div class="ui-state-highlight ui-corner-all">
+				<p>
+					<span class="ui-icon ui-icon-info"
+						style="float: left; margin-right: .3em;"></span> <strong>Log:</strong>
+				</p>
+				<p id="log-message" />
+			</div>
+		</div>
+
+
+	</div>
+</div>
+
+

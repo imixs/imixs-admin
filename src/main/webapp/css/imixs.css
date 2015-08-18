@@ -11,9 +11,11 @@ html, body, div, p, h1, h2, h3, ul, ol, span, a, table, td, form, img,
 	font-weight: inherit;
 	padding: inherit;
 }
+
 #container {
-	min-height:600px;
+	min-height: 600px;
 }
+
 #footer1, #footer2 {
 	text-align: right;
 	margin-right: 2em;
@@ -52,15 +54,14 @@ html, body, div, p, h1, h2, h3, ul, ol, span, a, table, td, form, img,
 	line-height: 18px;
 }
 
-
 #imixs-nav {
 	border-top: 1px solid #fff;
 	font-size: 12px;
 }
 
 #imixs-nav ul {
-	margin-top:2px;
-	margin-left:28px;
+	margin-top: 2px;
+	margin-left: 28px;
 }
 
 #imixs-nav li {
@@ -68,7 +69,7 @@ html, body, div, p, h1, h2, h3, ul, ol, span, a, table, td, form, img,
 	display: inline;
 	color: #2D302C;
 	padding: 5px 20px 5px 10px;
-	margin:0;
+	margin: 0;
 }
 
 #imixs-nav li.active {
@@ -146,24 +147,14 @@ html, body, div, p, h1, h2, h3, ul, ol, span, a, table, td, form, img,
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
 /*** Form Definitions ****/
 dl {
 	margin: 0;
 	vertical-align: top;
 }
 
-dl dd input[type="text"],.imixs-form-section-2 dd input[type="password"],.imixs-form-section-2 dd select
-	{
+dl dd input[type="text"], .imixs-form-section-2 dd input[type="password"],
+	.imixs-form-section-2 dd select {
 	width: 100%;
 }
 
@@ -172,18 +163,18 @@ dd textarea {
 	height: 5em;
 }
 
-.imixs-form-section dd,.imixs-form-section-2 dd {
+.imixs-form-section dd, .imixs-form-section-2 dd {
 	margin-left: 0px;
 }
 
 /* Simulation row */
-.imixs-form-section,.imixs-form-section-2,.imixs-form-section-3 {
+.imixs-form-section, .imixs-form-section-2, .imixs-form-section-3 {
 	clear: both;
 	width: 100%;
 }
 
-.imixs-form-section:after,.imixs-form-section-2:after,.imixs-form-section-3:after
-	{
+.imixs-form-section:after, .imixs-form-section-2:after,
+	.imixs-form-section-3:after {
 	content: ".";
 	display: block;
 	clear: left;
@@ -213,20 +204,28 @@ dd textarea {
 	padding: 0 10px 10px 0;
 }
 
-.imixs-view a , .imixs-view a  span{
+.imixs-view a, .imixs-view a  span {
 	color: #428bca;
 }
 
 #imixs-error {
-	margin:20px 0;
-	color:#fff;
+	margin: 20px 0;
+	color: #fff;
 }
-#imixs-error p{
-	color:#fff;
+
+#imixs-log {
+	margin: 20px 0;
+}
+
+#imixs-error p, #imixs-log p {
 	margin: 10px;
 }
 
-#imixs-error .ui-icon {
+#imixs-error p {
+	color: #fff;
+}
+
+#imixs-error .ui-icon, #imixs-log .ui-icon {
 	margin: 0.2em;
 }
 

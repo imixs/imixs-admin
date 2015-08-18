@@ -20,8 +20,12 @@ var Worklist = function() {
 	this.view;
 	this.start = 0;
 	this.count = 10;
+	this.fieldName = "";
+	this.fieldType = "";
+	this.newValue = "";
+	this.$activityid = 0;
 
-	/* return summary or txtnam */
+	/* return summary or txtname */
 	this.getSummary = function(model) {
 		var val = this.getItem(model, "txtworkflowsummary");
 		if (!val)
@@ -32,10 +36,15 @@ var Worklist = function() {
 Worklist.prototype = new ItemCollection();
 
 /* WorklistController */
-var Workitem = function() {
+var Workitem = function(entity) {
 	this.id = '';
-	this.entity = null;
-
+	if (entity)
+		this.entity = entity;
+	else {
+		this.entity=new Object();
+		this.entity.item = new Array();
+	}
+		
 	/* return all items sorted by name */
 	this.getSortedItemlist = function() {
 
@@ -48,6 +57,7 @@ var Workitem = function() {
 				return 0;
 		});
 	}
+
 };
 Workitem.prototype = new ItemCollection();
 
@@ -87,6 +97,63 @@ worklistController.loadWorklist = function() {
 
 			worklistController.model.view = json.collection.entity;
 			QueryRoute.route();
+		},
+		error : function(jqXHR, error, errorThrown) {
+
+			message = errorThrown;
+			$("#error-message").text(message);
+			$("#imixs-error").show();
+		}
+	});
+
+}
+
+/**
+ * Bulk Update - processes a selection of workitems and updates a field
+ * information
+ * 
+ */
+worklistController.bulkUpdate = function() {
+	worklistController.pull();
+	clearLog();
+	printLog("Load worklist: '" + worklistController.model.query + "'...");
+
+	var url = restServiceController.model.baseURL;
+	url = url + "/workflow/worklistbyquery/" + worklistController.model.query;
+	url = url + "?start=" + worklistController.model.start + "&count="
+			+ worklistController.model.count;
+
+	$.ajax({
+		type : "GET",
+		url : url,
+		dataType : "xml",
+		success : function(response) {
+			json = xml2json(response);
+
+			worklistController.model.view = json.collection.entity;
+
+			printLog("Start processing " + worklistController.model.view.length
+					+ " workitems", true);
+
+			// var itemCol=new ItemCollection();
+			$.each(worklistController.model.view, function(index, entity) {
+				var workitem = new Workitem(entity);
+				var uniqueid = workitem.getItem(entity, '$uniqueid');
+				printLog(".", true);
+
+				// construct workitem to be processed....
+				var processWorkitem = new Workitem();
+				valueObj = {
+					"name" : "$uniqueid",
+					"value" : [ {
+						"xsi:type" : "xs:string",
+						"$" : uniqueid
+					} ]
+				};
+				processWorkitem.entity.item.push(valueObj);
+				console.debug("data:", processWorkitem);
+			});
+
 		},
 		error : function(jqXHR, error, errorThrown) {
 
@@ -171,11 +238,37 @@ WorkitemRoute.beforeRoute.add(function(router) {
 
 WorkitemRoute.afterRoute.add(function(router) {
 	$("#imixs-nav ul li").removeClass('active');
-	$("#imixs-nav ul li:nth-child(1)").addClass('active');
+	$("#imixs-nav ul li:nth-child(2)").addClass('active');
+});
+
+var bulkUpdateRoute = benJS.createRoute('bulkupdate-route', {
+	"content" : "view_bulkupdate.html"
+});
+
+bulkUpdateRoute.beforeRoute.add(function(router) {
+
+});
+
+bulkUpdateRoute.afterRoute.add(function(router) {
+	$("#imixs-nav ul li").removeClass('active');
+	$("#imixs-nav ul li:nth-child(3)").addClass('active');
 });
 
 var contentTemplate = benJS.createTemplate("content");
 contentTemplate.afterLoad.add(layoutSection);
+
+function printLog(message, noLineBrake) {
+	console.debug(message);
+
+	$("#imixs-log #log-message").append(message);
+	if (!noLineBrake)
+		$("#imixs-log #log-message").append("<br />");
+}
+
+function clearLog(message, noLineBrake) {
+
+	$("#imixs-log #log-message").empty();
+}
 
 $(document).ready(function() {
 

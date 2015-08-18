@@ -6,6 +6,10 @@
 		<h1>Workitem:</h1>
 
 
+	<div class="imixs-form-section">
+			<input type="button" value="Close"
+				onclick="QueryRoute.route()" class="btn" />
+		</div>
 
 
 		<!-- Error message -->
@@ -30,19 +34,26 @@
 			<tbody data-ben-foreach="getSortedItemlist()">
 				<tr>
 					<td><span style="font-weight:bold;" data-ben-model="name"></span></td>
-					<td><span data-ben-foreach="value"> 
-					<span style="font-weight:bold;"
-							data-ben-model="model['xsi:type']"></span> :<span
+					<td>
+						<span data-ben-foreach="value"> 
+							<!-- here we need a data-ben-rendered feature to avoid emtpy entries -->
+							<span style="font-weight:bold;"
+							 data-ben-model="model['xsi:type']"></span> : <span
 							data-ben-model="model['$']"></span><br />
-
-					</span></td>
-
+						</span>
+					</td>
 				</tr>
 			</tbody>
 		</table>
 
 
 	</div>
+	
+	<div class="imixs-form-section">
+			<input type="button" value="Close"
+				onclick="QueryRoute.route()" class="btn" />
+		</div>
+	
 </div>
 
 
