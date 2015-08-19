@@ -24,31 +24,26 @@ var Worklist = function() {
 	this.fieldType = "";
 	this.newValue = "";
 	this.$activityid = 0;
-
-	/* return summary or txtname */
-	this.getSummary = function(model) {
-		var val = this.getItem(model, "txtworkflowsummary");
-		if (!val)
-			url = this.getItem(model, "txtname");
-		return val;
-	}
 };
-Worklist.prototype = new ItemCollection();
+
 
 /* WorklistController */
-var Workitem = function(entity) {
+var Workitem = function(itemarray) {
+	ItemCollection.call(this,itemarray);
 	this.id = '';
-	if (entity)
-		this.entity = entity;
-	else {
-		this.entity=new Object();
-		this.entity.item = new Array();
+
+	/* return summary or txtname */
+	this.getSummary = function() {
+		var val = this.getItem( "txtworkflowsummary");
+		if (!val)
+			url = this.getItem( "txtname");
+		return val;
 	}
 		
 	/* return all items sorted by name */
 	this.getSortedItemlist = function() {
 
-		return this.entity.item.sort(function(a, b) {
+		return this.item.sort(function(a, b) {
 			if (a.name > b.name)
 				return 1;
 			else if (a.name < b.name)
@@ -59,7 +54,7 @@ var Workitem = function(entity) {
 	}
 
 };
-Workitem.prototype = new ItemCollection();
+//Workitem.prototype = new ItemCollection();
 
 /*******************************************************************************
  * 
@@ -188,7 +183,8 @@ workitemController.loadWorkitem = function(context) {
 		success : function(response) {
 			json = xml2json(response);
 
-			workitemController.model.entity = json.entity;
+//			workitemController.model.entity = json.entity;
+			workitemController.model.item = json.entity.item;
 			WorkitemRoute.route();
 		},
 		error : function(jqXHR, error, errorThrown) {

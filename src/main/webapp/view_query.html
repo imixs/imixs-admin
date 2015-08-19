@@ -63,20 +63,20 @@
 						<th>Status</th>
 					</tr>
 				</thead>
-				<tbody data-ben-foreach="view">
+				<tbody data-ben-foreach="view as Workitem">
 					<tr>
 						<td><a href="javascript:;" onclick="workitemController.loadWorkitem(this)">
-						<span data-ben-model="getItem(model,'$uniqueid')" /></a> (<span
-							data-ben-model="getItem(model,'$version')" />)</td>
-						<td><span data-ben-model="getItem(model,'$created')" /> by <span
-							data-ben-model="getItem(model,'namcreator')"></span></td>
+						<span data-ben-model="getItem('$uniqueid')" /></a> (<span
+							data-ben-model="getItem('$version')" />)</td>
+						<td><span data-ben-model="getItem('$created')" /> by <span
+							data-ben-model="getItem('namcreator')"></span></td>
 
-						<td><span data-ben-model="getItem(model,'$modified')" /> by
-							<span data-ben-model="getItem(model,'namcurrenteditor')"></span></td>
+						<td><span data-ben-model="getItem('$modified')" /> by
+							<span data-ben-model="getItem('namcurrenteditor')"></span></td>
 
 						<td><span data-ben-model="getSummary(model)"></span></td>
 
-						<td><span data-ben-model="getItem(model,'txtworkflowstatus')" /></td>
+						<td><span data-ben-model="getItem('txtworkflowstatus')" /></td>
 					</tr>
 				</tbody>
 			</table>

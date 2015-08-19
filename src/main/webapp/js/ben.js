@@ -22,7 +22,7 @@
 var Ben = function() {
 
 	console.debug('------------------------');
-	console.debug('Ben.js: Version 0.0.7');
+	console.debug('Ben.js: Version 0.0.8');
 	console.debug('------------------------');
 
 	var that = this;
@@ -288,6 +288,16 @@ function BenController(id, model, view) {
 				.each(
 						function() {
 							var modelField = $(this).attr("data-ben-foreach");
+							var _prototypeClass;
+							
+							// support 'as' directive and test for a prototype definition
+							if (modelField.indexOf(' as ')>-1) {
+								res = modelField.split(" ");
+								modelField=res[0].trim();
+								_prototypeClass=res[2].trim();
+							}
+							
+							
 							var parent = $(this).parent('[data-ben-foreach]');
 							var foreachModel = that._extract_model_value(modelField,
 									model);
@@ -320,6 +330,14 @@ function BenController(id, model, view) {
 													function(index,
 															model_element) {
 
+														if (_prototypeClass) {
+															// eval prototype
+															var evalString="model_element =new "+_prototypeClass + "(model_element);";
+															            
+															// Worklist.prototype = new ItemCollection();
+															eval(evalString);
+														}
+														
 														var newEntry = $
 																.parseHTML(forEachBlockContent);
 														// update entry index
@@ -415,7 +433,7 @@ function BenController(id, model, view) {
 			if (modelField.indexOf('(') > -1) {
 				if (modelField.match("^[_a-zA-Z0-9]+\\(")) {
 					try {
-						modelValue = eval('this.model.' + modelField);
+						modelValue = eval('model.' + modelField);
 					} catch (err) {
 						console.error("Error calling gettermethod '" + modelField
 								+ "' -> " + err.message);

@@ -19,7 +19,6 @@
  * Contributors: Ralph Soika - Software Developer
  ******************************************************************************/
 
-
 /**
  * This library is based on Ben.JS and provides implementation for the
  * Imixs-Workflow framework.
@@ -27,19 +26,33 @@
  */
 
 /* Imixs ItemCollection */
-var ItemCollection = function () {	
+var ItemCollection = function(itemarray) {
+
+	if (!itemarray) {
+		// if no itemarray is provided than create an empty one
+		this.item = new Array();
+	} else {
+		if ($.isArray(itemarray)) {
+			this.item = itemarray;
+		} else {
+			if ($.isArray(itemarray.item)) {
+				this.item = itemarray.item;
+			}
+		}
+	}
+
 	/**
 	 * This method is used to return the value array of a name item inside the
 	 * current ItemCollection. If no item with this name exists the method adds
 	 * a new element with this name.
 	 */
-	this.getItem = function(model, fieldName) {
-		if (!model.item)
+	this.getItem = function(fieldName) {
+		if (!this.item)
 			return "";
 
 		var resultKey = -1;
 
-		$.each(model.item, function(index, aitem) {
+		$.each(this.item, function(index, aitem) {
 			if (aitem && aitem.name == fieldName) {
 				resultKey = index;
 				return false;
@@ -49,38 +62,38 @@ var ItemCollection = function () {
 		// check if field exists?
 		if (resultKey == -1) {
 			// create a new element
-			valueObj={"name":fieldName,
-					   "value":[
-						         {"xsi:type":"xs:string","$":""}
-						        ]
-					};
-			model.item.push(valueObj);
-			resultKey = model.item.length - 1;
+			valueObj = {
+				"name" : fieldName,
+				"value" : [ {
+					"xsi:type" : "xs:string",
+					"$" : ""
+				} ]
+			};
+			this.item.push(valueObj);
+			resultKey = this.item.length - 1;
 		}
 
-		var valueObj=model.item[resultKey].value[0];
+		var valueObj = this.item[resultKey].value[0];
 		if (valueObj) {
-			if (typeof (valueObj['$']) == "undefined") 
+			if (typeof (valueObj['$']) == "undefined")
 				return valueObj;
 			else
 				return valueObj['$'];
 		} else
 			return "";
-		
+
 	}
-	
-	
+
 	/**
 	 * formats a date output
 	 */
-	this.getItemDate = function(model, fieldName) {
-		var value = this.getItem(model, fieldName);
+	this.getItemDate = function(fieldName) {
+		var value = this.getItem(fieldName);
 		return $.datepicker.formatDate('dd. M yy', new Date(value));
 
 	}
-	
-};
 
+};
 
 /**
  * converts a XML result set form the Imixs Rest Service API into a JSON object.
@@ -112,14 +125,14 @@ function xml2json(xml) {
 				var nodeName = item.nodeName;
 
 				if (nodeName == 'name')
-					obj.name = item.textContent;				
-				
+					obj.name = item.textContent;
+
 				if (nodeName == 'value') {
-					// value is an array 
+					// value is an array
 					if (typeof (obj['value']) == "undefined") {
-						obj.value=new Array();
+						obj.value = new Array();
 					}
-			
+
 					var valobj = {};
 					valobj['$'] = item.textContent;
 					if (item.attributes.length > 0) {
