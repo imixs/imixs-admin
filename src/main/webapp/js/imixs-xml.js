@@ -84,6 +84,19 @@ var ItemCollection = function(itemarray) {
 
 	}
 
+	this.setItem = function(fieldname, value, xsiType) {
+		if (!xsiType)
+			xsiType = "xs:string";
+		var valueObj = {
+			"name" : fieldname,
+			"value" : [ {
+				"xsi:type" : xsiType,
+				"$" : value
+			} ]
+		};
+		this.item.push(valueObj);
+	}
+
 	/**
 	 * formats a date output
 	 */
@@ -99,6 +112,9 @@ var ItemCollection = function(itemarray) {
  * converts a XML result set form the Imixs Rest Service API into a JSON object.
  * Based on the idears from David Walsh
  * (http://davidwalsh.name/convert-xml-json)
+ * 
+ * 
+ * </code>
  */
 function xml2json(xml) {
 	// Create the return object
@@ -166,4 +182,38 @@ function xml2json(xml) {
 		}
 	}
 	return obj;
+};
+
+/**
+ * converts a itemcollection into a imixs XML string. The result can be used to
+ * post the string to a Imixs Rest Service API
+ * 
+ * <code>
+ *   <entity xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+ *      <item><name>namlasteditor</name><value xsi:type="xs:string">ralph.soika@imixs.com</value>
+ *      </item><item><name>$isauthor</name><value xsi:type="xs:boolean">true</value></item>
+ *      ....
+ *   </entity>
+ */
+function json2xml(workitem) {
+	var result = '<entity xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">';
+
+	if (workitem && workitem.item) {
+		$.each(workitem.item, function(index, aitem) {
+			result = result + '<item><name>' + aitem.name + '</name>';
+
+			if (aitem.value) {
+				$.each(aitem.value, function(index, avalue) {
+					result = result + '<value xsi:type="' + avalue["xsi:type"]
+							+ '">' + avalue["$"] + '</value>';
+				});
+			}
+			
+			result = result + '</item>';
+		});
+
+	}
+	
+	result = result + '</entity>';
+	return result;
 };

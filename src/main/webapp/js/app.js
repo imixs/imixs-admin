@@ -1,3 +1,5 @@
+"use strict";
+
 function layoutSection(templ, context) {
 	// $(context).i18n();
 	// $(context).imixsLayout();
@@ -36,7 +38,7 @@ var Workitem = function(itemarray) {
 	this.getSummary = function() {
 		var val = this.getItem( "txtworkflowsummary");
 		if (!val)
-			url = this.getItem( "txtname");
+			val = this.getItem( "txtname");
 		return val;
 	}
 		
@@ -88,7 +90,7 @@ worklistController.loadWorklist = function() {
 		url : url,
 		dataType : "xml",
 		success : function(response) {
-			json = xml2json(response);
+			var json = xml2json(response);
 
 			worklistController.model.view = json.collection.entity;
 			QueryRoute.route();
@@ -123,7 +125,7 @@ worklistController.bulkUpdate = function() {
 		url : url,
 		dataType : "xml",
 		success : function(response) {
-			json = xml2json(response);
+			var json = xml2json(response);
 
 			worklistController.model.view = json.collection.entity;
 
@@ -133,20 +135,22 @@ worklistController.bulkUpdate = function() {
 			// var itemCol=new ItemCollection();
 			$.each(worklistController.model.view, function(index, entity) {
 				var workitem = new Workitem(entity);
-				var uniqueid = workitem.getItem(entity, '$uniqueid');
+				var uniqueid = workitem.getItem('$uniqueid');
+				var processid = workitem.getItem('$processid');
 				printLog(".", true);
 
 				// construct workitem to be processed....
-				var processWorkitem = new Workitem();
-				valueObj = {
-					"name" : "$uniqueid",
-					"value" : [ {
-						"xsi:type" : "xs:string",
-						"$" : uniqueid
-					} ]
-				};
-				processWorkitem.entity.item.push(valueObj);
-				console.debug("data:", processWorkitem);
+				var updatedWorkitem = new Workitem();
+				
+				updatedWorkitem.setItem("$uniqueid",uniqueid,"xs:string"); 
+
+				updatedWorkitem.setItem("$processid",processid,"xs:int"); 
+				updatedWorkitem.setItem("$activity",worklistController.model.$activityid,"xs:int"); 
+
+				updatedWorkitem.setItem(worklistController.model.fieldName,worklistController.model.newValue,worklistController.model.fieldType); 
+				
+				//console.debug("xml=", json2xml(processWorkitem));
+				workitemController.processWorkitem(updatedWorkitem);
 			});
 
 		},
@@ -159,6 +163,38 @@ worklistController.bulkUpdate = function() {
 	});
 
 }
+
+
+
+/* Custom method to process a single workitem */
+workitemController.processWorkitem = function(workitem) {
+
+	
+  var xmlData=json2xml(workitem);
+	console.debug("process workitem: '" +  workitem.getItem('$uniqueid') + "'...");
+
+	var url = restServiceController.model.baseURL;
+	url = url + "/workflow/workitem/";
+
+	
+	$.ajax({ type: "POST",
+        url: url,
+        data: xmlData,
+        contentType: "text/xml",
+        dataType: "xml",
+        cache: false,
+        error: function() { 
+        	printLog("failed to post data",true); 
+        },
+        success: function(xml) {
+        	printLog("ok", true);
+        }
+	});
+	
+
+}
+
+
 
 /* Custom method to load a single workite */
 workitemController.loadWorkitem = function(context) {
@@ -181,7 +217,8 @@ workitemController.loadWorkitem = function(context) {
 		url : url,
 		dataType : "xml",
 		success : function(response) {
-			json = xml2json(response);
+			console.debug(response);
+			var json = xml2json(response);
 
 //			workitemController.model.entity = json.entity;
 			workitemController.model.item = json.entity.item;
