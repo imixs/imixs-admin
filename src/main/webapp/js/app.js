@@ -18,7 +18,7 @@ var RestService = function() {
 
 /* WorklistController */
 var Worklist = function() {
-	this.query = "SELECT entity FROM Entity entity ORDER BY entity.modified DESC";
+	this.query = "SELECT entity FROM Entity entity where entity.type='workitem' ORDER BY entity.modified DESC";
 	this.view;
 	this.start = 0;
 	this.count = 10;
@@ -137,15 +137,16 @@ worklistController.bulkUpdate = function() {
 				var workitem = new Workitem(entity);
 				var uniqueid = workitem.getItem('$uniqueid');
 				var processid = workitem.getItem('$processid');
+				var modelversion = workitem.getItem('$modelversion');
 				printLog(".", true);
 
 				// construct workitem to be processed....
 				var updatedWorkitem = new Workitem();
 				
 				updatedWorkitem.setItem("$uniqueid",uniqueid,"xs:string"); 
-
+				updatedWorkitem.setItem("$modelversion",modelversion,"xs:string"); 
 				updatedWorkitem.setItem("$processid",processid,"xs:int"); 
-				updatedWorkitem.setItem("$activity",worklistController.model.$activityid,"xs:int"); 
+				updatedWorkitem.setItem("$activityid",worklistController.model.$activityid,"xs:int"); 
 
 				updatedWorkitem.setItem(worklistController.model.fieldName,worklistController.model.newValue,worklistController.model.fieldType); 
 				
@@ -171,6 +172,7 @@ workitemController.processWorkitem = function(workitem) {
 
 	
   var xmlData=json2xml(workitem);
+  console.debug(xmlData);
 	console.debug("process workitem: '" +  workitem.getItem('$uniqueid') + "'...");
 
 	var url = restServiceController.model.baseURL;
@@ -184,10 +186,10 @@ workitemController.processWorkitem = function(workitem) {
         dataType: "xml",
         cache: false,
         error: function() { 
-        	printLog("failed to post data",true); 
+        	printLog("failed to post data"); 
         },
         success: function(xml) {
-        	printLog("ok", true);
+        	printLog("ok");
         }
 	});
 	
