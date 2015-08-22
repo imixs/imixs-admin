@@ -35,7 +35,10 @@ var ItemCollection = function(itemarray) {
 		if ($.isArray(itemarray)) {
 			this.item = itemarray;
 		} else {
-			if ($.isArray(itemarray.item)) {
+			// we test now which object is provided - entity or an item[]....
+			if (itemarray.entity && $.isArray(itemarray.entity.item)) {
+				this.item = itemarray.entity.item;
+			} else if ($.isArray(itemarray.item)) {
 				this.item = itemarray.item;
 			}
 		}
@@ -208,12 +211,12 @@ function json2xml(workitem) {
 							+ '">' + avalue["$"] + '</value>';
 				});
 			}
-			
+
 			result = result + '</item>';
 		});
 
 	}
-	
+
 	result = result + '</entity>';
 	return result;
 };

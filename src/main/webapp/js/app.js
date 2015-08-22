@@ -136,16 +136,12 @@ worklistController.bulkUpdate = function() {
 			$.each(worklistController.model.view, function(index, entity) {
 				var workitem = new Workitem(entity);
 				var uniqueid = workitem.getItem('$uniqueid');
-				var processid = workitem.getItem('$processid');
-				var modelversion = workitem.getItem('$modelversion');
-				printLog(".", true);
+				//printLog(".", true);
 
 				// construct workitem to be processed....
 				var updatedWorkitem = new Workitem();
 				
 				updatedWorkitem.setItem("$uniqueid",uniqueid,"xs:string"); 
-				updatedWorkitem.setItem("$modelversion",modelversion,"xs:string"); 
-				updatedWorkitem.setItem("$processid",processid,"xs:int"); 
 				updatedWorkitem.setItem("$activityid",worklistController.model.$activityid,"xs:int"); 
 
 				updatedWorkitem.setItem(worklistController.model.fieldName,worklistController.model.newValue,worklistController.model.fieldType); 
@@ -185,14 +181,25 @@ workitemController.processWorkitem = function(workitem) {
         contentType: "text/xml",
         dataType: "xml",
         cache: false,
-        error: function() { 
-        	printLog("failed to post data"); 
+        error: function(jqXHR, error, errorThrown) { 
+        	var message = errorThrown;
+        	var json = xml2json(jqXHR.responseXML);
+        	var workitem = new Workitem(json);
+        	workitemController.model.item = json.entity.item;
+			var uniqueid = workitem.getItem('$uniqueid');
+			var error_code = workitem.getItem('$error_code');
+			var error_message = workitem.getItem('$error_message');
+        	
+			printLog("<br />"+uniqueid + " : " + error_code + " - "+error_message,true);
+			
+			$("#error-message").text("BulkUpdate failed");
+			$("#imixs-error").show();
         },
         success: function(xml) {
-        	printLog("ok");
+        	printLog(".",true);
         }
 	});
-	
+	 
 
 }
 
