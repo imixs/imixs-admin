@@ -1,5 +1,8 @@
 "use strict";
 
+var benJS=BENJS.org.benjs.core;
+
+
 function layoutSection(templ, context) {
 	// $(context).i18n();
 	// $(context).imixsLayout();
