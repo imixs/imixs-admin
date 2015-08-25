@@ -1,7 +1,6 @@
 "use strict";
 
-var benJS=BENJS.org.benjs.core;
-
+var benJS = BENJS.org.benjs.core;
 
 function layoutSection(templ, context) {
 	// $(context).i18n();
@@ -31,20 +30,19 @@ var Worklist = function() {
 	this.$activityid = 0;
 };
 
-
 /* WorklistController */
 var Workitem = function(itemarray) {
-	ItemCollection.call(this,itemarray);
+	ItemCollection.call(this, itemarray);
 	this.id = '';
 
 	/* return summary or txtname */
 	this.getSummary = function() {
-		var val = this.getItem( "txtworkflowsummary");
+		var val = this.getItem("txtworkflowsummary");
 		if (!val)
-			val = this.getItem( "txtname");
+			val = this.getItem("txtname");
 		return val;
 	}
-		
+
 	/* return all items sorted by name */
 	this.getSortedItemlist = function() {
 
@@ -59,7 +57,7 @@ var Workitem = function(itemarray) {
 	}
 
 };
-//Workitem.prototype = new ItemCollection();
+// Workitem.prototype = new ItemCollection();
 
 /*******************************************************************************
  * 
@@ -67,12 +65,20 @@ var Workitem = function(itemarray) {
  * 
  ******************************************************************************/
 
-var restServiceController = benJS.createController("restServiceController",
-		new RestService());
-var worklistController = benJS.createController("worklistController",
-		new Worklist());
-var workitemController = benJS.createController("workitemController",
-		new Workitem());
+var restServiceController = benJS.createController({
+	id : "restServiceController",
+	model : new RestService()
+});
+
+var worklistController = benJS.createController({
+	id : "worklistController",
+	model : new Worklist()
+});
+
+var workitemController = benJS.createController({
+	id : "workitemController",
+	model : new Workitem()
+});
 
 restServiceController.connect = function() {
 	this.pull();
@@ -139,17 +145,20 @@ worklistController.bulkUpdate = function() {
 			$.each(worklistController.model.view, function(index, entity) {
 				var workitem = new Workitem(entity);
 				var uniqueid = workitem.getItem('$uniqueid');
-				//printLog(".", true);
+				// printLog(".", true);
 
 				// construct workitem to be processed....
 				var updatedWorkitem = new Workitem();
-				
-				updatedWorkitem.setItem("$uniqueid",uniqueid,"xs:string"); 
-				updatedWorkitem.setItem("$activityid",worklistController.model.$activityid,"xs:int"); 
 
-				updatedWorkitem.setItem(worklistController.model.fieldName,worklistController.model.newValue,worklistController.model.fieldType); 
-				
-				//console.debug("xml=", json2xml(processWorkitem));
+				updatedWorkitem.setItem("$uniqueid", uniqueid, "xs:string");
+				updatedWorkitem.setItem("$activityid",
+						worklistController.model.$activityid, "xs:int");
+
+				updatedWorkitem.setItem(worklistController.model.fieldName,
+						worklistController.model.newValue,
+						worklistController.model.fieldType);
+
+				// console.debug("xml=", json2xml(processWorkitem));
 				workitemController.processWorkitem(updatedWorkitem);
 			});
 
@@ -164,49 +173,45 @@ worklistController.bulkUpdate = function() {
 
 }
 
-
-
 /* Custom method to process a single workitem */
 workitemController.processWorkitem = function(workitem) {
 
-	
-  var xmlData=json2xml(workitem);
-  console.debug(xmlData);
-	console.debug("process workitem: '" +  workitem.getItem('$uniqueid') + "'...");
+	var xmlData = json2xml(workitem);
+	console.debug(xmlData);
+	console.debug("process workitem: '" + workitem.getItem('$uniqueid')
+			+ "'...");
 
 	var url = restServiceController.model.baseURL;
 	url = url + "/workflow/workitem/";
 
-	
-	$.ajax({ type: "POST",
-        url: url,
-        data: xmlData,
-        contentType: "text/xml",
-        dataType: "xml",
-        cache: false,
-        error: function(jqXHR, error, errorThrown) { 
-        	var message = errorThrown;
-        	var json = xml2json(jqXHR.responseXML);
-        	var workitem = new Workitem(json);
-        	workitemController.model.item = json.entity.item;
+	$.ajax({
+		type : "POST",
+		url : url,
+		data : xmlData,
+		contentType : "text/xml",
+		dataType : "xml",
+		cache : false,
+		error : function(jqXHR, error, errorThrown) {
+			var message = errorThrown;
+			var json = xml2json(jqXHR.responseXML);
+			var workitem = new Workitem(json);
+			workitemController.model.item = json.entity.item;
 			var uniqueid = workitem.getItem('$uniqueid');
 			var error_code = workitem.getItem('$error_code');
 			var error_message = workitem.getItem('$error_message');
-        	
-			printLog("<br />"+uniqueid + " : " + error_code + " - "+error_message,true);
-			
+
+			printLog("<br />" + uniqueid + " : " + error_code + " - "
+					+ error_message, true);
+
 			$("#error-message").text("BulkUpdate failed");
 			$("#imixs-error").show();
-        },
-        success: function(xml) {
-        	printLog(".",true);
-        }
+		},
+		success : function(xml) {
+			printLog(".", true);
+		}
 	});
-	 
 
 }
-
-
 
 /* Custom method to load a single workite */
 workitemController.loadWorkitem = function(context) {
@@ -232,7 +237,7 @@ workitemController.loadWorkitem = function(context) {
 			console.debug(response);
 			var json = xml2json(response);
 
-//			workitemController.model.entity = json.entity;
+			// workitemController.model.entity = json.entity;
 			workitemController.model.item = json.entity.item;
 			WorkitemRoute.route();
 		},
@@ -251,56 +256,60 @@ workitemController.loadWorkitem = function(context) {
  * ROUTES & TEMPLATES
  * 
  ******************************************************************************/
-var RestServiceRoute = benJS.createRoute('restservice-route', {
-	"content" : "view_restservice.html"
-});
-
-RestServiceRoute.beforeRoute.add(function(router) {
-	restServiceController.pull();
-});
-
-RestServiceRoute.afterRoute.add(function(router) {
-	$("#imixs-nav ul li").removeClass('active');
-	$("#imixs-nav ul li:nth-child(1)").addClass('active');
-});
-
-var QueryRoute = benJS.createRoute('query-route', {
-	"content" : "view_query.html"
-});
-
-QueryRoute.afterRoute.add(function(router) {
-	$("#imixs-nav ul li").removeClass('active');
-	$("#imixs-nav ul li:nth-child(2)").addClass('active');
-});
-
-var WorkitemRoute = benJS.createRoute('workitem-route', {
-	"content" : "view_workitem.html"
-});
-
-WorkitemRoute.beforeRoute.add(function(router) {
+var RestServiceRoute = benJS.createRoute({
+	id : "restservice-route",
+	templates : {
+		"content" : "view_restservice.html"
+	},
+	beforeRoute : function(router) {
+		restServiceController.pull();
+	},
+	afterRoute : function(router) {
+		$("#imixs-nav ul li").removeClass('active');
+		$("#imixs-nav ul li:nth-child(1)").addClass('active');
+	}
 
 });
 
-WorkitemRoute.afterRoute.add(function(router) {
-	$("#imixs-nav ul li").removeClass('active');
-	$("#imixs-nav ul li:nth-child(2)").addClass('active');
+var QueryRoute = benJS.createRoute({
+	id : "query-route",
+	templates : {
+		"content" : "view_query.html"
+	},
+	afterRoute : function(router) {
+		$("#imixs-nav ul li").removeClass('active');
+		$("#imixs-nav ul li:nth-child(2)").addClass('active');
+	}
 });
 
-var bulkUpdateRoute = benJS.createRoute('bulkupdate-route', {
-	"content" : "view_bulkupdate.html"
+var WorkitemRoute = benJS.createRoute({
+	id : "workitem-route",
+	templates : {
+		"content" : "view_workitem.html"
+	},
+	afterRoute : function(router) {
+		$("#imixs-nav ul li").removeClass('active');
+		$("#imixs-nav ul li:nth-child(2)").addClass('active');
+	}
 });
 
-bulkUpdateRoute.beforeRoute.add(function(router) {
-
+var bulkUpdateRoute = benJS.createRoute({
+	id : "bulkupdate-route",
+	templates : {
+		"content" : "view_bulkupdate.html"
+	},
+	afterRoute : function(router) {
+		$("#imixs-nav ul li").removeClass('active');
+		$("#imixs-nav ul li:nth-child(3)").addClass('active');
+	}
 });
 
-bulkUpdateRoute.afterRoute.add(function(router) {
-	$("#imixs-nav ul li").removeClass('active');
-	$("#imixs-nav ul li:nth-child(3)").addClass('active');
+var contentTemplate = benJS.createTemplate({
+	id : "content",
+	afterLoad: layoutSection
 });
 
-var contentTemplate = benJS.createTemplate("content");
-contentTemplate.afterLoad.add(layoutSection);
+
 
 function printLog(message, noLineBrake) {
 	console.debug(message);
