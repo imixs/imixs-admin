@@ -16,6 +16,7 @@ function layoutSection(templ, context) {
 
 var RestService = function() {
 	this.baseURL = "http://localhost:8080/backlog-rest";
+	this.indexList = null;
 };
 
 /* WorklistController */
@@ -43,9 +44,31 @@ var Workitem = function(itemarray) {
 		return val;
 	}
 
-	/* return all items sorted by name */
+	/*
+	 * return all items sorted by name and provides a index item if the field
+	 * has an Imixs-Entity-Index
+	 */
 	this.getSortedItemlist = function() {
 
+		// add index type and indexIcon
+		$.each(this.item, function(index, aitem) {
+			aitem.index = restServiceController.model.indexList[aitem.name];
+			if ((typeof aitem.index) == 'number') {
+				var iconTitle = "";
+				if (aitem.index == 0)
+					iconTitle = "Text Index";
+				else if (aitem.index == 1)
+					iconTitle = "Integer Index";
+				else if (aitem.index == 2)
+					iconTitle = "Double Index";
+				else if (aitem.index == 3)
+					iconTitle = "Calendar Index";
+				aitem.indexIcon = "<img src='img/index_typ_" + aitem.index
+						+ ".gif' title='" + iconTitle + "' />";
+			}
+		});
+
+		// sort list
 		return this.item.sort(function(a, b) {
 			if (a.name > b.name)
 				return 1;
@@ -82,7 +105,26 @@ var workitemController = benJS.createController({
 
 restServiceController.connect = function() {
 	this.pull();
-	QueryRoute.route();
+
+	// read indexlist...
+	$.ajax({
+		type : "GET",
+		url : this.model.baseURL + "/entity/indexlist",
+		dataType : "json",
+		success : function(response) {
+
+			restServiceController.model.indexList = response.map;
+			QueryRoute.route();
+		},
+		error : function(jqXHR, error, errorThrown) {
+
+			message = errorThrown;
+			$("#error-message").text(message);
+			$("#imixs-error").show();
+		}
+	});
+
+	// QueryRoute.route();
 }
 /* Custom method to load a worklist */
 worklistController.loadWorklist = function() {
@@ -90,7 +132,7 @@ worklistController.loadWorklist = function() {
 	console.debug("load worklist: '" + worklistController.model.query + "'...");
 
 	var url = restServiceController.model.baseURL;
-	url = url + "/workflow/worklistbyquery/" + worklistController.model.query;
+	url = url + "/entity/entitiesbyquery/" + worklistController.model.query;
 	url = url + "?start=" + worklistController.model.start + "&count="
 			+ worklistController.model.count;
 
@@ -306,10 +348,8 @@ var bulkUpdateRoute = benJS.createRoute({
 
 var contentTemplate = benJS.createTemplate({
 	id : "content",
-	afterLoad: layoutSection
+	afterLoad : layoutSection
 });
-
-
 
 function printLog(message, noLineBrake) {
 	console.debug(message);
