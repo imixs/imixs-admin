@@ -1,29 +1,73 @@
 <div class="row">
 	<h1>Index Management</h1>
-	<div data-ben-controller="restServiceController" class="imixs-form-section">
-		
-		
-		
-		<table>
-			<thead>
-				<tr>
-					<th>Index</th>
-					<th>Type</th>
-					<th>Action</th>
-				</tr>
-			</thead>
-			<tbody data-ben-foreach="getIndexList()">
-				<tr>
+	<div data-ben-controller="restServiceController"
+		class="imixs-form-section">
 
-					<td><span data-ben-model="name"/></td>
-					<td><span data-ben-model="type"/></td>
-					<td><input type="button" value="Delete" onclick="adminclient.restServiceController.removeIndex(this)" /></td>
-				</tr>
-			</tbody>
-		</table>
+
+	
+		<!-- Error message -->
+		<div id="imixs-error" style="">
+			<div class="ui-state-error ui-corner-all">
+				<p>
+					<span class="ui-icon ui-icon-alert"
+						style="float: left; margin-right: .3em;"></span> <strong>Error:</strong>
+				</p>
+				<p id="error-message" />
+			</div>
+		</div>
+		
+		<div class="row">
+
+			<div class="col-6">
+				<h3>Index List</h3>
+				<table>
+					<thead>
+						<tr>
+							<th>Index</th>
+							<th>Type</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody data-ben-foreach="getIndexList()">
+						<tr>
+
+							<td><span data-ben-model="name" /></td>
+							<td><span data-ben-model="type" /></td>
+							<td><input type="button" value="Delete"
+								onclick="adminclient.restServiceController.removeIndex(this)" /></td>
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+			<div class="col-6">
+				<h3>Add new Index</h3>
+
+				<dl>
+					<dt>Index Name:</dt>
+					<dd>
+						<input type="text" data-ben-model="indexName" />
+					</dd>
+
+					<dt>Index Type:</dt>
+					<dd>
+						<select data-ben-model="indexType">
+							<option value="0">Text Index</option>
+							<option value="1">Integer Index</option>
+							<option value="2">Double Index</option>
+							<option value="3">DateTime Index</option>
+						</select>
+					</dd>
+
+
+
+				</dl>
+
+				<input type="button" value="Add Index"
+					onclick="adminclient.restServiceController.addIndex()" />
+			</div>
+		</div>
 
 	</div>
 
 </div>
-
-

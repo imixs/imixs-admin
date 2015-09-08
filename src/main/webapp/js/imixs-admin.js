@@ -1,6 +1,6 @@
 "use strict";
 
-//define namespace
+// define namespace
 IMIXS.namespace("org.imixs.workflow.adminclient");
 
 // define core module
@@ -15,34 +15,32 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		console.error("ERROR - missing dependency: imixs-xml.js");
 	}
 
-	
-	var  benJS = BENJS.org.benjs.core,
-	imixs = IMIXS.org.imixs.core, 
-	imixsXML = IMIXS.org.imixs.xml, 
-	/*******************************************************************************
+	var benJS = BENJS.org.benjs.core, imixs = IMIXS.org.imixs.core, imixsXML = IMIXS.org.imixs.xml,
+	/***************************************************************************
 	 * 
 	 * MODELS
 	 * 
-	 ******************************************************************************/
+	 **************************************************************************/
 
 	RestService = function() {
 		this.baseURL = "http://localhost:8080/office-rest";
 		this.indexMap = null;
-		
+		this.indexName = null;
+		this.indexType = null;
+
 		/* returns an 2 dimensional array of the index map */
 		this.getIndexList = function() {
-			var result=new Array();
+			var result = new Array();
 			var entry;
-			for (var property in this.indexMap) {
-				var sonderding={
+			for ( var property in this.indexMap) {
+				var sonderding = {
 					name : property,
 					type : this.indexMap[property]
 				};
 				result.push(sonderding);
-				
-				 
-			} 
-			
+
+			}
+
 			return result;
 		}
 	},
@@ -73,8 +71,8 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		}
 
 		/*
-		 * return all items sorted by name and provides a index item if the field
-		 * has an Imixs-Entity-Index
+		 * return all items sorted by name and provides a index item if the
+		 * field has an Imixs-Entity-Index
 		 */
 		this.getSortedItemlist = function() {
 
@@ -108,19 +106,12 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		}
 
 	},
-	
-	
-	
-	
-	
-	
 
-
-	/*******************************************************************************
+	/***************************************************************************
 	 * 
 	 * CONTROLLERS
 	 * 
-	 ******************************************************************************/
+	 **************************************************************************/
 
 	restServiceController = benJS.createController({
 		id : "restServiceController",
@@ -137,12 +128,11 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		model : new Workitem()
 	}),
 
-	
-	/*******************************************************************************
+	/***************************************************************************
 	 * 
 	 * ROUTES & TEMPLATES
 	 * 
-	 ******************************************************************************/
+	 **************************************************************************/
 	restServiceRoute = benJS.createRoute({
 		id : "restservice-route",
 		templates : {
@@ -180,7 +170,6 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		}
 	}),
 
-
 	workitemRoute = benJS.createRoute({
 		id : "workitem-route",
 		templates : {
@@ -207,13 +196,13 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		id : "content",
 		afterLoad : layoutSection
 	}),
-	
+
 	/**
 	 * Start the ben Application
 	 */
 	start = function() {
 		console.debug("starting backlog application...");
-		
+
 		// start view
 		benJS.start({
 			"loadTemplatesOnStartup" : false
@@ -222,15 +211,12 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		restServiceRoute.route();
 		$("#imixs-error").hide();
 	};
-	
-	
-	
 
 	/* Custom method to process a single workitem */
 	workitemController.processWorkitem = function(workitem) {
 
-		var xmlData = json2xml(workitem);
-		console.debug(xmlData);
+		var xmlData = imixsXML.json2xml(workitem);
+		// console.debug(xmlData);
 		console.debug("process workitem: '" + workitem.getItem('$uniqueid')
 				+ "'...");
 
@@ -246,7 +232,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			cache : false,
 			error : function(jqXHR, error, errorThrown) {
 				var message = errorThrown;
-				var json = xml2json(jqXHR.responseXML);
+				var json = imixsXML.xml2json(jqXHR.responseXML);
 				var workitem = new Workitem(json);
 				workitemController.model.item = json.entity.item;
 				var uniqueid = workitem.getItem('$uniqueid');
@@ -266,8 +252,46 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 
 	};
 
+	/* Custom method to save a single workitem */
+	workitemController.saveWorkitem = function(workitem) {
 
-	
+		var xmlData = imixsXML.json2xml(workitem);
+		// console.debug(xmlData);
+		console.debug("save workitem: '" + workitem.getItem('$uniqueid')
+				+ "'...");
+
+		var url = restServiceController.model.baseURL;
+		url = url + "/entity/";
+
+		$.ajax({
+			type : "POST",
+			url : url,
+			data : xmlData,
+			contentType : "text/xml",
+			dataType : "xml",
+			cache : false,
+			error : function(jqXHR, error, errorThrown) {
+				var message = errorThrown;
+				var json = imixsXML.xml2json(jqXHR.responseXML);
+				var workitem = new Workitem(json);
+				workitemController.model.item = json.entity.item;
+				var uniqueid = workitem.getItem('$uniqueid');
+				var error_code = workitem.getItem('$error_code');
+				var error_message = workitem.getItem('$error_message');
+
+				printLog("<br />" + uniqueid + " : " + error_code + " - "
+						+ error_message, true);
+
+				$("#error-message").text("BulkUpdate failed");
+				$("#imixs-error").show();
+			},
+			success : function(xml) {
+				printLog(".", true);
+			}
+		});
+
+	};
+
 	/* Custom method to load a single workite */
 	workitemController.loadWorkitem = function(context) {
 
@@ -279,7 +303,9 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			workitemController.model.id = id;
 		}
 
-		console.debug("load workitem: '" + workitemController.model.id + "'...");
+		console
+				.debug("load workitem: '" + workitemController.model.id
+						+ "'...");
 
 		var url = restServiceController.model.baseURL;
 		url = url + "/workflow/workitem/" + workitemController.model.id;
@@ -306,14 +332,11 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 
 	}
 
-	
-	
-	
-	
-
+	/*
+	 * Read the index list and open the query view
+	 */
 	restServiceController.connect = function() {
 		this.pull();
-
 		// read indexlist...
 		$.ajax({
 			type : "GET",
@@ -331,43 +354,85 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 				$("#imixs-error").show();
 			}
 		});
-
-		// QueryRoute.route();
 	}
-	
-	
+
+	/*
+	 * Updtes the index list and open the index view
+	 */
+	restServiceController.updateIndexlist = function() {
+		this.pull();
+		// read indexlist...
+		$.ajax({
+			type : "GET",
+			url : this.model.baseURL + "/entity/indexlist",
+			dataType : "json",
+			success : function(response) {
+				restServiceController.model.indexName = "";
+				restServiceController.model.indexType = "";
+				restServiceController.model.indexMap = response.map;
+				indexRoute.route();
+			},
+			error : function(jqXHR, error, errorThrown) {
+				$("#error-message").text(errorThrown);
+				$("#imixs-error").show();
+			}
+		});
+	}
+
 	/* removes an index */
 	restServiceController.removeIndex = function(context) {
 		var entry = $(context).closest('[data-ben-entry]');
 		var entryNo = $(entry).attr("data-ben-entry");
-		
-		var indexEntry=restServiceController.model.getIndexList()[entryNo];
-		if (confirm('Delete Index ' + indexEntry.name  +' ?')) {
+
+		var indexEntry = restServiceController.model.getIndexList()[entryNo];
+		if (confirm('Delete Index ' + indexEntry.name + ' ?')) {
 			var url = restServiceController.model.baseURL;
 			url = url + "/entity/index/" + indexEntry.name;
-			
+
 			$.ajax({
 				type : "DELETE",
 				url : url,
 				success : function(response) {
-					indexRoute.route();
+					restServiceController.updateIndexlist();
 				},
 				error : function(jqXHR, error, errorThrown) {
-
-					message = errorThrown;
-					$("#error-message").text(message);
+					$("#error-message").text("Unable to remove index");
 					$("#imixs-error").show();
 				}
 			});
 		}
 	}
-	
-	
-	
+
+	/* removes an index */
+	restServiceController.addIndex = function() {
+		restServiceController.pull();
+		if (confirm('Add new Index ' + this.model.indexName + ' ?')) {
+			var url = restServiceController.model.baseURL;
+			url = url + "/entity/index/" + this.model.indexName + "/"
+					+ this.model.indexType;
+
+			$.ajax({
+				type : "PUT",
+				url : url,
+				success : function(response) {
+					restServiceController.model.indexName = "";
+					restServiceController.model.indexType = "";
+					restServiceController.updateIndexlist();
+				},
+				error : function(jqXHR, error, errorThrown) {
+					$("#error-message").text(
+							"Unable to add index - wrong format");
+					$("#imixs-error").show();
+				}
+			});
+		}
+	}
+
 	/* Custom method to load a worklist */
 	worklistController.loadWorklist = function() {
 		worklistController.pull();
-		console.debug("load worklist: '" + worklistController.model.query + "'...");
+		console.debug("load worklist: '" + worklistController.model.query
+				+ "'...");
 
 		var url = restServiceController.model.baseURL;
 		url = url + "/entity/entitiesbyquery/" + worklistController.model.query;
@@ -405,7 +470,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		printLog("Load worklist: '" + worklistController.model.query + "'...");
 
 		var url = restServiceController.model.baseURL;
-		url = url + "/workflow/worklistbyquery/" + worklistController.model.query;
+		url = url + "/entity/entitiesbyquery/" + worklistController.model.query;
 		url = url + "?start=" + worklistController.model.start + "&count="
 				+ worklistController.model.count;
 
@@ -414,77 +479,78 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			url : url,
 			dataType : "xml",
 			success : function(response) {
-				var json = xml2json(response);
+				var json = imixsXML.xml2json(response);
 
 				worklistController.model.view = json.collection.entity;
 
-				printLog("Start processing " + worklistController.model.view.length
-						+ " workitems", true);
+				printLog("Start processing "
+						+ worklistController.model.view.length + " workitems",
+						true);
 
 				// var itemCol=new ItemCollection();
-				$.each(worklistController.model.view, function(index, entity) {
-					var workitem = new Workitem(entity);
-					var uniqueid = workitem.getItem('$uniqueid');
-					// printLog(".", true);
+				$.each(worklistController.model.view,
+						function(index, entity) {
+							var workitem = new Workitem(entity);
+							var uniqueid = workitem.getItem('$uniqueid');
+							// printLog(".", true);
 
-					// construct workitem to be processed....
-					var updatedWorkitem = new Workitem();
+							// construct workitem to be
+							// processed....
+							var updatedWorkitem = new Workitem();
 
-					updatedWorkitem.setItem("$uniqueid", uniqueid, "xs:string");
-					updatedWorkitem.setItem("$activityid",
-							worklistController.model.$activityid, "xs:int");
+							updatedWorkitem.setItem("$uniqueid", uniqueid,
+									"xs:string");
 
-					updatedWorkitem.setItem(worklistController.model.fieldName,
-							worklistController.model.newValue,
-							worklistController.model.fieldType);
+							updatedWorkitem.setItem(
+									worklistController.model.fieldName,
+									worklistController.model.newValue,
+									worklistController.model.fieldType);
 
-					// console.debug("xml=", json2xml(processWorkitem));
-					workitemController.processWorkitem(updatedWorkitem);
-				});
+							// process or save the workitem?
+							if (worklistController.model.$activityid > 0) {
+								// set activityID
+								updatedWorkitem.setItem("$activityid",
+										worklistController.model.$activityid,
+										"xs:int");
+								workitemController
+										.processWorkitem(updatedWorkitem);
+							} else {
+								// save entity
+								workitemController
+										.saveWorkitem(updatedWorkitem);
+							}
+
+						});
 
 			},
 			error : function(jqXHR, error, errorThrown) {
-
-				message = errorThrown;
-				$("#error-message").text(message);
+				$("#error-message").text(errorThrown);
 				$("#imixs-error").show();
 			}
 		});
 
 	}
-	
-	
-	
 
-
-
-	
-	
 	// public API
 	return {
-		Workitem: Workitem,
-		restServiceRoute: restServiceRoute,
-		restServiceController: restServiceController,
-		worklistController: worklistController,
-		workitemController: workitemController,
-		queryRoute: queryRoute,
-		bulkUpdateRoute: bulkUpdateRoute,
-		indexRoute: indexRoute,
-		start: start
+		Workitem : Workitem,
+		restServiceRoute : restServiceRoute,
+		restServiceController : restServiceController,
+		worklistController : worklistController,
+		workitemController : workitemController,
+		queryRoute : queryRoute,
+		bulkUpdateRoute : bulkUpdateRoute,
+		indexRoute : indexRoute,
+		start : start
 	};
-	
+
 }());
-
-
-
 
 function layoutSection(templ, context) {
 	// $(context).i18n();
 	// $(context).imixsLayout();
 	$("#imixs-error").hide();
 };
-
-
 
 function printLog(message, noLineBrake) {
 	console.debug(message);

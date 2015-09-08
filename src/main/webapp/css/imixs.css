@@ -153,7 +153,7 @@ dl {
 	vertical-align: top;
 }
 
-dl dd input[type="text"], .imixs-form-section-2 dd input[type="password"],
+dl dd input[type="text"],dl dd select, .imixs-form-section-2 dd input[type="password"],
 	.imixs-form-section-2 dd select {
 	width: 100%;
 }
