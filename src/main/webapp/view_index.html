@@ -1,0 +1,29 @@
+<div class="row">
+	<h1>Index Management</h1>
+	<div data-ben-controller="restServiceController" class="imixs-form-section">
+		
+		
+		
+		<table>
+			<thead>
+				<tr>
+					<th>Index</th>
+					<th>Type</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody data-ben-foreach="getIndexList()">
+				<tr>
+
+					<td><span data-ben-model="name"/></td>
+					<td><span data-ben-model="type"/></td>
+					<td><input type="button" value="Delete" onclick="adminclient.restServiceController.removeIndex(this)" /></td>
+				</tr>
+			</tbody>
+		</table>
+
+	</div>
+
+</div>
+
+

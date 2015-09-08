@@ -31,7 +31,7 @@
 
 		<div class="imixs-form-section">
 			<input type="button" value="Search"
-				onclick="worklistController.loadWorklist()" class="btn" />
+				onclick="adminclient.worklistController.loadWorklist()" class="btn" />
 
 
 		</div>
@@ -63,9 +63,9 @@
 						<th>Status</th>
 					</tr>
 				</thead>
-				<tbody data-ben-foreach="view as Workitem">
+				<tbody data-ben-foreach="view as adminclient.Workitem">
 					<tr>
-						<td><a href="javascript:;" onclick="workitemController.loadWorkitem(this)">
+						<td><a href="javascript:;" onclick="adminclient.workitemController.loadWorkitem(this)">
 						<span data-ben-model="getItem('$uniqueid')" /></a> (<span
 							data-ben-model="getItem('$version')" />)</td>
 						<td><span data-ben-model="getItem('$created')" /> by <span
