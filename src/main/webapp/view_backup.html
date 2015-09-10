@@ -1,11 +1,12 @@
 <div class="row imixs-view">
-	<h1>Bulk-Update:</h1>
+	<h1>Backup:</h1>
 	<div data-ben-controller="worklistController">
 
 
 		<div class="imixs-form-section">
-			<p>A bulk update will update all entities defined by the current
-				JPQL Statement from the Database. NOTE: Complex queries can take a
+			<p>A backup writes all entities defined by the current
+				JPQL Statement from the Database to disk. Use the restore function to restore a backup from disk.
+				NOTE: Complex queries can take a
 				long time.</p>
 
 
@@ -37,51 +38,27 @@
 
 
 
-		<!--  Bulk update -->
+		<!--  Backup and Restore -->
 		<hr />
-		<div class="imixs-form-section-3">
+	
+
+		<div class="imixs-form-section-1">
 
 			<dl>
-				<dt>Field Name:</dt>
+				<dt>File Path:</dt>
 				<dd>
-					<input type="text" data-ben-model="fieldName"></input>
+					<input type="text" placeholder="Enter path to the backup storrage"
+					data-ben-model="filePath"></input>
 				</dd>
-			</dl>
-			<dl>
-				<dt>Field Type:</dt>
-				<dd>
-					<select data-ben-model="fieldType">
-						<option>xs:string</option>
-						<option>xs:int</option>
-						<option>xs:boolean</option>
-						<option>xs:dateTime</option>
-
-					</select>
-				</dd>
-			</dl>
-
-			<dl style="clear: left">
-				<dt>New Value:</dt>
-				<dd>
-					<textarea data-ben-model="newValue"></textarea>
-				</dd>
-			</dl>
-
-
-			<dl style="clear: left">
-				<dt>Workflow Activity ID (optional):</dt>
-				<dd>
-					<input type="text"					
-					 data-ben-model="$activityid"></input>
-				</dd>
-			</dl>
+			</dl>			
 
 		</div>
 
-
 		<div class="imixs-form-section">
-			<input type="button" value="Start Update"
-				onclick="adminclient.worklistController.bulkUpdate()" class="btn" />
+			<input type="button" value="Backup"
+				onclick="adminclient.worklistController.backup()" class="btn" />
+			<input type="button" value="Restore"
+				onclick="adminclient.worklistController.restore()" class="btn" />
 
 
 		</div>

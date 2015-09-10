@@ -54,6 +54,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		this.fieldName = "";
 		this.fieldType = "";
 		this.newValue = "";
+		this.filePath="";
 		this.$activityid = 0;
 	},
 
@@ -159,17 +160,6 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		}
 	}),
 
-	indexRoute = benJS.createRoute({
-		id : "index-route",
-		templates : {
-			"content" : "view_index.html"
-		},
-		afterRoute : function(router) {
-			$("#imixs-nav ul li").removeClass('active');
-			$("#imixs-nav ul li:nth-child(4)").addClass('active');
-		}
-	}),
-
 	workitemRoute = benJS.createRoute({
 		id : "workitem-route",
 		templates : {
@@ -191,6 +181,40 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			$("#imixs-nav ul li:nth-child(3)").addClass('active');
 		}
 	}),
+
+	bulkDeleteRoute = benJS.createRoute({
+		id : "bulkdelete-route",
+		templates : {
+			"content" : "view_bulkdelete.html"
+		},
+		afterRoute : function(router) {
+			$("#imixs-nav ul li").removeClass('active');
+			$("#imixs-nav ul li:nth-child(4)").addClass('active');
+		}
+	}),
+
+	indexRoute = benJS.createRoute({
+		id : "index-route",
+		templates : {
+			"content" : "view_index.html"
+		},
+		afterRoute : function(router) {
+			$("#imixs-nav ul li").removeClass('active');
+			$("#imixs-nav ul li:nth-child(5)").addClass('active');
+		}
+	}),
+	
+	backupRoute = benJS.createRoute({
+		id : "backup-route",
+		templates : {
+			"content" : "view_backup.html"
+		},
+		afterRoute : function(router) {
+			$("#imixs-nav ul li").removeClass('active');
+			$("#imixs-nav ul li:nth-child(6)").addClass('active');
+		}
+	}),
+	
 
 	contentTemplate = benJS.createTemplate({
 		id : "content",
@@ -316,16 +340,33 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			dataType : "xml",
 			success : function(response) {
 				console.debug(response);
-				var json = imixsXML.xml2json(response);
-
-				// workitemController.model.entity = json.entity;
-				workitemController.model.item = json.entity.item;
+				workitemController.model.item = imixsXML.xml2entity(response);
 				workitemRoute.route();
 			},
 			error : function(jqXHR, error, errorThrown) {
+				$("#error-message").text(errorThrown);
+				$("#imixs-error").show();
+			}
+		});
 
-				message = errorThrown;
-				$("#error-message").text(message);
+	}
+
+	/* Custom method to delete a entity by id */
+	workitemController.deleteWorkitem = function(uniqueid) {
+
+		console.debug("delete entity: '" + uniqueid + "'...");
+
+		var url = restServiceController.model.baseURL;
+		url = url + "/entity/" + uniqueid;
+
+		$.ajax({
+			type : "DELETE",
+			url : url,
+			success : function(response) {
+				printLog(".", true);
+			},
+			error : function(jqXHR, error, errorThrown) {
+				$("#error-message").text(errorThrown);
 				$("#imixs-error").show();
 			}
 		});
@@ -444,9 +485,8 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			url : url,
 			dataType : "xml",
 			success : function(response) {
-				var json = imixsXML.xml2json(response);
-
-				worklistController.model.view = json.collection.entity;
+				worklistController.model.view = imixsXML
+						.xml2collection(response);
 				queryRoute.route();
 			},
 			error : function(jqXHR, error, errorThrown) {
@@ -465,6 +505,9 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	 * 
 	 */
 	worklistController.bulkUpdate = function() {
+		if (!confirm("Do you realy want to start a bulk update now?")) {
+			return false;
+		}
 		worklistController.pull();
 		clearLog();
 		printLog("Load worklist: '" + worklistController.model.query + "'...");
@@ -479,10 +522,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			url : url,
 			dataType : "xml",
 			success : function(response) {
-				var json = imixsXML.xml2json(response);
-
-				worklistController.model.view = json.collection.entity;
-
+				worklistController.model.view = imixsXML.xml2collection(response);
 				printLog("Start processing "
 						+ worklistController.model.view.length + " workitems",
 						true);
@@ -531,6 +571,49 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 
 	}
 
+	/**
+	 * Bulk Delete - removes a selection of workitems
+	 * 
+	 */
+	worklistController.bulkDelete = function() {
+		if (!confirm("Do you realy want to start a bulk delete now?")) {
+			return false;
+		}
+		worklistController.pull();
+		clearLog();
+		printLog("Load worklist: '" + worklistController.model.query + "'...");
+
+		var url = restServiceController.model.baseURL;
+		url = url + "/entity/entitiesbyquery/" + worklistController.model.query;
+		url = url + "?start=" + worklistController.model.start + "&count="
+				+ worklistController.model.count;
+
+		$.ajax({
+			type : "GET",
+			url : url,
+			dataType : "xml",
+			success : function(response) {
+				worklistController.model.view = imixsXML.xml2collection(response);
+				printLog("Start deleting "
+						+ worklistController.model.view.length + " entities",
+						true);
+
+				// var itemCol=new ItemCollection();
+				$.each(worklistController.model.view, function(index, entity) {
+					var workitem = new Workitem(entity);
+					var uniqueid = workitem.getItem('$uniqueid');
+					// save entity
+					workitemController.deleteWorkitem(uniqueid);
+				});
+			},
+			error : function(jqXHR, error, errorThrown) {
+				$("#error-message").text(errorThrown);
+				$("#imixs-error").show();
+			}
+		});
+
+	}
+
 	// public API
 	return {
 		Workitem : Workitem,
@@ -540,7 +623,9 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		workitemController : workitemController,
 		queryRoute : queryRoute,
 		bulkUpdateRoute : bulkUpdateRoute,
+		bulkDeleteRoute : bulkDeleteRoute,
 		indexRoute : indexRoute,
+		backupRoute : backupRoute,
 		start : start
 	};
 
