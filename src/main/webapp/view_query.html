@@ -61,6 +61,7 @@
 						<th>Modified</th>
 						<th>Summary</th>
 						<th>Status</th>
+						<th>Action</th>
 					</tr>
 				</thead>
 				<tbody data-ben-foreach="view as adminclient.Workitem">
@@ -77,6 +78,10 @@
 						<td><span data-ben-model="getSummary(model)"></span></td>
 
 						<td><span data-ben-model="getItem('txtworkflowstatus')" /></td>
+						
+						<td><input type="button" value="Delete"
+								onclick="adminclient.workitemController.deleteWorkitem(this)" /></td>
+					
 					</tr>
 				</tbody>
 			</table>

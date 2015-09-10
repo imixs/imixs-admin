@@ -54,7 +54,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		this.fieldName = "";
 		this.fieldType = "";
 		this.newValue = "";
-		this.filePath="";
+		this.filePath = "";
 		this.$activityid = 0;
 	},
 
@@ -203,7 +203,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			$("#imixs-nav ul li:nth-child(5)").addClass('active');
 		}
 	}),
-	
+
 	backupRoute = benJS.createRoute({
 		id : "backup-route",
 		templates : {
@@ -214,7 +214,6 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			$("#imixs-nav ul li:nth-child(6)").addClass('active');
 		}
 	}),
-	
 
 	contentTemplate = benJS.createTemplate({
 		id : "content",
@@ -351,8 +350,23 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 
 	}
 
-	/* Custom method to delete a entity by id */
-	workitemController.deleteWorkitem = function(uniqueid) {
+	/* deletes a worktiem from the current result list */
+	workitemController.deleteWorkitem = function(context) {
+		var entry = $(context).closest('[data-ben-entry]');
+		var entryNo = $(entry).attr("data-ben-entry");
+		var workitem = new imixs.ItemCollection(
+				worklistController.model.view[entryNo]);
+
+		var id = workitem.getItem('$uniqueid');
+
+		if (confirm('Delete Entity ' + id + ' ?')) {
+			workitemController.deleteWorkitemById(id);
+		}
+
+	}
+
+	/* Custom method to delete a entity by uniqueid */
+	workitemController.deleteWorkitemById = function(uniqueid) {
 
 		console.debug("delete entity: '" + uniqueid + "'...");
 
@@ -522,7 +536,8 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			url : url,
 			dataType : "xml",
 			success : function(response) {
-				worklistController.model.view = imixsXML.xml2collection(response);
+				worklistController.model.view = imixsXML
+						.xml2collection(response);
 				printLog("Start processing "
 						+ worklistController.model.view.length + " workitems",
 						true);
@@ -593,7 +608,8 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			url : url,
 			dataType : "xml",
 			success : function(response) {
-				worklistController.model.view = imixsXML.xml2collection(response);
+				worklistController.model.view = imixsXML
+						.xml2collection(response);
 				printLog("Start deleting "
 						+ worklistController.model.view.length + " entities",
 						true);
@@ -602,9 +618,69 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 				$.each(worklistController.model.view, function(index, entity) {
 					var workitem = new Workitem(entity);
 					var uniqueid = workitem.getItem('$uniqueid');
-					// save entity
-					workitemController.deleteWorkitem(uniqueid);
+					// delete entity
+					workitemController.deleteWorkitemById(uniqueid);
 				});
+			},
+			error : function(jqXHR, error, errorThrown) {
+				$("#error-message").text(errorThrown);
+				$("#imixs-error").show();
+			}
+		});
+
+	}
+
+	/**
+	 * Backup a result set into the filesystem
+	 * 
+	 */
+	worklistController.backup = function() {
+		if (!confirm("Do you realy want to start a backup data now?")) {
+			return false;
+		}
+		worklistController.pull();
+		clearLog();
+		printLog("Backup started....");
+
+		var url = restServiceController.model.baseURL;
+		url = url + "/entity/backup/" + worklistController.model.query;
+		url = url + "?filepath=" + worklistController.model.filePath;
+
+		$.ajax({
+			type : "PUT",
+			url : url,
+			success : function(response) {
+				printLog("Backup finished successful!", true);
+			},
+			error : function(jqXHR, error, errorThrown) {
+				$("#error-message").text(errorThrown);
+				$("#imixs-error").show();
+			}
+		});
+
+	}
+
+	/**
+	 * restores a backup
+	 * 
+	 */
+	worklistController.restore = function() {
+		if (!confirm("Do you realy want to start a restore now?")) {
+			return false;
+		}
+		worklistController.pull();
+		clearLog();
+		printLog("Restore started....");
+
+		var url = restServiceController.model.baseURL;
+		url = url + "/entity/backup?filepath="
+				+ worklistController.model.filePath;
+
+		$.ajax({
+			type : "GET",
+			url : url,
+			success : function(response) {
+				printLog("Restore finished successful!", true);
 			},
 			error : function(jqXHR, error, errorThrown) {
 				$("#error-message").text(errorThrown);
