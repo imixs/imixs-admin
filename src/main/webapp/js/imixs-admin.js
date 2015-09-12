@@ -154,9 +154,16 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		templates : {
 			"content" : "view_query.html"
 		},
+		beforRoute : function(router) {
+			// clear current result set
+			//worklistController.model.view=null;
+			//worklistController.model.view=new Array();
+		},
 		afterRoute : function(router) {
 			$("#imixs-nav ul li").removeClass('active');
 			$("#imixs-nav ul li:nth-child(2)").addClass('active');
+			
+			//worklistController.loadWorklist();
 		}
 	}),
 
@@ -341,6 +348,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 				console.debug(response);
 				workitemController.model.item = imixsXML.xml2entity(response);
 				workitemRoute.route();
+				//workitemController.push();
 			},
 			error : function(jqXHR, error, errorThrown) {
 				$("#error-message").text(errorThrown);
@@ -350,34 +358,60 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 
 	}
 
-	/* deletes a worktiem from the current result list */
-	workitemController.deleteWorkitem = function(context) {
-		var entry = $(context).closest('[data-ben-entry]');
-		var entryNo = $(entry).attr("data-ben-entry");
-		var workitem = new imixs.ItemCollection(
-				worklistController.model.view[entryNo]);
+	/**
+	 * deletes a worktiem. Expects a config element containing optional context,
+	 * id and callback:
+	 * 
+	 * <code> 
+	 *   { context:this, 
+	 *     confirm: boolean
+	 *     uniqueid:String, 
+	 *     callback:function 
+	 *   }
+	 * </code>
+	 */
+	workitemController.deleteWorkitem = function(config) {
 
-		var id = workitem.getItem('$uniqueid');
+		if (config.context) {
+			var entry = $(config.context).closest('[data-ben-entry]');
+			var entryNo = $(entry).attr("data-ben-entry");
+			var workitem = new imixs.ItemCollection(
+					worklistController.model.view[entryNo]);
 
-		if (confirm('Delete Entity ' + id + ' ?')) {
-			workitemController.deleteWorkitemById(id);
+			var id = workitem.getItem('$uniqueid');
+			if (id) {
+				config.uniqueid = id;
+			}
 		}
 
-	}
+		if (typeof config.confirm === "undefined") {
+			config.confirm=true;
+		}
+		
+		if (config.confirm === true) {
+			// confirm dialog
+			if (!confirm('Delete Entity ' + id + ' ?')) {
+				return false;
+			}
 
-	/* Custom method to delete a entity by uniqueid */
-	workitemController.deleteWorkitemById = function(uniqueid) {
+		}
 
-		console.debug("delete entity: '" + uniqueid + "'...");
+		// delete workitem
+		console.debug("delete entity: '" + config.uniqueid + "'...");
 
 		var url = restServiceController.model.baseURL;
-		url = url + "/entity/" + uniqueid;
+		url = url + "/entity/" + config.uniqueid;
 
 		$.ajax({
 			type : "DELETE",
 			url : url,
 			success : function(response) {
 				printLog(".", true);
+
+				// callback
+				if (typeof config.callback === "function") {
+					config.callback();
+				}
 			},
 			error : function(jqXHR, error, errorThrown) {
 				$("#error-message").text(errorThrown);
@@ -502,6 +536,8 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 				worklistController.model.view = imixsXML
 						.xml2collection(response);
 				queryRoute.route();
+				
+				//worklistController.push();
 			},
 			error : function(jqXHR, error, errorThrown) {
 
@@ -619,7 +655,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 					var workitem = new Workitem(entity);
 					var uniqueid = workitem.getItem('$uniqueid');
 					// delete entity
-					workitemController.deleteWorkitemById(uniqueid);
+					workitemController.deleteWorkitem({uniqueid:uniqueid,confirm:false});
 				});
 			},
 			error : function(jqXHR, error, errorThrown) {

@@ -80,7 +80,7 @@
 						<td><span data-ben-model="getItem('txtworkflowstatus')" /></td>
 						
 						<td><input type="button" value="Delete"
-								onclick="adminclient.workitemController.deleteWorkitem(this)" /></td>
+								onclick="adminclient.workitemController.deleteWorkitem({context:this,callback:adminclient.worklistController.loadWorklist})" /></td>
 					
 					</tr>
 				</tbody>
