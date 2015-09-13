@@ -3,6 +3,28 @@ html, body, div, p, h1, h2, h3, ul, ol, span, a, table, td, form, img,
 	color: #444;
 }
 
+/* Ajax loader */
+.imixs-wait {
+   	display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 ) 
+                url('./ajax-loader.gif') 
+                50% 50% 
+                no-repeat;
+}
+
+body.loading {
+    overflow: hidden;   
+}
+body.loading .imixs-wait {
+    display: block;
+}
+
 #header {
 	min-height: 70px;
 	background: transparent;

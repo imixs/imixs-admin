@@ -431,9 +431,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 				queryRoute.route();
 			},
 			error : function(jqXHR, error, errorThrown) {
-
-				message = errorThrown;
-				$("#error-message").text(message);
+				$("#error-message").text(errorThrown);
 				$("#imixs-error").show();
 			}
 		});
@@ -533,8 +531,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 				worklistController.push();
 			},
 			error : function(jqXHR, error, errorThrown) {
-				message = errorThrown;
-				$("#error-message").text(message);
+				$("#error-message").text(errorThrown);
 				$("#imixs-error").show();
 			}
 		});
