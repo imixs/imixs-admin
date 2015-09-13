@@ -154,16 +154,9 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		templates : {
 			"content" : "view_query.html"
 		},
-		beforeRoute : function(router) {
-			// clear current result set
-			//worklistController.model.view=null;
-			//worklistController.model.view=new Array();
-		},
 		afterRoute : function(router) {
 			$("#imixs-nav ul li").removeClass('active');
 			$("#imixs-nav ul li:nth-child(2)").addClass('active');
-			//worklistController.autoRefresh=false;
-			
 			worklistController.loadWorklist();
 		}
 	}),
@@ -536,11 +529,10 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			success : function(response) {
 				worklistController.model.view = imixsXML
 						.xml2collection(response);
-				// reload content
-				contentTemplate.load();
+				// push content
+				worklistController.push();
 			},
 			error : function(jqXHR, error, errorThrown) {
-
 				message = errorThrown;
 				$("#error-message").text(message);
 				$("#imixs-error").show();

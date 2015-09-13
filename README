@@ -1,7 +1,0 @@
-
-Deployment Info
-================================
-
-Because in Wildfly a persistence.xml file is ncessary the pom.xml
-includes a 'wildfly' profile just to copy this dummy persistence.xml into
-the classes/META-INF/ folder. For GlassFish is file my not be included!
