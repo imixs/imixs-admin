@@ -10,7 +10,6 @@
 	</welcome-file-list>
 
 
-	<!-- ApplicationRealm  imixsrealm -->
 	<login-config>
 		<auth-method>BASIC</auth-method>
 		<realm-name>imixsrealm</realm-name>
