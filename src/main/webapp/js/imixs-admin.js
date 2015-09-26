@@ -24,6 +24,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 
 	RestService = function() {
 		this.baseURL = "http://localhost:8080/office-rest";
+		this.connected=false;
 		this.indexMap = null;
 		this.indexName = null;
 		this.indexType = null;
@@ -43,6 +44,16 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 
 			return result;
 		}
+		
+		this.getStatus = function() {
+			if (this.connected) {
+				return "<strong>Rest Service: </strong>"+this.baseURL;
+			} else {
+				return "<strong>Rest Service not found</strong>"
+			}
+		}
+		
+		
 	},
 
 	/* WorklistController */
@@ -426,11 +437,12 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			url : this.model.baseURL + "/entity/indexlist",
 			dataType : "json",
 			success : function(response) {
-
+				restServiceController.model.connected=true;
 				restServiceController.model.indexMap = response.map;
 				queryRoute.route();
 			},
 			error : function(jqXHR, error, errorThrown) {
+				restServiceController.model.connected=false;
 				$("#error-message").text(errorThrown);
 				$("#imixs-error").show();
 			}
@@ -736,6 +748,8 @@ function layoutSection(templ, context) {
 	// $(context).i18n();
 	// $(context).imixsLayout();
 	$("#imixs-error").hide();
+	
+	
 };
 
 function printLog(message, noLineBrake) {

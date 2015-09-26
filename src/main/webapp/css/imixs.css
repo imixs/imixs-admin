@@ -235,11 +235,21 @@ dd textarea {
 	color: #fff;
 }
 
+#imixs-status {
+	margin: 10px 0;
+	color: #fff;
+}
+
+#imixs-status .ui-state-highlight {
+	background: #a6ffbb;
+	border-color: green;
+}
+
 #imixs-log {
 	margin: 20px 0;
 }
 
-#imixs-error p, #imixs-log p {
+#imixs-error p, #imixs-log p, #imixs-status p {
 	margin: 10px;
 }
 
