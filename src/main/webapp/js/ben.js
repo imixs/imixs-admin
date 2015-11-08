@@ -48,11 +48,11 @@ BENJS.namespace("org.benjs.core");
 BENJS.org.benjs.core = (function() {
 
 	console.debug('------------------------');
-	console.debug('Ben.js: Version 0.1.0');
+	console.debug('Ben.js: Version 0.3.0');
 	console.debug('------------------------');
 
 	// private properties
-	var _controllers = new Array(), _templates = new Array(), _routes = new Array(),
+	var _appVersion = '', _controllers = new Array(), _templates = new Array(), _routes = new Array(),
 
 	// private methods
 	createController = function(settings) {
@@ -156,50 +156,162 @@ BENJS.org.benjs.core = (function() {
 	/**
 	 * this method reads all input fields with the attribute 'data-ben-model'
 	 * inside the given controller section and updates the corresponding model
-	 * value.
+	 * value. In case of a getter method the method calls the corresponding
+	 * setter method
 	 */
 	_read_section = function(selectorId, model) {
-		$(selectorId).find(':input').each(function() {
-			var modelValue, modelField;
+		$(selectorId).find(':input').each(
+				function() {
+					var modelValue, modelField, methodName;
 
-			// check if input is a data-ben-model
-			modelField = $(this).attr("data-ben-model");
-			if (modelField) {
-				modelValue = "";
+					// check if input is a data-ben-model
+					modelField = $(this).attr("data-ben-model");
+					if (modelField) {
+						modelField = modelField.trim();
+						modelValue = "";
 
-				// test input fields
-				switch (this.type) {
-				case 'text':
-				case 'hidden':
-				case 'password':
-				case 'select-multiple':
-				case 'select-one':
-				case 'textarea':
-					modelValue = $(this).val();
-					model[modelField] = modelValue;
-					break;
-				case 'checkbox':
-				case 'radio':
-					this.checked = false;
-				}
-
-			}
-		});
+						// test input fields
+						switch (this.type) {
+						case 'text':
+						case 'hidden':
+						case 'password':
+						case 'select-multiple':
+						case 'select-one':
+						case 'textarea':
+							modelValue = $(this).val();
+							break;
+						case 'checkbox':
+						case 'radio':
+							this.checked = false;
+						}
+						// check if data-ben-model is a getter method
+						if (modelField.match("^get[_a-zA-Z0-9.]+\\(")) {
+							try {
+								// convert get in set
+								// modelField="set"+modelField.substring(3,modelField.length-1);
+								modelField = "set" + modelField.substring(3);
+								// test if setter method is defined
+								methodName = modelField.substring(0, modelField
+										.indexOf('('));
+								if ($.isFunction(model[methodName])) {
+									// modelField=modelField+",modelValue)";
+									// eval('model.' + modelField);
+									_executeFunctionByName(modelField, model,
+											modelValue);
+								} else {
+									console.warn("setter method '" + methodName
+											+ "' is not defined!");
+								}
+							} catch (err) {
+								console.error("Error calling setter-method '"
+										+ modelField + "' -> " + err.message);
+							}
+						} else {
+							model[modelField] = modelValue;
+						}
+					}
+				});
 
 	},
 
+	/*
+	 * helper method adds a version number to an url. Used by $.load()
+	 */
+	_addAppVersion = function(url) {
+		if (_appVersion) {
+			if (url.indexOf('?') > -1) {
+				url = url + '&appVersion=' + _appVersion;
+			} else {
+				url = url + '?appVersion=' + _appVersion;
+			}
+		}
+		return url;
+	},
+
+	/*
+	 * helper method to call a model getter/setter method by name. The method
+	 * expects the function name including the parameters
+	 * 
+	 * e.g. setValue('abc');
+	 * 
+	 * Optional additional params can be set which will be added to the function
+	 * call. 
+	 * 
+	 * In addition the method also extract namespaces used for the method call
+	 * 
+	 * e.g. myobject.getValue('abc');
+	 */
+	_executeFunctionByName = function(functionCall, context, params) {
+		var paramPos,methodName,args,fnparams,fn,namespaces,i;
+		
+		paramPos = functionCall.indexOf('(');
+		methodName = functionCall.substring(0, paramPos);
+		args = functionCall.substring(paramPos + 1).trim();
+		args = args.substring(0, args.indexOf(')')).trim();
+		// first split the params...
+		fnparams = args.split(",");
+		if (params) {
+			fnparams.push(params);
+		}
+		// clean param value ....
+		$.each(fnparams, function(index, _obj) {
+			// string literal ?
+			if (_obj.indexOf("'") === 0 || _obj.indexOf('"') === 0) {
+				fnparams[index] = _obj.substring(1, _obj.length - 1);
+			} else {
+				// param is treated as string literal			
+			}
+		});
+
+		// extract namespaces...
+		namespaces = methodName.split(".");
+		methodName = namespaces.pop();
+		for(i = 0; i < namespaces.length; i++) {
+		    context = context[namespaces[i]];
+		}
+		
+		// is valid function?
+		fn = context[methodName];
+		if (typeof fn === "function") {
+			return fn.apply(context, fnparams);
+		}
+	},
+
+	/*
+	 * Helper method to create a new object by a object name. The method
+	 * accepts a initial parameter which is in this case always the current model element
+	 */
+	_createObjectByName = function(_prototypeClass,param) {
+		var context,namespaces,func,i;		
+		context=window;
+		namespaces = _prototypeClass.split(".");
+		func = namespaces.pop();
+		for(i = 0; i < namespaces.length; i++) {
+		    context = context[namespaces[i]];
+		}
+		return new context[func](param);
+	},
+	
+	
 	/**
 	 * Start the ben Application
 	 */
 	start = function(config) {
 		console.debug("starting application...");
 
+		// set default settings
 		if (config === undefined) {
-			config = {
-				"loadTemplatesOnStartup" : true
-			};
+			config = {};
 		}
+		if (config.loadTemplatesOnStartup === undefined) {
+			config.loadTemplatesOnStartup = true;
+		}
+		if (config.appVersion === undefined) {
+			config.appVersion = "";
+		}
+
 		console.debug("configuration=", config);
+		_appVersion = config.appVersion;
 
 		// first load views for all registered controllers and push the
 		// model....
@@ -268,6 +380,7 @@ BENJS.org.benjs.core = (function() {
 		 * Initializes the controller
 		 */
 		this.init = function(context) {
+
 			this.foreachCache = new Array();
 			var selectorId = "[data-ben-controller='" + this.id + "']";
 			if ($(selectorId, context).length) {
@@ -314,6 +427,16 @@ BENJS.org.benjs.core = (function() {
 			// callback
 			that.afterPull.fire(that, pullContext);
 		}
+		
+		
+		/**
+		 * This method pulls and immediately pushs the data of the model object
+		 * to refresh the controller section
+		 */
+		this.refresh = function(context) {
+			that.pull();
+			that.push();
+		}
 
 		/**
 		 * loads a the view for the current controller. If no URL is provided
@@ -331,9 +454,10 @@ BENJS.org.benjs.core = (function() {
 				}
 			}
 			if (url) {
+
 				var selectorId = "[data-ben-controller='" + this.id + "']";
 
-				// document.body
+				url = _addAppVersion(url);
 
 				$(selectorId, searchcontext)
 						.each(
@@ -386,6 +510,31 @@ BENJS.org.benjs.core = (function() {
 		 */
 		this._update = function(selector, model) {
 
+			/*
+			 * test data-ben-model elements..
+			 */
+			$(selector).find('[data-ben-render]').each(
+				function() {
+					var modelField, parentForEachBlocks, selectorForEachBlocks;
+					modelField = $(this).attr("data-ben-render");
+					// test if parent foeach...
+					parentForEachBlocks = $(this).closest(
+							'[data-ben-foreach]');
+					selectorForEachBlocks = $(selector).closest(
+							'[data-ben-foreach]');
+
+					if (parentForEachBlocks.length === 0
+							|| $(parentForEachBlocks).get(0) === $(
+									selectorForEachBlocks).get(0)) {
+						// show/hide element...
+						that._render_element(this, modelField, model);
+					} else {
+						// child element - do skip!
+					}
+					
+				}
+			);
+			
 			/*
 			 * First check foreach blocks without an id
 			 */
@@ -476,20 +625,24 @@ BENJS.org.benjs.core = (function() {
 												+ foreachID);
 										forEachBlockContent = forEachBlock
 												.clone().html().trim();
+
+										// if content block did not start with <
+										// or
+										// is no valid XHTML we surround the
+										// content
+										// with a span to define a valid xhtml
+										// element
+										// we use the $().html() method to
+										// validate XHTML
+										if (forEachBlockContent.indexOf('<') != 0
+												|| !$(forEachBlockContent)
+														.html()) {
+											forEachBlockContent = '<span>'
+													+ forEachBlockContent
+													+ '</span>';
+										}
+										// cach foreach content block now
 										that.foreachCache[foreachID] = forEachBlockContent;
-
-									}
-
-									// if content block is no valid XHTML or
-									// contains more than one child element,
-									// surround content with a span to define a
-									// valid xhtml element
-									if (forEachBlockContent.indexOf('<') != 0
-											|| forEachBlockContent
-													.indexOf('<!--') === 0) {
-										forEachBlockContent = '<span data-ben-entry="">'
-												+ forEachBlockContent
-												+ '</span>';
 									}
 
 									// remove the content which was
@@ -499,45 +652,29 @@ BENJS.org.benjs.core = (function() {
 										// copy the content of the
 										// data-ben-foreach
 										// block
-										$
-												.each(
-														foreachModel,
-														function(index,
-																model_element) {
+										$.each(
+											foreachModel,
+											function(index, model_element) {
+												var newEntry; //, evalString;
+												if (_prototypeClass) {
+													// we avoid eval call here
+													// evalString = "model_element =new " + _prototypeClass + "(model_element);";
+													//	eval(evalString);																
+													model_element=_createObjectByName(_prototypeClass,model_element);
+												}
 
-															var newEntry, evalString;
+												newEntry = $
+														.parseHTML(forEachBlockContent);
+												// update entry
+												// index
+												$(newEntry).attr(
+																"data-ben-entry",
+																index);
 
-															if (_prototypeClass) {
-																// eval
-																// prototype
-																evalString = "model_element =new "
-																		+ _prototypeClass
-																		+ "(model_element);";
+												$(forEachBlock).append(newEntry);
+												that._update(newEntry,model_element);
 
-																// Worklist.prototype
-																// = new
-																// ItemCollection();
-																eval(evalString);
-															}
-
-															newEntry = $
-																	.parseHTML(forEachBlockContent);
-															// update entry
-															// index
-															$(newEntry)
-																	.attr(
-																			"data-ben-entry",
-																			index);
-
-															$(forEachBlock)
-																	.append(
-																			newEntry);
-															that
-																	._update(
-																			newEntry,
-																			model_element);
-
-														});
+											});
 									}
 								}
 
@@ -592,6 +729,29 @@ BENJS.org.benjs.core = (function() {
 			}
 
 		}
+		
+		
+		
+		/**
+		 * This helper method hides a given element if the corresponding 
+		 * model object results in false.
+		 * 
+		 * @param selectorID -
+		 *            jquery selector
+		 * @param model -
+		 *            modelobject
+		 */
+		this._render_element = function(selector, modelField, model) {
+			var modelValue;
+			if (modelField) {
+				modelValue = that._extract_model_value(modelField, model);
+				if ( modelValue) {
+					$(selector).show();
+				} else {
+					$(selector).hide();
+				}
+			}
+		}
 
 		/**
 		 * This helper method extract a given model object. The method supports
@@ -604,7 +764,7 @@ BENJS.org.benjs.core = (function() {
 		 *            modelobject
 		 */
 		this._extract_model_value = function(modelField, model) {
-			var modelValue;
+			var modelValue, methodName;
 
 			if (modelField) {
 				// trim
@@ -613,7 +773,11 @@ BENJS.org.benjs.core = (function() {
 				if (modelField.indexOf('(') > -1) {
 					if (modelField.match("^[_a-zA-Z0-9.]+\\(")) {
 						try {
-							modelValue = eval('model.' + modelField);
+							// test if method is defined
+							methodName = modelField.substring(0, modelField
+									.indexOf('('));
+							modelValue = _executeFunctionByName(modelField,
+										model);
 						} catch (err) {
 							console.error("Error calling gettermethod '"
 									+ modelField + "' -> " + err.message);
@@ -631,12 +795,12 @@ BENJS.org.benjs.core = (function() {
 					if (modelField === '.') {
 						modelValue = model;
 					} else {
-						if (!modelField.match("^model.")) {
-							modelField = "model." + modelField;
-						}
-						modelValue = eval(modelField);
+						//if (!modelField.match("^model.")) {
+						//	modelField = "model." + modelField;
+						//	}
+						//modelValue = eval(modelField);
 						// alternative code to avoid eval
-						// modelValue = model[modelField];
+						modelValue = model[modelField];
 					}
 				}
 
@@ -694,7 +858,7 @@ BENJS.org.benjs.core = (function() {
 
 			var selectorId = "[data-ben-template='" + that.id + "']";
 
-			// document.body
+			that.url = _addAppVersion(that.url);
 
 			$(selectorId)
 					.each(
@@ -800,7 +964,7 @@ BENJS.org.benjs.core = (function() {
 			var keys = Object.keys(that.templates);
 
 			$.each(keys, function(index, templID) {
-				var templ = benJS.findTemplateByID(templID);
+				var templ = BENJS.org.benjs.core.findTemplateByID(templID);
 				if (templ) {
 					that.templateCount++;
 					templ.afterLoad.add(that._templateOnLoad);

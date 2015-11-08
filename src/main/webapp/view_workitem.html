@@ -33,15 +33,15 @@
 				</tr>
 			</thead>
 			<tbody data-ben-foreach="getSortedItemlist()">
-				<tr>
+				<tr data-ben-render="name">
 
 					<td><span data-ben-model="indexIcon"/></td>
 
 					<td><span style="font-weight: bold;" data-ben-model="name"></span></td>
 					<td><span data-ben-foreach="value"> <!-- here we need a data-ben-rendered feature to avoid emtpy entries -->
 							<span style="font-weight: bold;"
-							data-ben-model="model['xsi:type']"></span> : <span
-							data-ben-model="model['$']"></span><br />
+							data-ben-model="xsi:type"></span> : <span
+							data-ben-model="$"></span><br />
 					</span></td>
 				</tr>
 			</tbody>

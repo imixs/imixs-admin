@@ -87,9 +87,9 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		 * field has an Imixs-Entity-Index
 		 */
 		this.getSortedItemlist = function() {
-
-			// add index type and indexIcon
+ 			// add index type and indexIcon
 			$.each(this.item, function(index, aitem) {
+				
 				aitem.index = restServiceController.model.indexMap[aitem.name];
 				if ((typeof aitem.index) == 'number') {
 					var iconTitle = "";
@@ -106,8 +106,19 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 				}
 			});
 
-			// sort list
-			return this.item.sort(function(a, b) {
+			
+			
+			// now we remove items without a name....
+			var resultList=new Array();
+			$.each(this.item, function(index, aitem) {
+				if (aitem.name) {
+					resultList.push(aitem);
+				}
+			});
+			
+			
+			// sort resultlist
+			return  resultList.sort(function(a, b) {
 				if (a.name > b.name)
 					return 1;
 				else if (a.name < b.name)
@@ -115,6 +126,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 				else
 					return 0;
 			});
+			
 		}
 
 	},
@@ -239,9 +251,11 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		console.debug("starting backlog application...");
 
 		// start view
-		benJS.start({
-			"loadTemplatesOnStartup" : false
-		});
+		benJS.start();
+		
+//		benJS.start({
+//			"loadTemplatesOnStartup" : true
+//		});
 
 		restServiceRoute.route();
 		$("#imixs-error").hide();
