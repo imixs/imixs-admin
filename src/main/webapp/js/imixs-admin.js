@@ -248,14 +248,21 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	 * Start the ben Application
 	 */
 	start = function() {
+		var loc,url,service="";
 		console.debug("starting backlog application...");
 
+		// compute application root....
+		loc = window.location;
+		url = window.location.href;
+		if (url.indexOf('service=')>-1) {
+			service=url.substring(url.indexOf('service=')+8);
+		}
+			
+		url = url.substring(0,url.indexOf(loc.pathname));
+		restServiceController.model.baseURL=url+"/"+service;
+		
 		// start view
 		benJS.start();
-		
-//		benJS.start({
-//			"loadTemplatesOnStartup" : true
-//		});
 
 		restServiceRoute.route();
 		$("#imixs-error").hide();
