@@ -38,11 +38,20 @@ body.loading .imixs-wait {
 	min-height: 600px;
 }
 
-#footer1, #footer2 {
+#footer2 {
 	text-align: right;
 	margin-right: 2em;
 }
+#footer1{
+	text-align: left;
+	margin-right: 2em;
+}
 
+ #footer1 a{ 
+    color: #428BCE;
+ }
+ 
+ 
 /**********************************************
  * IMIXS Styles 
  **********************************************/
@@ -182,7 +191,7 @@ dl dd input[type="text"],dl dd select, .imixs-form-section-2 dd input[type="pass
 
 dd textarea {
 	width: 100%;
-	height: 5em;
+	height: 8em;
 }
 
 .imixs-form-section dd, .imixs-form-section-2 dd {

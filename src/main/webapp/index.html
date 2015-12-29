@@ -26,13 +26,11 @@
 				<ul>
 					<li style="font-weight: bold;"><a href="./">Imixs-Admin</a></li>
 
-					<li><a href="http://blog.imixs.org" target="_blank">imixs.org</a></li>
+					<li><a href="http://www.imixs.org" target="_blank">imixs.org</a></li>
 					<li><a href="http://www.imixs.com" target="_blank">imixs.com</a></li>
 
 					<li><a href="http://blog.imixs.org" target="_blank">blog</a></li>
 
-					<li><a href="https://github.com/imixs/imixs-workflow"
-						target="_blank">github</a></li>
 
 
 				</ul>
@@ -66,7 +64,9 @@
 	<!-- END header -->
 
 	<div id="container">
-		<div data-ben-template="content"></div>
+		<form autocomplete="on">
+			<div data-ben-template="content"></div>
+		</form>
 	</div>
 
 
@@ -75,14 +75,12 @@
 	<!-- END container -->
 
 	<div id="footer">
-		<div id="footer1">
-			&#169; 2006-2014 Imixs Software Solutions GmbH | <a
-				href="mailto:info@imixs.com">Contact</a> | <a
-				href="http://www.imixs.com/?page_id=56">Impressum</a>
-		</div>
+		<div id="footer1">Version 4.0.0</div>
 		<div id="footer2">
-			Webdesign: <a href="http://www.creatix.org">www.creatix.org</a> |
-			fotos: © gordon bussiek | photocase.com
+
+			&#169; 2006-2014 <a href="http://www.imixs.com" target="_blank">Imixs
+				Software Solutions GmbH</a> | <a href="mailto:info@imixs.com">Contact</a>
+			| Webdesign: <a href="http://www.creatix.org">www.creatix.org</a>
 		</div>
 	</div>
 	<!-- END footer -->
@@ -118,7 +116,7 @@
 					$body.removeClass("loading");
 				}
 			});
-			
+
 			adminclient.start();
 
 		});

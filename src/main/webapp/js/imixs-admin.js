@@ -549,7 +549,12 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 				+ "'...");
 
 		var url = restServiceController.model.baseURL;
-		url = url + "/entity/entitiesbyquery/" + worklistController.model.query;
+		var query = worklistController.model.query;
+		// replace new lines..
+		query = query.replace(/(\r\n|\n|\r)/gm, " ");
+		
+		
+		url = url + "/entity/entitiesbyquery/" + query;
 		url = url + "?start=" + worklistController.model.start + "&count="
 				+ worklistController.model.count;
 
