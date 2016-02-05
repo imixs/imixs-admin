@@ -582,10 +582,21 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	 * 
 	 */
 	worklistController.bulkUpdate = function() {
-		if (!confirm("Do you realy want to start a bulk update now?")) {
+	
+		worklistController.pull();
+
+		// test fieldname...
+		var re = /[a-zA-Z0-9\-\_\$\~]$/
+		if (!re.test(worklistController.model.fieldName)|| worklistController.model.fieldName.indexOf('\\')>-1) {
+	        alert ("Invalid Fieldname");
+		    return false;
+		}	
+		
+		if (!confirm("Do you really want to start a bulk update now?")) {
 			return false;
 		}
-		worklistController.pull();
+			
+		
 		clearLog();
 		printLog("Load worklist: '" + worklistController.model.query + "'...");
 
@@ -620,7 +631,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 									"xs:string");
 
 							updatedWorkitem.setItem(
-									worklistController.model.fieldName,
+									worklistController.model.fieldName.trim(),
 									worklistController.model.newValue,
 									worklistController.model.fieldType);
 
