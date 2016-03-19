@@ -25,6 +25,19 @@ body.loading .imixs-wait {
     display: block;
 }
 
+table {
+	margin-top:20px;
+}
+table th {
+	text-align:left;
+	border-left:1px solid #ccc;
+	
+	xborder-right:1px solid #ccc;
+	padding: 0 4px;
+}
+table th:FIRST-CHILD {
+	border-left:none;
+}
 #header {
 	min-height: 70px;
 	background: transparent;
@@ -127,16 +140,7 @@ body.loading .imixs-wait {
 	border: 0px;
 }
 
-#ximixs-sidebar {
-	border-color: silver;
-	border-style: dashed dashed dashed solid;
-	border-width: 0px 0px 0px 0px;
-	float: right;
-	font-size: 11px;
-	margin: 10px 0px 0px;
-	padding: 1em;
-	width: 300px;
-}
+
 
 /* Responsive */
 

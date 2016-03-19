@@ -101,8 +101,11 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 						iconTitle = "Double Index";
 					else if (aitem.index == 3)
 						iconTitle = "Calendar Index";
+					
 					aitem.indexIcon = "<img src='img/index_typ_" + aitem.index
 							+ ".gif' title='" + iconTitle + "' />";
+					
+					//console.log("index=" + aitem.indexIcon);	
 				}
 			});
 
@@ -115,6 +118,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 					resultList.push(aitem);
 				}
 			});
+			
 			
 			
 			// sort resultlist

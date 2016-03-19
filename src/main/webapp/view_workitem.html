@@ -3,7 +3,7 @@
 
 	<div data-ben-controller="workitemController">
 
-		<h1>Workitem:</h1>
+		<h1>Workitem: <span data-ben-model="id"></span></h1>
 
 
 		<div class="imixs-form-section">
@@ -24,25 +24,27 @@
 		</div>
 
 
-		<table>
+		<table style="margin-top:20px;">
 			<thead>
 				<tr>
-					<th></th>
-					<th>Field</th>
-					<th>Value</th>
+					<th style="text-align:left;">Index</th>
+					<th style="text-align:left;border-left:1px solid #ccc;">Property Name</th>
+					<th style="text-align:left;border-left:1px solid #ccc;">Type / Value</th>
 				</tr>
 			</thead>
 			<tbody data-ben-foreach="getSortedItemlist()">
 				<tr data-ben-render="name">
 
-					<td><span data-ben-model="indexIcon"/></td>
+					<td style="text-align:center;"><span data-ben-model="indexIcon"></span></td>
 
 					<td><span style="font-weight: bold;" data-ben-model="name"></span></td>
-					<td><span data-ben-foreach="value"> <!-- here we need a data-ben-rendered feature to avoid emtpy entries -->
-							<span style="font-weight: bold;"
-							data-ben-model="xsi:type"></span> : <span
-							data-ben-model="$"></span><br />
-					</span></td>
+					<td><span data-ben-foreach="value"> 
+						<!-- here we need a data-ben-rendered feature to avoid emtpy entries -->
+							<span style="font-weight: bold;" data-ben-model="xsi:type"></span>
+							 : <span data-ben-model="$"></span>
+							 <br />
+						</span>
+					</td>
 				</tr>
 			</tbody>
 		</table>
