@@ -558,7 +558,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		query = query.replace(/(\r\n|\n|\r)/gm, " ");
 		
 		
-		url = url + "/entity/entitiesbyquery/" + query;
+		url = url + "/entity/query/" + query;
 		url = url + "?start=" + worklistController.model.start + "&count="
 				+ worklistController.model.count;
 
@@ -605,7 +605,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		printLog("Load worklist: '" + worklistController.model.query + "'...");
 
 		var url = restServiceController.model.baseURL;
-		url = url + "/entity/entitiesbyquery/" + worklistController.model.query;
+		url = url + "/entity/query/" + worklistController.model.query;
 		url = url + "?start=" + worklistController.model.start + "&count="
 				+ worklistController.model.count;
 
@@ -677,7 +677,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		printLog("Load worklist: '" + worklistController.model.query + "'...");
 
 		var url = restServiceController.model.baseURL;
-		url = url + "/entity/entitiesbyquery/" + worklistController.model.query;
+		url = url + "/entity/query/" + worklistController.model.query;
 		url = url + "?start=" + worklistController.model.start + "&count="
 				+ worklistController.model.count;
 
