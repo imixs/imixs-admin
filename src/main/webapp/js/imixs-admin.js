@@ -24,6 +24,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 
 	RestService = function() {
 		this.baseURL = "http://localhost:8080/office-rest";
+		this.priorVersion=false;
 		this.connected=false;
 		this.indexMap = null;
 		this.indexName = null;
@@ -172,6 +173,9 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		afterRoute : function(router) {
 			$("#imixs-nav ul li").removeClass('active');
 			$("#imixs-nav ul li:nth-child(1)").addClass('active');
+			
+			// update the priorVersionCheckbox
+			$('#priorVersionCheckBox').prop('checked', restServiceController.model.priorVersion);
 		}
 
 	}),
@@ -455,7 +459,26 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	 * Read the index list and open the query view
 	 */
 	restServiceController.connect = function() {
+		
+		worklistController.model.view=null;
+		
+		
 		this.pull();
+		
+		// get priorVersion flag manually (not yet supported by benJS)
+		restServiceController.model.priorVersion=$('#priorVersionCheckBox').is(':checked');
+		
+		// remove last / if provided
+		restServiceController.model.baseURL=restServiceController.model.baseURL.trim();
+		if (restServiceController.model.baseURL.endsWith("/")) {
+			restServiceController.model.baseURL=restServiceController.model.baseURL.substring(0,restServiceController.model.baseURL.length-1);
+		}
+		
+		console.log("baseURL=" + restServiceController.model.baseURL);
+		console.log("priorVersion=" + restServiceController.model.priorVersion);
+
+		
+		
 		// read indexlist...
 		$.ajax({
 			type : "GET",
@@ -557,8 +580,11 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		// replace new lines..
 		query = query.replace(/(\r\n|\n|\r)/gm, " ");
 		
+		if (restServiceController.model.priorVersion)
+			url = url + "/entity/entitiesbyquery/" + query;
+		else
+			url	= url + "/entity/query/" + query;
 		
-		url = url + "/entity/query/" + query;
 		url = url + "?start=" + worklistController.model.start + "&count="
 				+ worklistController.model.count;
 
@@ -605,7 +631,11 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		printLog("Load worklist: '" + worklistController.model.query + "'...");
 
 		var url = restServiceController.model.baseURL;
-		url = url + "/entity/query/" + worklistController.model.query;
+		if (restServiceController.model.priorVersion)
+			url = url + "/entity/entitiesbyquery/" + worklistController.model.query;
+		else
+			url = url + "/entity/query/" + worklistController.model.query;
+		
 		url = url + "?start=" + worklistController.model.start + "&count="
 				+ worklistController.model.count;
 
@@ -677,7 +707,12 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		printLog("Load worklist: '" + worklistController.model.query + "'...");
 
 		var url = restServiceController.model.baseURL;
-		url = url + "/entity/query/" + worklistController.model.query;
+		
+		if (restServiceController.model.priorVersion)
+			url = url + "/entity/entitiesbyquery/" + worklistController.model.query;
+		else
+			url = url + "/entity/query/" + worklistController.model.query;
+		
 		url = url + "?start=" + worklistController.model.start + "&count="
 				+ worklistController.model.count;
 
