@@ -5,7 +5,7 @@
 	<artifactId>imixs-admin</artifactId>
 	<packaging>war</packaging>
 	<name>Imixs Workflow Web Admin Tool</name>
-	<version>4.1.4</version>
+	<version>4.2.0</version>
 	<description>Imixs Workflow Web Admin Tool</description>
 	<url>http://www.imixs.org/websites/imixs-org.nsf/chapter/api</url>
 	<organization>
@@ -49,7 +49,6 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<org.imixs.workflow.version>3.3.0</org.imixs.workflow.version>
 	</properties>
 
 	<profiles>

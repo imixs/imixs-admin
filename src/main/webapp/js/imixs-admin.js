@@ -24,8 +24,8 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 
 	RestService = function() {
 		this.baseURL = "http://localhost:8080/office-rest";
-		this.priorVersion=false;
-		this.connected=false;
+		this.apiVersion = "4.0";
+		this.connected = false;
 		this.indexMap = null;
 		this.indexName = null;
 		this.indexType = null;
@@ -45,16 +45,15 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 
 			return result;
 		}
-		
+
 		this.getStatus = function() {
 			if (this.connected) {
-				return "<strong>Rest Service: </strong>"+this.baseURL;
+				return "<strong>Rest Service: </strong>" + this.baseURL;
 			} else {
 				return "<strong>Rest Service not found</strong>"
 			}
 		}
-		
-		
+
 	},
 
 	/* WorklistController */
@@ -88,9 +87,9 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		 * field has an Imixs-Entity-Index
 		 */
 		this.getSortedItemlist = function() {
- 			// add index type and indexIcon
+			// add index type and indexIcon
 			$.each(this.item, function(index, aitem) {
-				
+
 				aitem.index = restServiceController.model.indexMap[aitem.name];
 				if ((typeof aitem.index) == 'number') {
 					var iconTitle = "";
@@ -102,28 +101,24 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 						iconTitle = "Double Index";
 					else if (aitem.index == 3)
 						iconTitle = "Calendar Index";
-					
+
 					aitem.indexIcon = "<img src='img/index_typ_" + aitem.index
 							+ ".gif' title='" + iconTitle + "' />";
-					
-					//console.log("index=" + aitem.indexIcon);	
+
+					// console.log("index=" + aitem.indexIcon);
 				}
 			});
 
-			
-			
 			// now we remove items without a name....
-			var resultList=new Array();
+			var resultList = new Array();
 			$.each(this.item, function(index, aitem) {
 				if (aitem.name) {
 					resultList.push(aitem);
 				}
 			});
-			
-			
-			
+
 			// sort resultlist
-			return  resultList.sort(function(a, b) {
+			return resultList.sort(function(a, b) {
 				if (a.name > b.name)
 					return 1;
 				else if (a.name < b.name)
@@ -131,7 +126,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 				else
 					return 0;
 			});
-			
+
 		}
 
 	},
@@ -173,9 +168,9 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		afterRoute : function(router) {
 			$("#imixs-nav ul li").removeClass('active');
 			$("#imixs-nav ul li:nth-child(1)").addClass('active');
-			
-			// update the priorVersionCheckbox
-			$('#priorVersionCheckBox').prop('checked', restServiceController.model.priorVersion);
+
+			// update the api_version select box
+			$('#api_version').val(restServiceController.model.apiVersion);
 		}
 
 	}),
@@ -184,6 +179,18 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		id : "query-route",
 		templates : {
 			"content" : "view_query.html"
+		},
+		afterRoute : function(router) {
+			$("#imixs-nav ul li").removeClass('active');
+			$("#imixs-nav ul li:nth-child(2)").addClass('active');
+			worklistController.loadWorklist();
+		}
+	}),
+	
+	searchRoute = benJS.createRoute({
+		id : "search-route",
+		templates : {
+			"content" : "view_search.html"
 		},
 		afterRoute : function(router) {
 			$("#imixs-nav ul li").removeClass('active');
@@ -256,19 +263,19 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	 * Start the ben Application
 	 */
 	start = function() {
-		var loc,url,service="";
+		var loc, url, service = "";
 		console.debug("starting backlog application...");
 
 		// compute application root....
 		loc = window.location;
 		url = window.location.href;
-		if (url.indexOf('service=')>-1) {
-			service=url.substring(url.indexOf('service=')+8);
+		if (url.indexOf('service=') > -1) {
+			service = url.substring(url.indexOf('service=') + 8);
 		}
-			
-		url = url.substring(0,url.indexOf(loc.pathname));
-		restServiceController.model.baseURL=url+"/"+service;
-		
+
+		url = url.substring(0, url.indexOf(loc.pathname));
+		restServiceController.model.baseURL = url + "/" + service;
+
 		// start view
 		benJS.start();
 
@@ -382,7 +389,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 				console.debug(response);
 				workitemController.model.item = imixsXML.xml2entity(response);
 				workitemRoute.route();
-				//workitemController.push();
+				// workitemController.push();
 			},
 			error : function(jqXHR, error, errorThrown) {
 				$("#error-message").text(errorThrown);
@@ -419,9 +426,9 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		}
 
 		if (typeof config.confirm === "undefined") {
-			config.confirm=true;
+			config.confirm = true;
 		}
-		
+
 		if (config.confirm === true) {
 			// confirm dialog
 			if (!confirm('Delete Entity ' + id + ' ?')) {
@@ -459,38 +466,42 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	 * Read the index list and open the query view
 	 */
 	restServiceController.connect = function() {
-		
-		worklistController.model.view=null;
-		
-		
-		this.pull();
-		
-		// get priorVersion flag manually (not yet supported by benJS)
-		restServiceController.model.priorVersion=$('#priorVersionCheckBox').is(':checked');
-		
-		// remove last / if provided
-		restServiceController.model.baseURL=restServiceController.model.baseURL.trim();
-		if (restServiceController.model.baseURL.endsWith("/")) {
-			restServiceController.model.baseURL=restServiceController.model.baseURL.substring(0,restServiceController.model.baseURL.length-1);
-		}
-		
-		console.log("baseURL=" + restServiceController.model.baseURL);
-		console.log("priorVersion=" + restServiceController.model.priorVersion);
 
-		
-		
+		worklistController.model.view = null;
+
+		this.pull();
+
+		// get apiVersion 
+		restServiceController.model.apiVersion = $('#api_version').val();
+
+		// remove last / if provided
+		restServiceController.model.baseURL = restServiceController.model.baseURL
+				.trim();
+		if (restServiceController.model.baseURL.endsWith("/")) {
+			restServiceController.model.baseURL = restServiceController.model.baseURL
+					.substring(0,
+							restServiceController.model.baseURL.length - 1);
+		}
+
+		console.log("baseURL=" + restServiceController.model.baseURL);
+		console.log("apiVersion=" + restServiceController.model.apiVersion);
+
 		// read indexlist...
 		$.ajax({
 			type : "GET",
 			url : this.model.baseURL + "/entity/indexlist",
 			dataType : "json",
 			success : function(response) {
-				restServiceController.model.connected=true;
+				restServiceController.model.connected = true;
 				restServiceController.model.indexMap = response.map;
-				queryRoute.route();
+				
+				if (restServiceController.model.apiVersion=="4.0")
+					searchRoute.route();
+				else
+					queryRoute.route();
 			},
 			error : function(jqXHR, error, errorThrown) {
-				restServiceController.model.connected=false;
+				restServiceController.model.connected = false;
 				$("#error-message").text(errorThrown);
 				$("#imixs-error").show();
 			}
@@ -579,12 +590,15 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		var query = worklistController.model.query;
 		// replace new lines..
 		query = query.replace(/(\r\n|\n|\r)/gm, " ");
-		
-		if (restServiceController.model.priorVersion)
+
+		if (restServiceController.model.apiVersion == "3.7") {
 			url = url + "/entity/entitiesbyquery/" + query;
-		else
-			url	= url + "/entity/query/" + query;
-		
+		} else if (restServiceController.model.apiVersion == "3.8") {
+			url = url + "/entity/entitiesbyquery/" + query;
+		} else {
+			// default support 4.0.x
+			url = url + "/document/search/" + query;
+		}
 		url = url + "?start=" + worklistController.model.start + "&count="
 				+ worklistController.model.count;
 
@@ -612,29 +626,34 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	 * 
 	 */
 	worklistController.bulkUpdate = function() {
-	
+
 		worklistController.pull();
 
 		// test fieldname...
 		var re = /[a-zA-Z0-9\-\_\$\~]$/
-		if (!re.test(worklistController.model.fieldName)|| worklistController.model.fieldName.indexOf('\\')>-1) {
-	        alert ("Invalid Fieldname");
-		    return false;
-		}	
-		
+		if (!re.test(worklistController.model.fieldName)
+				|| worklistController.model.fieldName.indexOf('\\') > -1) {
+			alert("Invalid Fieldname");
+			return false;
+		}
+
 		if (!confirm("Do you really want to start a bulk update now?")) {
 			return false;
 		}
-			
-		
+
 		clearLog();
 		printLog("Load worklist: '" + worklistController.model.query + "'...");
 
 		var url = restServiceController.model.baseURL;
-		if (restServiceController.model.priorVersion)
-			url = url + "/entity/entitiesbyquery/" + worklistController.model.query;
-		else
+		if (restServiceController.model.apiVersion=="3.7") {
+			url = url + "/entity/entitiesbyquery/"
+			+ worklistController.model.query;
+		} else  if (restServiceController.model.apiVersion=="3.8") {
 			url = url + "/entity/query/" + worklistController.model.query;
+		} else {
+			// default 4.0.0
+			url = url + "/document/search/" + worklistController.model.query;
+		}
 		
 		url = url + "?start=" + worklistController.model.start + "&count="
 				+ worklistController.model.count;
@@ -707,12 +726,18 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		printLog("Load worklist: '" + worklistController.model.query + "'...");
 
 		var url = restServiceController.model.baseURL;
-		
-		if (restServiceController.model.priorVersion)
-			url = url + "/entity/entitiesbyquery/" + worklistController.model.query;
-		else
+
+		if (restServiceController.model.apiVersion=="3.7") {
+			url = url + "/entity/entitiesbyquery/"
+			+ worklistController.model.query;
+		} else if (restServiceController.model.apiVersion=="3.8") { 
 			url = url + "/entity/query/" + worklistController.model.query;
-		
+
+		} else {
+			// default 4.0.0
+			url = url + "/document/search/" + worklistController.model.query;
+		}
+			
 		url = url + "?start=" + worklistController.model.start + "&count="
 				+ worklistController.model.count;
 
@@ -732,7 +757,10 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 					var workitem = new Workitem(entity);
 					var uniqueid = workitem.getItem('$uniqueid');
 					// delete entity
-					workitemController.deleteWorkitem({uniqueid:uniqueid,confirm:false});
+					workitemController.deleteWorkitem({
+						uniqueid : uniqueid,
+						confirm : false
+					});
 				});
 			},
 			error : function(jqXHR, error, errorThrown) {
@@ -811,6 +839,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		worklistController : worklistController,
 		workitemController : workitemController,
 		queryRoute : queryRoute,
+		searchRoute : searchRoute,
 		bulkUpdateRoute : bulkUpdateRoute,
 		bulkDeleteRoute : bulkDeleteRoute,
 		indexRoute : indexRoute,
@@ -824,8 +853,7 @@ function layoutSection(templ, context) {
 	// $(context).i18n();
 	// $(context).imixsLayout();
 	$("#imixs-error").hide();
-	
-	
+
 };
 
 function printLog(message, noLineBrake) {

@@ -1,0 +1,108 @@
+<div class="row imixs-view">
+
+	<!-- Status message -->
+	<div id="imixs-status" data-ben-controller="restServiceController">
+		<div class="ui-state-highlight ui-corner-all">
+			<p>
+				<span class="ui-icon ui-icon-transferthick-e-w"
+					style="float: left; margin-right: .3em; margin-top: .2em;"></span>
+				<span data-ben-model="getStatus()"></span>
+			</p>
+		</div>
+	</div>
+
+
+
+	<h1>Search:</h1>
+	<div data-ben-controller="worklistController">
+
+		<div class="imixs-form-section">
+			<dl>
+				<dt>Searchterm:</dt>
+				<dd>
+					<textarea
+						placeholder="(type:'workitem')"
+						data-ben-model="query"></textarea>
+				</dd>
+			</dl>
+		</div>
+		<div class="imixs-form-section-3">
+
+			<dl>
+				<dt>Start:</dt>
+				<dd>
+					<input type="text" placeholder="0" data-ben-model="start"></input>
+				</dd>
+			</dl>
+			<dl>
+				<dt>Count:</dt>
+				<dd>
+					<input type="text" placeholder="10" data-ben-model="count"></input>
+				</dd>
+			</dl>
+
+		</div>
+
+		<div class="imixs-form-section">
+			<input type="button" value="Search"
+				onclick="adminclient.worklistController.loadWorklist()" class="btn" />
+
+
+		</div>
+
+
+
+		<!-- Error message -->
+		<div id="imixs-error" style="">
+			<div class="ui-state-error ui-corner-all">
+				<p>
+					<span class="ui-icon ui-icon-alert"
+						style="float: left; margin-right: .3em;"></span> <strong>Error:</strong>
+				</p>
+				<p id="error-message" />
+			</div>
+		</div>
+
+
+		<!--  Result list -->
+
+		<div>
+			<table>
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Created</th>
+						<th>Modified</th>
+						<th>Summary</th>
+						<th>Status</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody data-ben-foreach="view as adminclient.Workitem">
+					<tr>
+						<td><a href="javascript:;"
+							onclick="adminclient.workitemController.loadWorkitem(this)">
+								<span data-ben-model="getItem('$uniqueid')" />
+						</a> (<span data-ben-model="getItem('$version')" />)</td>
+						<td><span data-ben-model="getItem('$created')" /> by <span
+							data-ben-model="getItem('namcreator')"></span></td>
+
+						<td><span data-ben-model="getItem('$modified')" /> by <span
+							data-ben-model="getItem('namcurrenteditor')"></span></td>
+
+						<td><span data-ben-model="getSummary(model)"></span></td>
+
+						<td><span data-ben-model="getItem('txtworkflowstatus')" /></td>
+
+						<td><input type="button" value="Delete"
+							onclick="adminclient.workitemController.deleteWorkitem({context:this,callback:adminclient.worklistController.loadWorklist})" /></td>
+
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+</div>
+
+

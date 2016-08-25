@@ -6,12 +6,16 @@
 			<dt>URL:</dt>
 			<dd>
 				<input type="text" placeholder="Enter Rest Service Base Address"
-					data-ben-model="baseURL" autocomplete="on" /> 
-					<br /> 
-					<input  id="priorVersionCheckBox"
-					type="checkBox" value="true" /><span
-					title="Use deprecated Rest API URL pattern">Connect to prior versions 3.8.x</span>
+					data-ben-model="baseURL" autocomplete="on" /> <br /> <label>Connect
+					to Imixs-Workflow version:</label> 
 					
+					<select style="width:100px;"  data-ben-model="apiVersion"
+					id="api_version">
+					<option value="4.0">4.0</option>
+					<option value="3.8">3.8</option>
+					<option value="3.7">&lt; 3.8</option>
+				</select>
+
 			</dd>
 
 
