@@ -58,10 +58,12 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 
 	/* WorklistController */
 	Worklist = function() {
-		this.query = "SELECT entity FROM Entity entity where entity.type='workitem' ORDER BY entity.modified DESC";
+		this.query ="";
 		this.view;
 		this.start = 0;
 		this.count = 10;
+		this.maxresult=10; // apiVersion 4.0
+		this.page=0; // apiVersion 4.0
 		this.fieldName = "";
 		this.fieldType = "";
 		this.newValue = "";
@@ -191,6 +193,10 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		id : "search-route",
 		templates : {
 			"content" : "view_search.html"
+		},
+		beforeRoute : function(router) {
+			if (worklistController.model.query=="")
+				worklistController.model.query= "(type:\"workitem\")";
 		},
 		afterRoute : function(router) {
 			$("#imixs-nav ul li").removeClass('active');
@@ -363,7 +369,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 
 	};
 
-	/* Custom method to load a single workite */
+	/* Custom method to load a single workitem */
 	workitemController.loadWorkitem = function(context) {
 
 		var entry = $('span', context);
@@ -486,26 +492,28 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		console.log("baseURL=" + restServiceController.model.baseURL);
 		console.log("apiVersion=" + restServiceController.model.apiVersion);
 
-		// read indexlist...
-		$.ajax({
-			type : "GET",
-			url : this.model.baseURL + "/entity/indexlist",
-			dataType : "json",
-			success : function(response) {
-				restServiceController.model.connected = true;
-				restServiceController.model.indexMap = response.map;
-				
-				if (restServiceController.model.apiVersion=="4.0")
-					searchRoute.route();
-				else
+		// read indexlist if api version < 4.0...
+		if (restServiceController.model.apiVersion=="4.0") {
+			worklistController.query= "(type:\"workitem\")";
+			searchRoute.route();
+		} else {
+			$.ajax({
+				type : "GET",
+				url : this.model.baseURL + "/entity/indexlist",
+				dataType : "json",
+				success : function(response) {
+					restServiceController.model.connected = true;
+					restServiceController.model.indexMap = response.map;
+					worklistController.query= "SELECT entity FROM Entity entity where entity.type='workitem' ORDER BY entity.modified DESC";
 					queryRoute.route();
-			},
-			error : function(jqXHR, error, errorThrown) {
-				restServiceController.model.connected = false;
-				$("#error-message").text(errorThrown);
-				$("#imixs-error").show();
-			}
-		});
+				},
+				error : function(jqXHR, error, errorThrown) {
+					restServiceController.model.connected = false;
+					$("#error-message").text(errorThrown);
+					$("#imixs-error").show();
+				}
+			});
+		}
 	}
 
 	/*
@@ -588,19 +596,26 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 
 		var url = restServiceController.model.baseURL;
 		var query = worklistController.model.query;
+		if (query=="")
+			return;
 		// replace new lines..
 		query = query.replace(/(\r\n|\n|\r)/gm, " ");
 
 		if (restServiceController.model.apiVersion == "3.7") {
 			url = url + "/entity/entitiesbyquery/" + query;
+			url = url + "?start=" + worklistController.model.start + "&count="
+			+ worklistController.model.count;
 		} else if (restServiceController.model.apiVersion == "3.8") {
 			url = url + "/entity/entitiesbyquery/" + query;
+			url = url + "?start=" + worklistController.model.start + "&count="
+			+ worklistController.model.count;
 		} else {
 			// default support 4.0.x
 			url = url + "/document/search/" + query;
+			url = url + "?maxresult=" + worklistController.model.maxresult + "&page="
+			+ worklistController.model.page;
 		}
-		url = url + "?start=" + worklistController.model.start + "&count="
-				+ worklistController.model.count;
+	
 
 		$.ajax({
 			type : "GET",
@@ -648,15 +663,20 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		if (restServiceController.model.apiVersion=="3.7") {
 			url = url + "/entity/entitiesbyquery/"
 			+ worklistController.model.query;
+			url = url + "?start=" + worklistController.model.start + "&count="
+			+ worklistController.model.count;
 		} else  if (restServiceController.model.apiVersion=="3.8") {
 			url = url + "/entity/query/" + worklistController.model.query;
+			url = url + "?start=" + worklistController.model.start + "&count="
+			+ worklistController.model.count;
 		} else {
 			// default 4.0.0
 			url = url + "/document/search/" + worklistController.model.query;
+			url = url + "?maxresult=" + worklistController.model.maxresult + "&page="
+			+ worklistController.model.page;
 		}
 		
-		url = url + "?start=" + worklistController.model.start + "&count="
-				+ worklistController.model.count;
+		
 
 		$.ajax({
 			type : "GET",
@@ -730,16 +750,19 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		if (restServiceController.model.apiVersion=="3.7") {
 			url = url + "/entity/entitiesbyquery/"
 			+ worklistController.model.query;
+			url = url + "?start=" + worklistController.model.start + "&count="
+			+ worklistController.model.count;
 		} else if (restServiceController.model.apiVersion=="3.8") { 
 			url = url + "/entity/query/" + worklistController.model.query;
-
+			url = url + "?start=" + worklistController.model.start + "&count="
+			+ worklistController.model.count;
 		} else {
 			// default 4.0.0
 			url = url + "/document/search/" + worklistController.model.query;
+			url = url + "?maxresult=" + worklistController.model.maxresult + "&page="
+			+ worklistController.model.page;
 		}
 			
-		url = url + "?start=" + worklistController.model.start + "&count="
-				+ worklistController.model.count;
 
 		$.ajax({
 			type : "GET",
