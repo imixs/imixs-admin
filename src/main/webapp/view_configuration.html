@@ -1,0 +1,62 @@
+<div class="row">
+
+
+	<div data-ben-controller="configurationController">
+
+		<h1>Lucene Configuration</h1>
+
+
+		<div class="imixs-form-section">
+			<input type="button" value="Close" onclick="adminclient.queryRoute.route()"
+				class="btn" />
+		</div>
+
+
+		<!-- Error message -->
+		<div id="imixs-error" style="">
+			<div class="ui-state-error ui-corner-all">
+				<p>
+					<span class="ui-icon ui-icon-alert"
+						style="float: left; margin-right: .3em;"></span> <strong>Error:</strong>
+				</p>
+				<p id="error-message" />
+			</div>
+		</div>
+
+
+		<table style="margin-top:20px;">
+			<thead>
+				<tr>
+					<th style="text-align:left;">Index</th>
+					<th style="text-align:left;border-left:1px solid #ccc;">Property Name</th>
+					<th style="text-align:left;border-left:1px solid #ccc;">Type / Value</th>
+				</tr>
+			</thead>
+			<tbody data-ben-foreach="getSortedItemlist()">
+				<tr data-ben-render="name">
+
+					<td style="text-align:center;"><span data-ben-model="indexIcon"></span></td>
+
+					<td><span style="font-weight: bold;" data-ben-model="name"></span></td>
+					<td><span data-ben-foreach="value"> 
+						<!-- here we need a data-ben-rendered feature to avoid emtpy entries -->
+							<span style="font-weight: bold;" data-ben-model="xsi:type"></span>
+							 : <span data-ben-model="$"></span>
+							 <br />
+						</span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+
+	</div>
+
+	<div class="imixs-form-section">
+		<input type="button" value="Close" onclick="adminclient.queryRoute.route()"
+				class="btn" />
+	</div>
+
+</div>
+
+

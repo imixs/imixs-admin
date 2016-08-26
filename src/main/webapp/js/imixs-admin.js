@@ -29,6 +29,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		this.indexMap = null;
 		this.indexName = null;
 		this.indexType = null;
+		this.configuration= new Workitem();
 
 		/* returns an 2 dimensional array of the index map */
 		this.getIndexList = function() {
@@ -92,22 +93,29 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			// add index type and indexIcon
 			$.each(this.item, function(index, aitem) {
 
-				aitem.index = restServiceController.model.indexMap[aitem.name];
-				if ((typeof aitem.index) == 'number') {
-					var iconTitle = "";
-					if (aitem.index == 0)
-						iconTitle = "Text Index";
-					else if (aitem.index == 1)
-						iconTitle = "Integer Index";
-					else if (aitem.index == 2)
-						iconTitle = "Double Index";
-					else if (aitem.index == 3)
-						iconTitle = "Calendar Index";
-
-					aitem.indexIcon = "<img src='img/index_typ_" + aitem.index
-							+ ".gif' title='" + iconTitle + "' />";
-
-					// console.log("index=" + aitem.indexIcon);
+				if (restServiceController.model.apiVersion=="4.0") {
+					if (restServiceController.model.fieldListNoAnalyse.indexOf(aitem.name)>-1) {
+						aitem.indexIcon = "<img src='img/index_typ_0.gif' title='no-analyze' />";
+					}
+					
+				} else {
+					aitem.index = restServiceController.model.indexMap[aitem.name];
+					if ((typeof aitem.index) == 'number') {
+						var iconTitle = "";
+						if (aitem.index == 0)
+							iconTitle = "Text Index";
+						else if (aitem.index == 1)
+							iconTitle = "Integer Index";
+						else if (aitem.index == 2)
+							iconTitle = "Double Index";
+						else if (aitem.index == 3)
+							iconTitle = "Calendar Index";
+	
+						aitem.indexIcon = "<img src='img/index_typ_" + aitem.index
+								+ ".gif' title='" + iconTitle + "' />";
+	
+						// console.log("index=" + aitem.indexIcon);
+					}
 				}
 			});
 
@@ -153,6 +161,11 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		id : "workitemController",
 		model : new Workitem()
 	}),
+	
+	configurationController = benJS.createController({
+		id : "configurationController",
+		model : new Workitem()
+	}),
 
 	/***************************************************************************
 	 * 
@@ -185,25 +198,16 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		afterRoute : function(router) {
 			$("#imixs-nav ul li").removeClass('active');
 			$("#imixs-nav ul li:nth-child(2)").addClass('active');
+			
+			// update the priorVersionCheckbox
+			if (restServiceController.model.apiVersion=="4.0") {
+				$('#sortorderreverse').prop('checked', restServiceController.model.sortrevrse);
+			}
+			
 			worklistController.loadWorklist();
 		}
 	}),
-	
-	searchRoute = benJS.createRoute({
-		id : "search-route",
-		templates : {
-			"content" : "view_search.html"
-		},
-		beforeRoute : function(router) {
-			if (worklistController.model.query=="")
-				worklistController.model.query= "(type:\"workitem\")";
-		},
-		afterRoute : function(router) {
-			$("#imixs-nav ul li").removeClass('active');
-			$("#imixs-nav ul li:nth-child(2)").addClass('active');
-			worklistController.loadWorklist();
-		}
-	}),
+
 
 	workitemRoute = benJS.createRoute({
 		id : "workitem-route",
@@ -238,8 +242,8 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		}
 	}),
 
-	indexRoute = benJS.createRoute({
-		id : "index-route",
+	configurationRoute = benJS.createRoute({
+		id : "configuration-route",
 		templates : {
 			"content" : "view_index.html"
 		},
@@ -248,6 +252,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			$("#imixs-nav ul li:nth-child(5)").addClass('active');
 		}
 	}),
+	
 
 	backupRoute = benJS.createRoute({
 		id : "backup-route",
@@ -494,8 +499,50 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 
 		// read indexlist if api version < 4.0...
 		if (restServiceController.model.apiVersion=="4.0") {
-			worklistController.query= "(type:\"workitem\")";
-			searchRoute.route();
+			$.ajax({
+				
+				type : "GET",
+				url : this.model.baseURL + "/document/configuration",
+				dataType : "xml",
+				contentType : "application/xml",
+				success : function(response) {
+					console.debug(response);
+					restServiceController.model.configuration =imixsXML.xml2entity(response);
+					
+					configurationController.model.item = imixsXML.xml2entity(response);
+					
+					
+					$.each(restServiceController.model.configuration, function(index, aitem) {
+						if (aitem.name=="lucence.indexfieldlistnoanalyze") {
+							restServiceController.model.indexfieldlistnoanalyze=aitem.value;
+							var fieldListNoAnalyse = new Array();
+							$.each(aitem.value, function(index, aitem) {
+								fieldListNoAnalyse.push(aitem.$);
+							});
+							restServiceController.model.fieldListNoAnalyse=fieldListNoAnalyse;
+							return true;
+						}						
+					});
+
+					
+					// setup routes
+					configurationRoute.templates= {	"content" : "view_configuration.html" };
+					queryRoute.templates= {	"content" : "view_search.html" };
+					
+					// set default query
+					if (!worklistController.model.query) {
+						worklistController.model.query= "(type:\"workitem\")";
+					}
+					queryRoute.route();
+				},
+				error : function(jqXHR, error, errorThrown) {
+					restServiceController.model.connected = false;
+					$("#error-message").text(errorThrown);
+					$("#imixs-error").show();
+				}
+			});
+			
+			
 		} else {
 			$.ajax({
 				type : "GET",
@@ -504,7 +551,16 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 				success : function(response) {
 					restServiceController.model.connected = true;
 					restServiceController.model.indexMap = response.map;
-					worklistController.query= "SELECT entity FROM Entity entity where entity.type='workitem' ORDER BY entity.modified DESC";
+					
+					// setup routes
+					configurationRoute.templates= {	"content" : "view_index.html" };
+					queryRoute.templates= {	"content" : "view_query.html" };
+					
+					// set default query
+					if (!worklistController.model.query) {
+						worklistController.model.query= "SELECT entity FROM Entity entity where entity.type='workitem' ORDER BY entity.modified DESC";
+					}
+
 					queryRoute.route();
 				},
 				error : function(jqXHR, error, errorThrown) {
@@ -530,7 +586,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 				restServiceController.model.indexName = "";
 				restServiceController.model.indexType = "";
 				restServiceController.model.indexMap = response.map;
-				indexRoute.route();
+				configurationRoute.route();
 			},
 			error : function(jqXHR, error, errorThrown) {
 				$("#error-message").text(errorThrown);
@@ -598,6 +654,11 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		var query = worklistController.model.query;
 		if (query=="")
 			return;
+		
+		// get sortorderreverse flag manually (not yet supported by benJS)
+		worklistController.model.sortreverse=$('#sortorderreverse').is(':checked');
+		
+		
 		// replace new lines..
 		query = query.replace(/(\r\n|\n|\r)/gm, " ");
 
@@ -612,8 +673,8 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		} else {
 			// default support 4.0.x
 			url = url + "/document/search/" + query;
-			url = url + "?maxresult=" + worklistController.model.maxresult + "&page="
-			+ worklistController.model.page;
+			url = url + "?pageSize=" + worklistController.model.maxresult + "&pageIndex="
+			+ worklistController.model.page + "&sortBy=" +  worklistController.model.sortby + "&sortReverse=" +  worklistController.model.sortreverse;
 		}
 	
 
@@ -861,11 +922,11 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		restServiceController : restServiceController,
 		worklistController : worklistController,
 		workitemController : workitemController,
+		configurationController : configurationController,
 		queryRoute : queryRoute,
-		searchRoute : searchRoute,
 		bulkUpdateRoute : bulkUpdateRoute,
 		bulkDeleteRoute : bulkDeleteRoute,
-		indexRoute : indexRoute,
+		configurationRoute : configurationRoute,
 		backupRoute : backupRoute,
 		start : start
 	};
