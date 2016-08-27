@@ -291,7 +291,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			
 			$('#adminp-formpanel').imixsLayout();
 			
-			//adminPController.loadJobs();
+			adminPViewController.loadJobs();
 		}
 	}),
 	
@@ -1002,10 +1002,10 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			url : url,
 			dataType : "xml",
 			success : function(response) {
-				adminPController.model.jobs = imixsXML
+				adminPViewController.model.jobs = imixsXML
 						.xml2collection(response);
 				// push content
-				adminPController.push();
+				adminPViewController.push();
 			},
 			error : function(jqXHR, error, errorThrown) {
 				$("#error-message").text(errorThrown);
@@ -1068,7 +1068,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			},
 			success : function(xml) {
 				printLog(".", true);
-				adminPController.loadJobs();
+				adminPViewController.loadJobs();
 			}
 		});
 	};

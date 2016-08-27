@@ -41,14 +41,14 @@
 							<dt>Type:</dt>
 							<dd>
 								<textarea placeholder="restricte to document types"
-									xdata-ben-model="typelist"></textarea>
+									data-ben-model="getItem('typelist')"></textarea>
 							</dd>
 						</dl>
 
 						<dl>
 							<dt>Blocksize:</dt>
 							<dd>
-								<input type="text" placeholder="" xdata-ben-model="blocksize"></input>
+								<input type="text" placeholder="" data-ben-model="getItem('numblocksize')"></input>
 							</dd>
 						</dl>
 
@@ -122,7 +122,7 @@
 
 
 							<td><input type="button" value="Delete"
-								onclick="adminclient.adminPController.deleteJob({context:this,callback:adminclient.worklistController.loadWorklist})" /></td>
+								onclick="adminclient.adminPViewController.deleteJob({context:this,callback:adminclient.worklistController.loadWorklist})" /></td>
 
 						</tr>
 					</tbody>
