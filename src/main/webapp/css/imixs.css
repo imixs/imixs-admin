@@ -38,6 +38,17 @@ table th {
 table th:FIRST-CHILD {
 	border-left:none;
 }
+.ui-widget {
+	font-size: 1em;
+}
+
+.ui-widget-content {
+	background:  #fff;
+}
+.ui-widget-header {
+	font-weight: normal;
+}
+
 #header {
 	min-height: 70px;
 	background: transparent;
@@ -241,6 +252,13 @@ dd textarea {
 
 .imixs-view a, .imixs-view a  span {
 	color: #428bca;
+}
+
+.imixs-date {
+	width: 110px !important;
+	background: url(./Calendar_16.png) no-repeat scroll left center
+		white;
+	padding-left: 20px !important;;
 }
 
 #imixs-error {

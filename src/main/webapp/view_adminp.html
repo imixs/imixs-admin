@@ -1,0 +1,133 @@
+<div class="row imixs-view">
+
+	<!-- Status message -->
+	<div id="imixs-status" data-ben-controller="restServiceController">
+		<div class="ui-state-highlight ui-corner-all">
+			<p>
+				<span class="ui-icon ui-icon-transferthick-e-w"
+					style="float: left; margin-right: .3em; margin-top: .2em;"></span>
+				<span data-ben-model="getStatus()"></span>
+			</p>
+		</div>
+	</div>
+
+
+
+	<h1>AdminP:</h1>
+	<div data-ben-controller="adminPController">
+
+		<div class="" id="adminp-formpanel">
+
+			<div class="imixs-tabs">
+				<ul>
+					<li><a href="#tab-1">Rebuild Index</a></li>
+					<li><a href="#tab-2">Rename User</a></li>
+				</ul>
+
+				<div id="tab-1">
+
+
+					<div class="imixs-form-section-3">
+
+						<dl>
+							<dt>Created:</dt>
+							<dd>
+								<input type="text" class="imixs-date" placeholder="0"
+									data-ben-model="datfrom"></input> - <input type="text"
+									class="imixs-date" placeholder="0" data-ben-model="datto"></input>
+							</dd>
+						</dl>
+						<dl>
+							<dt>Type:</dt>
+							<dd>
+								<textarea placeholder="restricte to document types"
+									data-ben-model="typelist"></textarea>
+							</dd>
+						</dl>
+
+						<dl>
+							<dt>Blocksize:</dt>
+							<dd>
+								<input type="text" placeholder="" data-ben-model="blocksize"></input>
+							</dd>
+						</dl>
+
+
+					</div>
+
+					<input type="button" value="Start Job"
+						onclick="adminclient.adminPController.createJob();" class="btn" />
+
+
+
+
+
+
+				</div>
+				<div id="tab-2" class="imixs-form-section">
+					<p>tbd...</p>
+				</div>
+			</div>
+
+
+
+
+
+
+
+
+			<!-- Error message -->
+			<div id="imixs-error" style="">
+				<div class="ui-state-error ui-corner-all">
+					<p>
+						<span class="ui-icon ui-icon-alert"
+							style="float: left; margin-right: .3em;"></span> <strong>Error:</strong>
+					</p>
+					<p id="error-message" />
+				</div>
+			</div>
+
+
+			<!--  Job list -->
+
+			<div>
+				<table>
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Type</th>
+							<th>Created</th>
+							<th>Modified</th>
+							<th>Status</th>
+							<th>Updates</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody data-ben-foreach="jobs as adminclient.Workitem">
+						<tr>
+							<td><a href="javascript:;"
+								onclick="adminclient.workitemController.loadWorkitem(this)">
+									<span data-ben-model="getItem('$uniqueid')" />
+							</a> (<span data-ben-model="getItem('$version')" />)</td>
+
+							<td><span data-ben-model="getItem('job')" /></td>
+
+							<td><span data-ben-model="getItem('$created')" /></td>
+
+							<td><span data-ben-model="getItem('$modified')" /></td>
+
+							<td><span data-ben-model="getItem('txtworkflowstatus')" /></td>
+
+							<td><span data-ben-model="getItem('numupdates')" /></td>
+
+
+							<td><input type="button" value="Delete"
+								onclick="adminclient.adminPController.deleteJob({context:this,callback:adminclient.worklistController.loadWorklist})" /></td>
+
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+		</div>
+	</div>

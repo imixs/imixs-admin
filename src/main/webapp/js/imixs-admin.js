@@ -22,8 +22,9 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	 * 
 	 **************************************************************************/
 
+	// Model for RestServiceController 
 	RestService = function() {
-		this.baseURL = "http://localhost:8080/office-rest";
+		this.baseURL = "http://localhost:8080/workflow/rest-service";
 		this.apiVersion = "4.0";
 		this.connected = false;
 		this.indexMap = null;
@@ -49,15 +50,15 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 
 		this.getStatus = function() {
 			if (this.connected) {
-				return "<strong>Rest Service: </strong>" + this.baseURL;
+				return "<strong>Connected: </strong>" + this.baseURL;
 			} else {
-				return "<strong>Rest Service not found</strong>"
+				return "<strong>Disconnected!</strong>"
 			}
 		}
 
 	},
 
-	/* WorklistController */
+	/* Model for WorklistController */
 	Worklist = function() {
 		this.query ="";
 		this.view;
@@ -72,7 +73,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		this.$activityid = 0;
 	},
 
-	/* WorklistController */
+	/* Model for WorklistController */
 	Workitem = function(itemarray) {
 		imixs.ItemCollection.call(this, itemarray);
 		this.id = '';
@@ -140,6 +141,15 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		}
 
 	},
+	
+	
+	/* Model for AdminPController */
+	AdminP = function() {
+		this.jobs;
+		this.job= new Workitem();
+	},
+	
+	
 
 	/***************************************************************************
 	 * 
@@ -165,6 +175,11 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	configurationController = benJS.createController({
 		id : "configurationController",
 		model : new Workitem()
+	}),
+	
+	adminPController = benJS.createController({
+		id : "adminPController",
+		model : new AdminP()
 	}),
 
 	/***************************************************************************
@@ -242,18 +257,6 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		}
 	}),
 
-	configurationRoute = benJS.createRoute({
-		id : "configuration-route",
-		templates : {
-			"content" : "view_index.html"
-		},
-		afterRoute : function(router) {
-			$("#imixs-nav ul li").removeClass('active');
-			$("#imixs-nav ul li:nth-child(5)").addClass('active');
-		}
-	}),
-	
-
 	backupRoute = benJS.createRoute({
 		id : "backup-route",
 		templates : {
@@ -261,9 +264,38 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		},
 		afterRoute : function(router) {
 			$("#imixs-nav ul li").removeClass('active');
+			$("#imixs-nav ul li:nth-child(5)").addClass('active');
+		}
+	}), 
+	
+	adminpRoute = benJS.createRoute({
+		id : "adminp-route",
+		templates : {
+			"content" : "view_adminp.html"
+		},
+		afterRoute : function(router) {
+			$("#imixs-nav ul li").removeClass('active');
 			$("#imixs-nav ul li:nth-child(6)").addClass('active');
+			
+			$('#adminp-formpanel').imixsLayout();
+			
+			adminPController.loadJobs();
 		}
 	}),
+	
+	configurationRoute = benJS.createRoute({
+		id : "configuration-route",
+		templates : {
+			"content" : "view_index.html"
+		},
+		afterRoute : function(router) {
+			$("#imixs-nav ul li").removeClass('active');
+			$("#imixs-nav ul li:nth-child(7)").addClass('active');
+		}
+	}),
+	
+
+
 
 	contentTemplate = benJS.createTemplate({
 		id : "content",
@@ -271,7 +303,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	}),
 
 	/**
-	 * Start the ben Application
+	 * Start the BenJS Application
 	 */
 	start = function() {
 		var loc, url, service = "";
@@ -280,13 +312,23 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		// compute application root....
 		loc = window.location;
 		url = window.location.href;
+		url = url.substring(0, url.indexOf(loc.pathname));
+
+		// test if a service query param is provided....
 		if (url.indexOf('service=') > -1) {
 			service = url.substring(url.indexOf('service=') + 8);
+			restServiceController.model.baseURL = url + "/" + service;
+		} else {
+			// test if we know a cookie...
+			var lastURL = getCookie("org.imixs.workflow.adminclient.baseurl");
+			if (lastURL) {
+				restServiceController.model.baseURL =lastURL;
+			}
 		}
 
-		url = url.substring(0, url.indexOf(loc.pathname));
-		restServiceController.model.baseURL = url + "/" + service;
 
+		
+		
 		// start view
 		benJS.start();
 
@@ -294,6 +336,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		$("#imixs-error").hide();
 	};
 
+	
 	/* Custom method to process a single workitem */
 	workitemController.processWorkitem = function(workitem) {
 
@@ -479,7 +522,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	restServiceController.connect = function() {
 
 		worklistController.model.view = null;
-
+		
 		this.pull();
 
 		// get apiVersion 
@@ -506,7 +549,8 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 				dataType : "xml",
 				contentType : "application/xml",
 				success : function(response) {
-					console.debug(response);
+					restServiceController.model.connected = true;
+					setCookie("org.imixs.workflow.adminclient.baseurl", restServiceController.model.baseURL,30);
 					restServiceController.model.configuration =imixsXML.xml2entity(response);
 					
 					configurationController.model.item = imixsXML.xml2entity(response);
@@ -533,12 +577,17 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 					if (!worklistController.model.query) {
 						worklistController.model.query= "(type:\"workitem\")";
 					}
+					
+					$("#imixs-error").hide();
+					$("#imixs-status").show();
+					
 					queryRoute.route();
 				},
 				error : function(jqXHR, error, errorThrown) {
 					restServiceController.model.connected = false;
 					$("#error-message").text(errorThrown);
 					$("#imixs-error").show();
+					$("#imixs-status").hide();
 				}
 			});
 			
@@ -550,6 +599,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 				dataType : "json",
 				success : function(response) {
 					restServiceController.model.connected = true;
+					setCookie("org.imixs.workflow.adminclient.baseurl", restServiceController.model.baseURL,30);
 					restServiceController.model.indexMap = response.map;
 					
 					// setup routes
@@ -560,6 +610,10 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 					if (!worklistController.model.query) {
 						worklistController.model.query= "SELECT entity FROM Entity entity where entity.type='workitem' ORDER BY entity.modified DESC";
 					}
+					
+					
+					$("#imixs-error").hide();
+					$("#imixs-status").show();
 
 					queryRoute.route();
 				},
@@ -567,6 +621,8 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 					restServiceController.model.connected = false;
 					$("#error-message").text(errorThrown);
 					$("#imixs-error").show();
+					$("#imixs-status").hide();
+
 				}
 			});
 		}
@@ -914,6 +970,154 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		});
 
 	}
+	
+	
+	
+	
+	/* Custom method to load the adminP jobs */
+	adminPController.loadJobs = function() {
+		//worklistController.pull();
+		console.debug("load adminP Jobs..");
+
+		var url = restServiceController.model.baseURL;
+		// default support 4.0.x
+		url = url + "/adminp/jobs?pageSize=50";
+	
+		$.ajax({
+			type : "GET",
+			url : url,
+			dataType : "xml",
+			success : function(response) {
+				adminPController.model.jobs = imixsXML
+						.xml2collection(response);
+				// push content
+				adminPController.push();
+			},
+			error : function(jqXHR, error, errorThrown) {
+				$("#error-message").text(errorThrown);
+				$("#imixs-error").show();
+			}
+		});
+
+	}
+
+	/**
+	 * Create AdminP Job
+	 * 
+	 */
+	adminPController.createJob = function() {
+
+		adminPController.pull();
+		var jobDocument = new Workitem();
+		jobDocument.setItem("type", "adminp","xs:string");
+		jobDocument.setItem("job", "REBUILD_LUCENE_INDEX","xs:string");
+		
+		
+
+		var xmlData = imixsXML.json2xml(jobDocument);
+		// console.debug(xmlData);
+		console.debug("create adminp job...");
+
+		var url = restServiceController.model.baseURL;
+		url = url + "/adminp/jobs";
+
+		$.ajax({
+			type : "POST",
+			url : url,
+			data : xmlData,
+			contentType : "text/xml",
+			dataType : "xml",
+			cache : false,
+			error : function(jqXHR, error, errorThrown) {
+				var message = errorThrown;
+				var json = imixsXML.xml2json(jqXHR.responseXML);
+				var workitem = new Workitem(json);
+				workitemController.model.item = json.entity.item;
+				var uniqueid = workitem.getItem('$uniqueid');
+				var error_code = workitem.getItem('$error_code');
+				var error_message = workitem.getItem('$error_message');
+
+				printLog("<br />" + uniqueid + " : " + error_code + " - "
+						+ error_message, true);
+
+				$("#error-message").text("BulkUpdate failed");
+				$("#imixs-error").show();
+			},
+			success : function(xml) {
+				printLog(".", true);
+				adminPController.loadJobs();
+			}
+		});
+	};
+	
+	
+	
+	/**
+	 * Deletes a AdminP job. The method Expects a config element containing optional context,
+	 * id and callback:
+	 * 
+	 * <code> 
+	 *   { context:this, 
+	 *     confirm: boolean
+	 *     uniqueid:String, 
+	 *     callback:function 
+	 *   }
+	 * </code>
+	 */
+	adminPController.deleteJob = function(config) {
+
+		if (config.context) {
+			var entry = $(config.context).closest('[data-ben-entry]');
+			var entryNo = $(entry).attr("data-ben-entry");
+			var workitem = new imixs.ItemCollection(
+					worklistController.model.view[entryNo]);
+
+			var id = workitem.getItem('$uniqueid');
+			if (id) {
+				config.uniqueid = id;
+			}
+		}
+
+		if (typeof config.confirm === "undefined") {
+			config.confirm = true;
+		}
+
+		if (config.confirm === true) {
+			// confirm dialog
+			if (!confirm('Are you sure that you want to delete the AdminP Job ' + id + ' now?')) {
+				return false;
+			}
+
+		}
+
+		// delete workitem
+		console.debug("delete AdminP job: '" + config.uniqueid + "'...");
+
+		var url = restServiceController.model.baseURL;
+		url = url + "/adminp/jobs/" + config.uniqueid;
+
+		$.ajax({
+			type : "DELETE",
+			url : url,
+			success : function(response) {
+				printLog(".", true);
+
+				// callback
+				if (typeof config.callback === "function") {
+					config.callback();
+				}
+			},
+			error : function(jqXHR, error, errorThrown) {
+				$("#error-message").text(errorThrown);
+				$("#imixs-error").show();
+			}
+		});
+
+	}
+
+	
+	
+	
 
 	// public API
 	return {
@@ -923,11 +1127,13 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		worklistController : worklistController,
 		workitemController : workitemController,
 		configurationController : configurationController,
+		adminPController : adminPController,
 		queryRoute : queryRoute,
 		bulkUpdateRoute : bulkUpdateRoute,
 		bulkDeleteRoute : bulkDeleteRoute,
 		configurationRoute : configurationRoute,
 		backupRoute : backupRoute,
+		adminpRoute : adminpRoute,
 		start : start
 	};
 
@@ -951,4 +1157,26 @@ function printLog(message, noLineBrake) {
 function clearLog(message, noLineBrake) {
 
 	$("#imixs-log #log-message").empty();
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length,c.length);
+        }
+    }
+    return "";
+}
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + "; " + expires;
 }

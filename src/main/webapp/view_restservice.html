@@ -7,10 +7,8 @@
 			<dd>
 				<input type="text" placeholder="Enter Rest Service Base Address"
 					data-ben-model="baseURL" autocomplete="on" /> <br /> <label>Connect
-					to Imixs-Workflow version:</label> 
-					
-					<select style="width:100px;"  data-ben-model="apiVersion"
-					id="api_version">
+					to Imixs-Workflow version:</label> <select style="width: 100px;"
+					data-ben-model="apiVersion" id="api_version">
 					<option value="4.0">4.0</option>
 					<option value="3.8">3.8</option>
 					<option value="3.7">&lt; 3.8</option>
@@ -29,6 +27,27 @@
 
 	</div>
 
+	<!-- Status message -->
+	<div id="imixs-status" data-ben-controller="restServiceController">
+		<div class="ui-state-highlight ui-corner-all">
+			<p>
+				<span class="ui-icon ui-icon-transferthick-e-w"
+					style="float: left; margin-right: .3em; margin-top: .2em;"></span>
+				<span data-ben-model="getStatus()"></span>
+			</p>
+		</div>
+	</div>
+
+	<!-- Error message -->
+	<div id="imixs-error" style="">
+		<div class="ui-state-error ui-corner-all">
+			<p>
+				<span class="ui-icon ui-icon-alert"
+					style="float: left; margin-right: .3em;"></span> <strong>Error:</strong>
+			</p>
+			<p id="error-message" />
+		</div>
+	</div>
 </div>
 
 
