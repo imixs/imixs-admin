@@ -146,7 +146,6 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	/* Model for AdminPController */
 	AdminP = function() {
 		this.jobs;
-		this.job= new Workitem();
 	},
 	
 	
@@ -177,8 +176,13 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		model : new Workitem()
 	}),
 	
-	adminPController = benJS.createController({
-		id : "adminPController",
+	adminPJobController = benJS.createController({
+		id : "adminPJobController",
+		model : new Workitem()
+	}),
+	
+	adminPViewController = benJS.createController({
+		id : "adminPViewController",
 		model : new AdminP()
 	}),
 
@@ -273,13 +277,21 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		templates : {
 			"content" : "view_adminp.html"
 		},
+		
+		beforeRoute : function(router) {
+			console.log('create empty adminp job');
+			adminPJobController.model=new Workitem();
+			adminPJobController.model.setItem('datfrom','','xs:dateTime');
+		},
+		
+		
 		afterRoute : function(router) {
 			$("#imixs-nav ul li").removeClass('active');
 			$("#imixs-nav ul li:nth-child(6)").addClass('active');
 			
 			$('#adminp-formpanel').imixsLayout();
 			
-			adminPController.loadJobs();
+			//adminPController.loadJobs();
 		}
 	}),
 	
@@ -288,6 +300,8 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		templates : {
 			"content" : "view_index.html"
 		},
+		
+	
 		afterRoute : function(router) {
 			$("#imixs-nav ul li").removeClass('active');
 			$("#imixs-nav ul li:nth-child(7)").addClass('active');
@@ -975,7 +989,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	
 	
 	/* Custom method to load the adminP jobs */
-	adminPController.loadJobs = function() {
+	adminPViewController.loadJobs = function() {
 		//worklistController.pull();
 		console.debug("load adminP Jobs..");
 
@@ -1005,15 +1019,24 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	 * Create AdminP Job
 	 * 
 	 */
-	adminPController.createJob = function() {
+	adminPJobController.createJob = function() {
 
-		adminPController.pull();
-		var jobDocument = new Workitem();
-		jobDocument.setItem("type", "adminp","xs:string");
-		jobDocument.setItem("job", "REBUILD_LUCENE_INDEX","xs:string");
+		adminPJobController.pull();
 		
+		 console.log("new date value=" + adminPJobController.model.getItem('datfrom')); 
+	 		
+		 // convert date objects into ISO 8601 format
+ 		imixsUI.convertDateTimeInput(adminPJobController.model);
+ 		
+ 		 console.log("new ISO format=" + adminPJobController.model.getItem('datfrom')); 
+ 		
+// 		var dingens=adminPController.model.job.getItem('datfrom');
+//		var jobDocument = new Workitem();
+//		jobDocument.setItem("type", "adminp","xs:string");
+//		jobDocument.setItem("job", "REBUILD_LUCENE_INDEX","xs:string");
+//		var datum=adminPController.model.job;
+//		console.log("Datum = " + datum);
 		
-
 		var xmlData = imixsXML.json2xml(jobDocument);
 		// console.debug(xmlData);
 		console.debug("create adminp job...");
@@ -1064,7 +1087,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	 *   }
 	 * </code>
 	 */
-	adminPController.deleteJob = function(config) {
+	adminPViewController.deleteJob = function(config) {
 
 		if (config.context) {
 			var entry = $(config.context).closest('[data-ben-entry]');
@@ -1127,7 +1150,8 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		worklistController : worklistController,
 		workitemController : workitemController,
 		configurationController : configurationController,
-		adminPController : adminPController,
+		adminPJobController : adminPJobController,
+		adminPViewController : adminPViewController,
 		queryRoute : queryRoute,
 		bulkUpdateRoute : bulkUpdateRoute,
 		bulkDeleteRoute : bulkDeleteRoute,

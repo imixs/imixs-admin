@@ -40,8 +40,8 @@ IMIXS.org.imixs.xml = (function() {
 
 	/**
 	 * converts a Imixs XML result set into an array of entities. This method
-	 * guarantees that an array of entities is returned even if the result colletion
-	 * size is 0 or 1
+	 * guarantees that an array of entities is returned even if the result
+	 * colletion size is 0 or 1
 	 */
 	xml2collection = function(xml) {
 		var json = xml2json(xml)
@@ -50,12 +50,12 @@ IMIXS.org.imixs.xml = (function() {
 
 		return json.collection.entity;
 	}
-	
+
 	/**
-	 * converts a Imixs XML result of an entity into an item array  
+	 * converts a Imixs XML result of an entity into an item array
 	 */
 	xml2entity = function(xml) {
-		var json = xml2json(xml)   
+		var json = xml2json(xml)
 		if (!$.isArray(json.entity.item))
 			json.entity.item = jQuery.makeArray(json.entity.item);
 		return json.entity.item;
@@ -150,7 +150,7 @@ IMIXS.org.imixs.xml = (function() {
 			 *   </entity>
 			 */
 			json2xml = function(workitem) {
-				var result = '<entity xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">';
+				var result = '<?xml version="1.0" encoding="UTF-8"?>\n<entity xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">';
 
 				if (workitem && workitem.item) {
 					$.each(workitem.item, function(index, aitem) {
@@ -160,8 +160,18 @@ IMIXS.org.imixs.xml = (function() {
 						if (aitem.value) {
 							$.each(aitem.value, function(index, avalue) {
 								result = result + '<value xsi:type="'
-										+ avalue["xsi:type"] + '">'
-										+ avalue["$"] + '</value>';
+										+ avalue["xsi:type"] + '">';
+								/*  
+								 * in case of xsi:type==xs:string we embed the
+								 * value into a CDATA element
+								 */
+								if (avalue["xsi:type"]==="xs:string") {
+									result = result + "<![CDATA[" + avalue["$"]
+											+ "]]>";
+								} else {
+									result = result + avalue["$"];
+								}
+								result = result + '</value>';
 							});
 						}
 

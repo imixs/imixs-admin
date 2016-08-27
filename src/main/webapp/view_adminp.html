@@ -14,11 +14,11 @@
 
 
 	<h1>AdminP:</h1>
-	<div data-ben-controller="adminPController">
+	<div>
 
-		<div class="" id="adminp-formpanel">
+		<div  class="" id="adminp-formpanel">
 
-			<div class="imixs-tabs">
+			<div class="imixs-tabs" data-ben-controller="adminPJobController">
 				<ul>
 					<li><a href="#tab-1">Rebuild Index</a></li>
 					<li><a href="#tab-2">Rename User</a></li>
@@ -32,8 +32,8 @@
 						<dl>
 							<dt>Created:</dt>
 							<dd>
-								<input type="text" class="imixs-date" placeholder="0"
-									data-ben-model="datfrom"></input> - <input type="text"
+								<input type="text" class="imixs-date" 
+									data-ben-model="getItem('datfrom')"></input> - <input type="text"
 									class="imixs-date" placeholder="0" data-ben-model="datto"></input>
 							</dd>
 						</dl>
@@ -41,14 +41,14 @@
 							<dt>Type:</dt>
 							<dd>
 								<textarea placeholder="restricte to document types"
-									data-ben-model="typelist"></textarea>
+									xdata-ben-model="typelist"></textarea>
 							</dd>
 						</dl>
 
 						<dl>
 							<dt>Blocksize:</dt>
 							<dd>
-								<input type="text" placeholder="" data-ben-model="blocksize"></input>
+								<input type="text" placeholder="" xdata-ben-model="blocksize"></input>
 							</dd>
 						</dl>
 
@@ -56,7 +56,7 @@
 					</div>
 
 					<input type="button" value="Start Job"
-						onclick="adminclient.adminPController.createJob();" class="btn" />
+						onclick="adminclient.adminPJobController.createJob();" class="btn" />
 
 
 
@@ -90,7 +90,7 @@
 
 			<!--  Job list -->
 
-			<div>
+			<div data-ben-controller="adminPViewController">
 				<table>
 					<thead>
 						<tr>
