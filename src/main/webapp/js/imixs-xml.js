@@ -159,19 +159,22 @@ IMIXS.org.imixs.xml = (function() {
 
 						if (aitem.value) {
 							$.each(aitem.value, function(index, avalue) {
-								result = result + '<value xsi:type="'
-										+ avalue["xsi:type"] + '">';
-								/*  
-								 * in case of xsi:type==xs:string we embed the
-								 * value into a CDATA element
-								 */
-								if (avalue["xsi:type"]==="xs:string") {
-									result = result + "<![CDATA[" + avalue["$"]
-											+ "]]>";
-								} else {
-									result = result + avalue["$"];
+								// if the value is undefined we skip this entry
+								if (avalue["$"]) {
+									result = result + '<value xsi:type="'
+											+ avalue["xsi:type"] + '">';
+									/*  
+									 * in case of xsi:type==xs:string we embed the
+									 * value into a CDATA element
+									 */
+									if (avalue["xsi:type"]==="xs:string") {
+										result = result + "<![CDATA[" + avalue["$"]
+												+ "]]>";
+									} else {
+										result = result + avalue["$"];
+									}
+									result = result + '</value>';
 								}
-								result = result + '</value>';
 							});
 						}
 

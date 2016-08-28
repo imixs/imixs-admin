@@ -63,7 +63,7 @@ IMIXS.org.imixs.ui = (function() {
 						var dateString = aitem.value[0]['$'];
 
 						// test if string matches ISO 8601 format
-						if (!dateString
+						if (dateString && !dateString
 								.match(/^(\d{4}\-\d\d\-\d\d([tT][\d:\.]*)?)([zZ]|([+\-])(\d\d):?(\d\d))?$/)) {
 							// test if Date object....
 							var dateObject = $.datepicker

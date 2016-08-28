@@ -282,6 +282,9 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			console.log('create empty adminp job');
 			adminPJobController.model=new Workitem();
 			adminPJobController.model.setItem('datfrom','','xs:dateTime');
+			adminPJobController.model.setItem('datto','','xs:dateTime');
+			adminPJobController.model.setItem('typelist','');
+			adminPJobController.model.setItem('numblocksize',100,'xs:int');
 		},
 		
 		
@@ -509,7 +512,11 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		console.debug("delete entity: '" + config.uniqueid + "'...");
 
 		var url = restServiceController.model.baseURL;
-		url = url + "/entity/" + config.uniqueid;
+		if (restServiceController.model.apiVersion=="4.0") {
+			url = url + "/document/" + config.uniqueid;
+		} else {
+			url = url + "/entity/" + config.uniqueid;
+		}
 
 		$.ajax({
 			type : "DELETE",
@@ -1019,27 +1026,15 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	 * Create AdminP Job
 	 * 
 	 */
-	adminPJobController.createJob = function() {
+	adminPJobController.createReindexJob = function() {
 
 		adminPJobController.pull();
-		
-		 console.log("new date value=" + adminPJobController.model.getItem('datfrom')); 
-	 		
+		adminPJobController.model.setItem("type","adminp");
+		adminPJobController.model.setItem("job","REBUILD_LUCENE_INDEX");
 		 // convert date objects into ISO 8601 format
  		imixsUI.convertDateTimeInput(adminPJobController.model);
- 		
- 		 console.log("new ISO format=" + adminPJobController.model.getItem('datfrom')); 
- 		
-// 		var dingens=adminPController.model.job.getItem('datfrom');
-//		var jobDocument = new Workitem();
-//		jobDocument.setItem("type", "adminp","xs:string");
-//		jobDocument.setItem("job", "REBUILD_LUCENE_INDEX","xs:string");
-//		var datum=adminPController.model.job;
-//		console.log("Datum = " + datum);
-		
-		var xmlData = imixsXML.json2xml(jobDocument);
-		// console.debug(xmlData);
-		console.debug("create adminp job...");
+		var xmlData = imixsXML.json2xml(adminPJobController.model);
+		console.debug("create new adminp job...");
 
 		var url = restServiceController.model.baseURL;
 		url = url + "/adminp/jobs";
@@ -1063,7 +1058,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 				printLog("<br />" + uniqueid + " : " + error_code + " - "
 						+ error_message, true);
 
-				$("#error-message").text("BulkUpdate failed");
+				$("#error-message").text("Create new job failed");
 				$("#imixs-error").show();
 			},
 			success : function(xml) {
@@ -1093,7 +1088,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			var entry = $(config.context).closest('[data-ben-entry]');
 			var entryNo = $(entry).attr("data-ben-entry");
 			var workitem = new imixs.ItemCollection(
-					worklistController.model.view[entryNo]);
+					adminPViewController.model.jobs[entryNo]);
 
 			var id = workitem.getItem('$uniqueid');
 			if (id) {
@@ -1123,8 +1118,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			type : "DELETE",
 			url : url,
 			success : function(response) {
-				printLog(".", true);
-
+				printLog("Job deleted.", true);
 				// callback
 				if (typeof config.callback === "function") {
 					config.callback();
