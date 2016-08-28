@@ -452,10 +452,10 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		var url = restServiceController.model.baseURL;
 		
 		if (restServiceController.model.apiVersion == "4.0") {
-			url = url + "/workflow/workitem/" + workitemController.model.id;
+			url = url + "/documents/" + workitemController.model.id;
 		} else {
 			// old version
-			url = url + "/entity/entities/" + workitemController.model.id;
+			url = url + "/workflow/workitem/" + workitemController.model.id;
 		}
 
 		$.ajax({
@@ -519,7 +519,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 
 		var url = restServiceController.model.baseURL;
 		if (restServiceController.model.apiVersion=="4.0") {
-			url = url + "/document/" + config.uniqueid;
+			url = url + "/documents/" + config.uniqueid;
 		} else {
 			url = url + "/entity/" + config.uniqueid;
 		}
@@ -572,7 +572,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			$.ajax({
 				
 				type : "GET",
-				url : this.model.baseURL + "/document/configuration",
+				url : this.model.baseURL + "/documents/configuration",
 				dataType : "xml",
 				contentType : "application/xml",
 				success : function(response) {
@@ -755,7 +755,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			+ worklistController.model.count;
 		} else {
 			// default support 4.0.x
-			url = url + "/document/search/" + query;
+			url = url + "/documents/search/" + query;
 			url = url + "?pageSize=" + worklistController.model.maxresult + "&pageIndex="
 			+ worklistController.model.page + "&sortBy=" +  worklistController.model.sortby + "&sortReverse=" +  worklistController.model.sortreverse;
 		}
@@ -815,7 +815,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			+ worklistController.model.count;
 		} else {
 			// default 4.0.0
-			url = url + "/document/search/" + worklistController.model.query;
+			url = url + "/documents/search/" + worklistController.model.query;
 			url = url + "?maxresult=" + worklistController.model.maxresult + "&page="
 			+ worklistController.model.page;
 		}
@@ -902,7 +902,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			+ worklistController.model.count;
 		} else {
 			// default 4.0.0
-			url = url + "/document/search/" + worklistController.model.query;
+			url = url + "/documents/search/" + worklistController.model.query;
 			url = url + "?maxresult=" + worklistController.model.maxresult + "&page="
 			+ worklistController.model.page;
 		}
