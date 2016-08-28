@@ -22,6 +22,7 @@
 				<ul>
 					<li><a href="#tab-1">Rebuild Index</a></li>
 					<li><a href="#tab-2">Rename User</a></li>
+					<li><a href="#tab-3">Migration</a></li>
 				</ul>
 
 				<div id="tab-1">
@@ -72,15 +73,61 @@
 					<input type="button" value="Start Job"
 						onclick="adminclient.adminPJobController.createReindexJob();" class="btn" />
 
-
-
-
-
-
 				</div>
+				
+				
+				
 				<div id="tab-2" class="imixs-form-section">
 					<p>tbd...</p>
 				</div>
+
+
+
+
+
+
+
+
+				<div id="tab-3">
+
+					<p>This AdminP process can be used to migrate an existing Imixs-Workflow Instance 3.x to version 4.0.
+					</p>
+					
+					<div class="row nested">
+
+						
+						<div class="col-4">
+							<dl>
+								<dt>Blocksize:</dt>
+								<dd>
+									<input type="text" placeholder="100"
+										data-ben-model="getItem('numblocksize')"></input>
+								</dd>
+							</dl>
+							<dl>
+								<dt>Interval in minutes:</dt>
+								<dd>
+									<input type="text" placeholder="1"
+										data-ben-model="getItem('numinterval')"></input>
+								</dd>
+							</dl>
+						</div>
+
+					</div>
+
+					<input type="button" value="Start Job"
+						onclick="adminclient.adminPJobController.createMigrationJob();" class="btn" />
+
+
+
+
+
+
+				</div>
+
+
+
+
 			</div>
 
 

@@ -450,7 +450,13 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 						+ "'...");
 
 		var url = restServiceController.model.baseURL;
-		url = url + "/workflow/workitem/" + workitemController.model.id;
+		
+		if (restServiceController.model.apiVersion == "4.0") {
+			url = url + "/workflow/workitem/" + workitemController.model.id;
+		} else {
+			// old version
+			url = url + "/entity/entities/" + workitemController.model.id;
+		}
 
 		$.ajax({
 			type : "GET",
@@ -744,7 +750,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			url = url + "?start=" + worklistController.model.start + "&count="
 			+ worklistController.model.count;
 		} else if (restServiceController.model.apiVersion == "3.8") {
-			url = url + "/entity/entitiesbyquery/" + query;
+			url = url + "/entity/query/" + query;
 			url = url + "?start=" + worklistController.model.start + "&count="
 			+ worklistController.model.count;
 		} else {
@@ -1023,7 +1029,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	}
 
 	/**
-	 * Create AdminP Job
+	 * Create AdminP Job REBUILD_LUCENE_INDEX
 	 * 
 	 */
 	adminPJobController.createReindexJob = function() {
@@ -1031,6 +1037,54 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		adminPJobController.pull();
 		adminPJobController.model.setItem("type","adminp");
 		adminPJobController.model.setItem("job","REBUILD_LUCENE_INDEX");
+		 // convert date objects into ISO 8601 format
+ 		imixsUI.convertDateTimeInput(adminPJobController.model);
+		var xmlData = imixsXML.json2xml(adminPJobController.model);
+		console.debug("create new adminp job...");
+
+		var url = restServiceController.model.baseURL;
+		url = url + "/adminp/jobs";
+
+		$.ajax({
+			type : "POST",
+			url : url,
+			data : xmlData,
+			contentType : "text/xml",
+			dataType : "xml",
+			cache : false,
+			error : function(jqXHR, error, errorThrown) {
+				var message = errorThrown;
+				var json = imixsXML.xml2json(jqXHR.responseXML);
+				var workitem = new Workitem(json);
+				workitemController.model.item = json.entity.item;
+				var uniqueid = workitem.getItem('$uniqueid');
+				var error_code = workitem.getItem('$error_code');
+				var error_message = workitem.getItem('$error_message');
+
+				printLog("<br />" + uniqueid + " : " + error_code + " - "
+						+ error_message, true);
+
+				$("#error-message").text("Create new job failed");
+				$("#imixs-error").show();
+			},
+			success : function(xml) {
+				printLog(".", true);
+				adminPViewController.loadJobs();
+			}
+		});
+	};
+	
+	
+	
+	/**
+	 * Create AdminP Job MIGRATION
+	 * 
+	 */
+	adminPJobController.createMigrationJob = function() {
+
+		adminPJobController.pull();
+		adminPJobController.model.setItem("type","adminp");
+		adminPJobController.model.setItem("job","MIGRATION");
 		 // convert date objects into ISO 8601 format
  		imixsUI.convertDateTimeInput(adminPJobController.model);
 		var xmlData = imixsXML.json2xml(adminPJobController.model);
