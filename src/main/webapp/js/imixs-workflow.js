@@ -63,7 +63,7 @@ IMIXS.org.imixs.workflow = (function() {
 			url : url,
 			dataType : "xml",
 			success : function(response) {
-				var entity = imixsXML.xml2entity(response);
+				var entity = imixsXML.xml2document(response);
 				options.success(new imixs.ItemCollection(entity));
 			},
 			error : options.error
@@ -166,7 +166,7 @@ IMIXS.org.imixs.workflow = (function() {
 			},
 			success : function(response) {
 				// return processed workitem
-				var entity = imixsXML.xml2entity(response);
+				var entity = imixsXML.xml2document(response);
 				options.success(new imixs.ItemCollection(entity));
 			}
 		});

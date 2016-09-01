@@ -464,7 +464,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			dataType : "xml",
 			success : function(response) {
 				console.debug(response);
-				workitemController.model.item = imixsXML.xml2entity(response);
+				workitemController.model.item = imixsXML.xml2document(response);
 				workitemRoute.route();
 				// workitemController.push();
 			},
@@ -578,9 +578,9 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 				success : function(response) {
 					restServiceController.model.connected = true;
 					setCookie("org.imixs.workflow.adminclient.baseurl", restServiceController.model.baseURL,30);
-					restServiceController.model.configuration =imixsXML.xml2entity(response);
+					restServiceController.model.configuration =imixsXML.xml2document(response);
 					
-					configurationController.model.item = imixsXML.xml2entity(response);
+					configurationController.model.item = imixsXML.xml2document(response);
 					
 					
 					$.each(restServiceController.model.configuration, function(index, aitem) {

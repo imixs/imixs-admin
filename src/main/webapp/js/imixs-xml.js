@@ -45,20 +45,38 @@ IMIXS.org.imixs.xml = (function() {
 	 */
 	xml2collection = function(xml) {
 		var json = xml2json(xml)
-		if (!$.isArray(json.collection.entity))
-			json.collection.entity = jQuery.makeArray(json.collection.entity);
-
-		return json.collection.entity;
+		
+		// test if we have the old xml format (imixs-workflow < 4.0)
+		if (json.collection.document) {
+			if (!$.isArray(json.collection.document))
+				json.collection.document = jQuery.makeArray(json.collection.document);
+			return json.collection.document;			
+		} else {
+			// try to convert old entity structure...
+			if (!$.isArray(json.collection.entity))
+				json.collection.entity = jQuery.makeArray(json.collection.entity);
+			return json.collection.entity;
+		}
+		
 	}
 
 	/**
-	 * converts a Imixs XML result of an entity into an item array
+	 * converts a Imixs XML result of an document into an item array
 	 */
-	xml2entity = function(xml) {
+	xml2document = function(xml) {
 		var json = xml2json(xml)
-		if (!$.isArray(json.entity.item))
-			json.entity.item = jQuery.makeArray(json.entity.item);
-		return json.entity.item;
+		// test if we have the old xml format (imixs-workflow < 4.0)
+		if (json.document) {
+			if (!$.isArray(json.document.item))
+				json.document.item = jQuery.makeArray(json.document.item);
+			return json.document.item;
+		} else {
+			// try to convert old entity structure...
+			if (!$.isArray(json.entity.item))
+				json.entity.item = jQuery.makeArray(json.entity.item);
+			return json.entity.item;
+		}
+		
 	}
 
 	/**
@@ -193,7 +211,7 @@ IMIXS.org.imixs.xml = (function() {
 		xml2json : xml2json,
 		json2xml : json2xml,
 		xml2collection : xml2collection,
-		xml2entity : xml2entity
+		xml2document : xml2document
 	};
 
 }());
