@@ -44,6 +44,10 @@ IMIXS.org.imixs.xml = (function() {
 	 * colletion size is 0 or 1
 	 */
 	xml2collection = function(xml) {
+		if (!xml) {
+			return {};
+		}
+		
 		var json = xml2json(xml)
 		
 		// test if we have the old xml format (imixs-workflow < 4.0)
@@ -64,6 +68,10 @@ IMIXS.org.imixs.xml = (function() {
 	 * converts a Imixs XML result of an document into an item array
 	 */
 	xml2document = function(xml) {
+		if (!xml) {
+			return {};
+		}
+			
 		var json = xml2json(xml)
 		// test if we have the old xml format (imixs-workflow < 4.0)
 		if (json.document) {
@@ -91,6 +99,10 @@ IMIXS.org.imixs.xml = (function() {
 				// Create the return object
 				var obj = {};
 
+				if (!xml) {
+					return obj;
+				}
+				
 				if (xml.nodeType == 1) { // element
 					// do attributes
 					if (xml.attributes.length > 0) {
@@ -168,6 +180,55 @@ IMIXS.org.imixs.xml = (function() {
 			 *   </entity>
 			 */
 			json2xml = function(workitem) {
+				var result = '<?xml version="1.0" encoding="UTF-8"?>\n<document xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">';
+
+				if (workitem && workitem.item) {
+					$.each(workitem.item, function(index, aitem) {
+						result = result + '<item name="' + aitem.name + '">';
+
+						if (aitem.value) {
+							$.each(aitem.value, function(index, avalue) {
+								// if the value is undefined we skip this entry
+								if (avalue["$"]) {
+									result = result + '<value xsi:type="'
+											+ avalue["xsi:type"] + '">';
+									/*  
+									 * in case of xsi:type==xs:string we embed the
+									 * value into a CDATA element
+									 */
+									if (avalue["xsi:type"]==="xs:string") {
+										result = result + "<![CDATA[" + avalue["$"]
+												+ "]]>";
+									} else {
+										result = result + avalue["$"];
+									}
+									result = result + '</value>';
+								}
+							});
+						}
+
+						result = result + '</item>';
+					});
+
+				}
+
+				result = result + '</document>';
+				return result;
+			};
+			
+			
+			/**
+			 * converts a itemcollection into the deprecated imixs XML string with 'entity' tags. The result can
+			 * be used to post the string to a Imixs Rest Service API
+			 * 
+			 * <code>
+			 *   <entity xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+			 *      <item><name>namlasteditor</name><value xsi:type="xs:string">ralph.soika@imixs.com</value>
+			 *      </item><item><name>$isauthor</name><value xsi:type="xs:boolean">true</value></item>
+			 *      ....
+			 *   </entity>
+			 */
+			json2xmlEntity = function(workitem) {
 				var result = '<?xml version="1.0" encoding="UTF-8"?>\n<entity xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">';
 
 				if (workitem && workitem.item) {
@@ -207,9 +268,9 @@ IMIXS.org.imixs.xml = (function() {
 
 	// public API
 	return {
-		// ItemCollection : ItemCollection,
 		xml2json : xml2json,
 		json2xml : json2xml,
+		json2xmlEntity : json2xmlEntity,
 		xml2collection : xml2collection,
 		xml2document : xml2document
 	};

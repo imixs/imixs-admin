@@ -357,7 +357,13 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	/* Custom method to process a single workitem */
 	workitemController.processWorkitem = function(workitem) {
 
-		var xmlData = imixsXML.json2xml(workitem);
+		var xmlData;
+		if (restServiceController.model.apiVersion!="4.0") {
+			xmlData= imixsXML.json2xmlEntity(workitem);
+		} else {
+			xmlData= imixsXML.json2xml(workitem);
+		}
+		
 		// console.debug(xmlData);
 		console.debug("process workitem: '" + workitem.getItem('$uniqueid')
 				+ "'...");
@@ -374,7 +380,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			cache : false,
 			error : function(jqXHR, error, errorThrown) {
 				var message = errorThrown;
-				var json = imixsXML.xml2json(jqXHR.responseXML);
+				var json = imixsXML.xml2document(jqXHR.responseXML);
 				var workitem = new Workitem(json);
 				workitemController.model.item = json.entity.item;
 				var uniqueid = workitem.getItem('$uniqueid');
@@ -397,7 +403,14 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	/* Custom method to save a single workitem */
 	workitemController.saveWorkitem = function(workitem) {
 
-		var xmlData = imixsXML.json2xml(workitem);
+		var xmlData;
+		if (restServiceController.model.apiVersion!="4.0") {
+			xmlData= imixsXML.json2xmlEntity(workitem);
+		} else {
+			xmlData= imixsXML.json2xml(workitem);
+		}
+
+		
 		// console.debug(xmlData);
 		console.debug("save workitem: '" + workitem.getItem('$uniqueid')
 				+ "'...");
@@ -414,7 +427,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			cache : false,
 			error : function(jqXHR, error, errorThrown) {
 				var message = errorThrown;
-				var json = imixsXML.xml2json(jqXHR.responseXML);
+				var json = imixsXML.xml2document(jqXHR.responseXML);
 				var workitem = new Workitem(json);
 				workitemController.model.item = json.entity.item;
 				var uniqueid = workitem.getItem('$uniqueid');
@@ -1039,7 +1052,12 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		adminPJobController.model.setItem("job","REBUILD_LUCENE_INDEX");
 		 // convert date objects into ISO 8601 format
  		imixsUI.convertDateTimeInput(adminPJobController.model);
-		var xmlData = imixsXML.json2xml(adminPJobController.model);
+		var xmlData;
+		if (restServiceController.model.apiVersion!="4.0") {
+			xmlData= imixsXML.json2xmlEntity(adminPJobController.model);
+		} else {
+			xmlData= imixsXML.json2xml(adminPJobController.model);
+		}
 		console.debug("create new adminp job...");
 
 		var url = restServiceController.model.baseURL;
@@ -1054,9 +1072,12 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			cache : false,
 			error : function(jqXHR, error, errorThrown) {
 				var message = errorThrown;
-				var json = imixsXML.xml2json(jqXHR.responseXML);
+				var json = imixsXML.xml2document(jqXHR.responseXML);
 				var workitem = new Workitem(json);
-				workitemController.model.item = json.entity.item;
+				if (json.document)
+					workitemController.model.item = json.document.item;
+				else if (json.entity)
+					workitemController.model.item = json.entity.item;
 				var uniqueid = workitem.getItem('$uniqueid');
 				var error_code = workitem.getItem('$error_code');
 				var error_message = workitem.getItem('$error_message');
@@ -1087,7 +1108,12 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		adminPJobController.model.setItem("job","MIGRATION");
 		 // convert date objects into ISO 8601 format
  		imixsUI.convertDateTimeInput(adminPJobController.model);
-		var xmlData = imixsXML.json2xml(adminPJobController.model);
+ 		var xmlData;
+		if (restServiceController.model.apiVersion!="4.0") {
+			xmlData= imixsXML.json2xmlEntity(adminPJobController.model);
+		} else {
+			xmlData= imixsXML.json2xml(adminPJobController.model);
+		}
 		console.debug("create new adminp job...");
 
 		var url = restServiceController.model.baseURL;
@@ -1102,9 +1128,12 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			cache : false,
 			error : function(jqXHR, error, errorThrown) {
 				var message = errorThrown;
-				var json = imixsXML.xml2json(jqXHR.responseXML);
+				var json = imixsXML.xml2document(jqXHR.responseXML);
 				var workitem = new Workitem(json);
-				workitemController.model.item = json.entity.item;
+				if (json.document)
+					workitemController.model.item = json.document.item;
+				else if (json.entity)
+					workitemController.model.item = json.entity.item;
 				var uniqueid = workitem.getItem('$uniqueid');
 				var error_code = workitem.getItem('$error_code');
 				var error_message = workitem.getItem('$error_message');
