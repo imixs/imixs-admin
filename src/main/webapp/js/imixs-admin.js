@@ -416,7 +416,11 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 				+ "'...");
 
 		var url = restServiceController.model.baseURL;
-		url = url + "/entity/";
+		if (restServiceController.model.apiVersion == "4.0") {
+			url = url + "/documents/";
+		} else {
+			url = url + "/entity/";
+		}
 
 		$.ajax({
 			type : "POST",
