@@ -1004,14 +1004,12 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		var url = restServiceController.model.baseURL;
 		
 		if (restServiceController.model.apiVersion=="4.0") {
-			url = url + "/documents/backup?filepath="
+			url = url + "/documents/restore?filepath="
 			+ worklistController.model.filePath;
 		} else {
-			url = url + "/entity/backup?filepath="
+			url = url + "/entity/restore?filepath="
 			+ worklistController.model.filePath;
 		}
-		url = url + "/entity/backup?filepath="
-				+ worklistController.model.filePath;
 
 		$.ajax({
 			type : "GET",
