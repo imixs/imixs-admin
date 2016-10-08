@@ -968,7 +968,11 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		printLog("Backup started....");
 
 		var url = restServiceController.model.baseURL;
-		url = url + "/entity/backup/" + worklistController.model.query;
+		if (restServiceController.model.apiVersion=="4.0") {
+			url = url + "/documents/backup/" + worklistController.model.query;
+		} else {
+			url = url + "/entity/backup/" + worklistController.model.query;
+		}
 		url = url + "?filepath=" + worklistController.model.filePath;
 
 		$.ajax({
@@ -998,6 +1002,14 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		printLog("Restore started....");
 
 		var url = restServiceController.model.baseURL;
+		
+		if (restServiceController.model.apiVersion=="4.0") {
+			url = url + "/documents/backup?filepath="
+			+ worklistController.model.filePath;
+		} else {
+			url = url + "/entity/backup?filepath="
+			+ worklistController.model.filePath;
+		}
 		url = url + "/entity/backup?filepath="
 				+ worklistController.model.filePath;
 
