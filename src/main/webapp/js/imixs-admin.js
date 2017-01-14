@@ -1120,6 +1120,12 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		adminPJobController.pull();
 		adminPJobController.model.setItem("type","adminp");
 		adminPJobController.model.setItem("job","MIGRATION");
+		
+		// update blocksize/index properties
+		adminPJobController.model.setItem("numindex",adminPJobController.model.getItem("numindex_migration"));
+		adminPJobController.model.setItem("numblocksize",adminPJobController.model.getItem("numblocksize_migration"));
+		adminPJobController.model.setItem("numinterval",adminPJobController.model.getItem("numinterval_migration"));
+		
 		 // convert date objects into ISO 8601 format
  		imixsUI.convertDateTimeInput(adminPJobController.model);
  		var xmlData;
