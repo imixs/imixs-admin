@@ -51,20 +51,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-	<profiles>
-		<!-- wildfly profile to add a empty persistence.xml -->
-		<profile>
-			<id>wildfly</id>
-			<build>
-				<resources>
-					<resource>
-						<directory>${basedir}/src/main/webapp_wildfly</directory>
-					</resource>
-				</resources>
-			</build>
-		</profile>
-	</profiles>
-
 	<build>
 		<resources>
 			<!-- enable resource filtering -->
