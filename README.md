@@ -45,7 +45,7 @@ You can start the Imixs-Admin docker container with the command:
 
 
 
-###Deployment Info
+### Deployment Notes
 
 Because in Wildfly a persistence.xml file is necessary the pom.xml
 includes a 'wildfly' profile just to copy this blank persistence.xml into
