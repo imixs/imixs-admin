@@ -9,7 +9,7 @@
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 
-
+	<!-- see issue #18 
 	<login-config>
 		<auth-method>BASIC</auth-method>
 		<realm-name>imixsrealm</realm-name>
@@ -30,5 +30,6 @@
 	<security-role>
 		<role-name>org.imixs.ACCESSLEVEL.MANAGERACCESS</role-name>
 	</security-role>
+	-->
 	
 </web-app>

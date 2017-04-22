@@ -3,12 +3,12 @@
 <glassfish-web-app>
 	<context-root>/imixsadmin</context-root>
 	
-	
+	<!-- see issue #18 
 	<security-role-mapping>
 		<role-name>org.imixs.ACCESSLEVEL.MANAGERACCESS</role-name>
 		<group-name>Manager</group-name>
 		<group-name>IMIXS-WORKFLOW-Manager</group-name>
 	</security-role-mapping>
-	
+	-->
 	
 </glassfish-web-app>
