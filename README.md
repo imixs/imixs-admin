@@ -26,22 +26,23 @@ The Imixs-Admin client provides a Docker Image to be used to run the service in 
 The docker image is based on the docker image [imixs/wildfly](https://hub.docker.com/r/imixs/wildfly/).
 
 
-## 1. Build Imixs-Admin
+## Run Imixs-Admin in a Docker Container
+You can start the Imixs-Admin docker container with the command:
+
+	docker run --name="imixs-admin" -d -p 8080:8080  imixs/imixs-admin
+
+## Build Imixs-Admin from sources
+
+Alternatively you can build the imixs-admin client manually by sources
 
 Imixs-Admin is based on maven. To build the Java EE artifact run:
 
 	mvn clean install
 
-## 2. Build the docker image
 To build the docker image run
 
 	docker build --tag=imixs/imixs-admin .
 
-
-## 3. Run 
-You can start the Imixs-Admin docker container with the command:
-
-	docker run --name="imixs-admin" -d -p 8080:8080  imixs/imixs-admin
 
 
 
