@@ -211,6 +211,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 
 			// update the api_version select box
 			$('#api_version').val(restServiceController.model.apiVersion);
+			$('#container').imixsLayout();
 		}
 
 	}),
@@ -230,6 +231,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			}
 			
 			worklistController.loadWorklist();
+			$('#container').imixsLayout();
 		}
 	}),
 
@@ -242,6 +244,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		afterRoute : function(router) {
 			$("#imixs-nav ul li").removeClass('active');
 			$("#imixs-nav ul li:nth-child(2)").addClass('active');
+			$('#container').imixsLayout();
 		}
 	}),
 
@@ -253,6 +256,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		afterRoute : function(router) {
 			$("#imixs-nav ul li").removeClass('active');
 			$("#imixs-nav ul li:nth-child(3)").addClass('active');
+			$('#container').imixsLayout();
 		}
 	}),
 
@@ -264,6 +268,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		afterRoute : function(router) {
 			$("#imixs-nav ul li").removeClass('active');
 			$("#imixs-nav ul li:nth-child(4)").addClass('active');
+			$('#container').imixsLayout();
 		}
 	}),
 
@@ -275,6 +280,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		afterRoute : function(router) {
 			$("#imixs-nav ul li").removeClass('active');
 			$("#imixs-nav ul li:nth-child(5)").addClass('active');
+			$('#container').imixsLayout();
 		}
 	}), 
 	
@@ -291,13 +297,19 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			adminPJobController.model.setItem('datfrom','','xs:dateTime');
 			adminPJobController.model.setItem('datto','','xs:dateTime');
 			adminPJobController.model.setItem('typelist','');
-			adminPJobController.model.setItem('numblocksize',100,'xs:int');
-			adminPJobController.model.setItem('numblocksize_migration',100,'xs:int');
-			adminPJobController.model.setItem('numindex',0,'xs:int');
-			adminPJobController.model.setItem('numindex_migration',0,'xs:int');
+
+			adminPJobController.model.numblocksize_update=100;
+			adminPJobController.model.numblocksize_migration=100;
+			adminPJobController.model.numblocksize_renameuser=100;
+
 			
-			adminPJobController.model.setItem('numinterval',1,'xs:int');
-			adminPJobController.model.setItem('numinterval_migration',1,'xs:int');
+			adminPJobController.model.numindex_update=0;
+			adminPJobController.model.numindex_renameuser=0;
+			adminPJobController.model.numindex_migration=0;
+			
+			adminPJobController.model.numinterval_update=1;
+			adminPJobController.model.numinterval_migration=1;
+			adminPJobController.model.numinterval_renameuser=1;
 			
 			
 		},
@@ -306,10 +318,8 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		afterRoute : function(router) {
 			$("#imixs-nav ul li").removeClass('active');
 			$("#imixs-nav ul li:nth-child(6)").addClass('active');
-			
-			$('#adminp-formpanel').imixsLayout();
-			
 			adminPViewController.loadJobs();
+			$('#container').imixsLayout();
 		}
 	}),
 	
@@ -323,6 +333,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		afterRoute : function(router) {
 			$("#imixs-nav ul li").removeClass('active');
 			$("#imixs-nav ul li:nth-child(7)").addClass('active');
+			$('#container').imixsLayout();
 		}
 	}),
 	
@@ -1078,6 +1089,11 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		adminPJobController.pull();
 		adminPJobController.model.setItem("type","adminp");
 		adminPJobController.model.setItem("job","REBUILD_LUCENE_INDEX");
+		
+		// update blocksize/index properties
+		adminPJobController.model.setItem("numblocksize",adminPJobController.model.numblocksize_update,'xs:int');
+		adminPJobController.model.setItem("numinterval",adminPJobController.model.numinterval_update,'xs:int');
+
 		 // convert date objects into ISO 8601 format
  		imixsUI.convertDateTimeInput(adminPJobController.model);
 		var xmlData;
@@ -1124,6 +1140,82 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	};
 	
 	
+	/**
+	 * Create AdminP Job RENAME_USER
+	 * 
+	 */
+	adminPJobController.createRenameUserJob = function() {
+		$("#imixs-error").hide();
+		adminPJobController.pull();
+		adminPJobController.model.setItem("type","adminp");
+		adminPJobController.model.setItem("job","RENAME_USER");
+		
+		// update blocksize/index properties
+		adminPJobController.model.setItem("numMaxCount",adminPJobController.model.numblocksize_renameuser,'xs:int');
+		adminPJobController.model.setItem("numinterval",adminPJobController.model.numinterval_renameuser,'xs:int');
+		
+		adminPJobController.model.setItem("namfrom",adminPJobController.model.from_user);
+		adminPJobController.model.setItem("namto",adminPJobController.model.to_user);
+		
+		
+		if (!adminPJobController.model.from_user || !adminPJobController.model.to_user) {
+			$("#error-message").text("Enter the UserID to migrate");
+			$("#imixs-error").show();
+			return;
+		}
+		
+		// get renamefullreplace flag manually (not yet supported by benJS)
+		var bFullReplace=$('#renamefullreplace').is(':checked');
+		adminPJobController.model.setItem('keyreplace',bFullReplace,'xs:boolean');
+		
+		
+		 // convert date objects into ISO 8601 format
+ 		imixsUI.convertDateTimeInput(adminPJobController.model);
+ 		var xmlData;
+		if (restServiceController.model.apiVersion!="4.0") {
+			xmlData= imixsXML.json2xmlEntity(adminPJobController.model);
+		} else {
+			xmlData= imixsXML.json2xml(adminPJobController.model);
+		}
+		console.debug("create new adminp job...");
+
+		var url = restServiceController.model.baseURL;
+		url = url + "/adminp/jobs";
+
+		$.ajax({
+			type : "POST",
+			url : url,
+			data : xmlData,
+			contentType : "text/xml",
+			dataType : "xml",
+			cache : false,
+			error : function(jqXHR, error, errorThrown) {
+				var message = errorThrown;
+				var json = imixsXML.xml2document(jqXHR.responseXML);
+				var workitem = new Workitem(json);
+				if (json.document)
+					workitemController.model.item = json.document.item;
+				else if (json.entity)
+					workitemController.model.item = json.entity.item;
+				var uniqueid = workitem.getItem('$uniqueid');
+				var error_code = workitem.getItem('$error_code');
+				var error_message = workitem.getItem('$error_message');
+
+				printLog("<br />" + uniqueid + " : " + error_code + " - "
+						+ error_message, true);
+
+				$("#error-message").text("Create new job failed");
+				$("#imixs-error").show();
+			},
+			success : function(xml) {
+				printLog(".", true);
+				adminPViewController.loadJobs();
+			}
+		});
+	};
+	
+	
+	
 	
 	/**
 	 * Create AdminP Job MIGRATION
@@ -1136,9 +1228,9 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		adminPJobController.model.setItem("job","MIGRATION");
 		
 		// update blocksize/index properties
-		adminPJobController.model.setItem("numindex",adminPJobController.model.getItem("numindex_migration"));
-		adminPJobController.model.setItem("numblocksize",adminPJobController.model.getItem("numblocksize_migration"));
-		adminPJobController.model.setItem("numinterval",adminPJobController.model.getItem("numinterval_migration"));
+		adminPJobController.model.setItem("numindex",adminPJobController.model.numindex_migration);
+		adminPJobController.model.setItem("numblocksize",adminPJobController.model.numblocksize_migration);
+		adminPJobController.model.setItem("numinterval",adminPJobController.model.numinterval_migration);
 		
 		 // convert date objects into ISO 8601 format
  		imixsUI.convertDateTimeInput(adminPJobController.model);

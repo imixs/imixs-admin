@@ -54,14 +54,14 @@
 								<dt>Blocksize:</dt>
 								<dd>
 									<input type="text" placeholder="100"
-										data-ben-model="getItem('numblocksize')"></input>
+										data-ben-model="numblocksize_update"></input>
 								</dd>
 							</dl>
 							<dl>
 								<dt>Interval in minutes:</dt>
 								<dd>
 									<input type="text" placeholder="1"
-										data-ben-model="getItem('numinterval')"></input>
+										data-ben-model="numinterval_update"></input>
 								</dd>
 							</dl>
 						</div>
@@ -76,8 +76,58 @@
 				
 				
 				<!-- Rename -->
-				<div id="tab-2" class="imixs-form-section">
-					<p>tbd...</p>
+				<div id="tab-2" class="">
+					<p>This AdminP process updates the ACL and permissions of existing workitems. Enter the userID to be changed.
+					</p>
+					<div class="row nested">
+						<div class="imixs-form-section-3">
+							<dl>
+								<dt>From User-ID:</dt>
+								<dd>
+									<input type="text" placeholder="enter userid"
+										data-ben-model="from_user"></input>
+								</dd>
+							</dl>
+							
+							<dl>
+								<dt>To User-ID:</dt>
+								<dd>
+									<input type="text" placeholder="enter userid"
+										data-ben-model="to_user"></input>
+								</dd>
+							</dl>
+							
+							<dl class="col-3">
+								<dt>Full Replace:</dt>
+								<dd>
+									<input type="checkbox" id="renamefullreplace" name="true" value="true" >YES
+								</dd>
+							</dl>
+						</div>
+						<div class="imixs-form-section-3">
+							<dl>
+								<dt>Blocksize:</dt>
+								<dd>
+									<input type="text" placeholder="100"
+										data-ben-model="numblocksize_renameuser"></input>
+								</dd>
+							</dl>
+							<dl>
+								<dt>Interval in minutes:</dt>
+								<dd>
+									<input type="text" placeholder="1"
+										data-ben-model="numinterval_renameuser"></input>
+								</dd>
+							</dl>
+						</div>
+
+					</div>
+
+					<input type="button" value="Start Job"
+						onclick="adminclient.adminPJobController.createRenameUserJob();" class="btn" />
+
+
+
 				</div>
 
 
@@ -96,21 +146,21 @@
 								<dt>Index:</dt>
 								<dd>
 									<input type="text" placeholder="0"
-										data-ben-model="getItem('numindex_migration')"></input>
+										data-ben-model="numindex_migration"></input>
 								</dd>
 							</dl>
 							<dl>
-								<dt>Blocksize:</dt>
+								<dt>Block Size:</dt>
 								<dd>
 									<input type="text" placeholder="100"
-										data-ben-model="getItem('numblocksize_migration')"></input>
+										data-ben-model="numblocksize_migration"></input>
 								</dd>
 							</dl>
 							<dl>
 								<dt>Interval in minutes:</dt>
 								<dd>
 									<input type="text" placeholder="1"
-										data-ben-model="getItem('numinterval_migration')"></input>
+										data-ben-model="numinterval_migration"></input>
 								</dd>
 							</dl>
 						</div>
@@ -119,22 +169,8 @@
 
 					<input type="button" value="Start Job"
 						onclick="adminclient.adminPJobController.createMigrationJob();" class="btn" />
-
-
-
-
-
-
 				</div>
-
-
-
-
 			</div>
-
-
-
-
 
 
 
