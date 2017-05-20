@@ -66,6 +66,12 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		this.count = 10;
 		this.maxresult=10; // apiVersion 4.0
 		this.page=0; // apiVersion 4.0
+		this.sortby="$created";
+		this.sortrevrse=true;
+		this.maxresult_deletion=10; // apiVersion 4.0
+		this.page_deletion=0; // apiVersion 4.0
+		this.maxresult_update=10; // apiVersion 4.0
+		this.page_update=0; // apiVersion 4.0
 		this.fieldName = "";
 		this.fieldType = "";
 		this.newValue = "";
@@ -220,7 +226,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			
 			// update the priorVersionCheckbox
 			if (restServiceController.model.apiVersion=="4.0") {
-				$('#sortorderreverse').prop('checked', restServiceController.model.sortrevrse);
+				$('#sortorderreverse').prop('checked', worklistController.model.sortrevrse);
 			}
 			
 			worklistController.loadWorklist();
@@ -280,11 +286,20 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		
 		beforeRoute : function(router) {
 			console.log('create empty adminp job');
+			// init adminp
 			adminPJobController.model=new Workitem();
 			adminPJobController.model.setItem('datfrom','','xs:dateTime');
 			adminPJobController.model.setItem('datto','','xs:dateTime');
 			adminPJobController.model.setItem('typelist','');
 			adminPJobController.model.setItem('numblocksize',100,'xs:int');
+			adminPJobController.model.setItem('numblocksize_migration',100,'xs:int');
+			adminPJobController.model.setItem('numindex',0,'xs:int');
+			adminPJobController.model.setItem('numindex_migration',0,'xs:int');
+			
+			adminPJobController.model.setItem('numinterval',1,'xs:int');
+			adminPJobController.model.setItem('numinterval_migration',1,'xs:int');
+			
+			
 		},
 		
 		
@@ -324,7 +339,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	 */
 	start = function() {
 		var loc, url, service = "";
-		console.debug("starting backlog application...");
+		console.debug("starting application...");
 
 		// compute application root....
 		loc = window.location;
@@ -343,12 +358,11 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			}
 		}
 
-
 		
-		
-		// start view
+		// start 
 		benJS.start();
-
+	
+		// default route....
 		restServiceRoute.route();
 		$("#imixs-error").hide();
 	};
@@ -824,17 +838,17 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		if (restServiceController.model.apiVersion=="3.7") {
 			url = url + "/entity/entitiesbyquery/"
 			+ worklistController.model.query;
-			url = url + "?start=" + worklistController.model.start + "&count="
-			+ worklistController.model.count;
+			url = url + "?start=" + (worklistController.model.maxresult_update*worklistController.model.page_update) + "&count="
+			+ worklistController.model.maxresult_update;
 		} else  if (restServiceController.model.apiVersion=="3.8") {
 			url = url + "/entity/query/" + worklistController.model.query;
 			url = url + "?start=" + worklistController.model.start + "&count="
-			+ worklistController.model.count;
+			+ worklistController.model.maxresult_update;
 		} else {
 			// default 4.0.0
 			url = url + "/documents/search/" + worklistController.model.query;
-			url = url + "?maxresult=" + worklistController.model.maxresult + "&page="
-			+ worklistController.model.page;
+			url = url + "?pageSize=" + worklistController.model.maxresult_update + "&pageIndex="
+			+ worklistController.model.page_update;
 		}
 		
 		
@@ -911,17 +925,17 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		if (restServiceController.model.apiVersion=="3.7") {
 			url = url + "/entity/entitiesbyquery/"
 			+ worklistController.model.query;
-			url = url + "?start=" + worklistController.model.start + "&count="
-			+ worklistController.model.count;
+			url = url + "?start=" + (worklistController.model.page_deletion*worklistController.model.maxresult_deletion) + "&count="
+			+ worklistController.model.maxresult_deletion;
 		} else if (restServiceController.model.apiVersion=="3.8") { 
 			url = url + "/entity/query/" + worklistController.model.query;
-			url = url + "?start=" + worklistController.model.start + "&count="
-			+ worklistController.model.count;
+			url = url + "?start=" + (worklistController.model.page_deletion*worklistController.model.maxresult_deletion)+ "&count="
+			+ worklistController.model.maxresult_deletion;
 		} else {
 			// default 4.0.0
 			url = url + "/documents/search/" + worklistController.model.query;
-			url = url + "?maxresult=" + worklistController.model.maxresult + "&page="
-			+ worklistController.model.page;
+			url = url + "?pageSize=" + worklistController.model.maxresult_deletion + "&pageIndex="
+			+ worklistController.model.page_deletion;
 		}
 			
 
