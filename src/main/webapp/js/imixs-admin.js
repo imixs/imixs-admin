@@ -86,7 +86,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 
 		/* return summary or txtname */
 		this.getSummary = function() {
-			var val = this.getItem("txtworkflowsummary");
+			var val = this.getItem("$workflowsummary");
 			if (!val)
 				val = this.getItem("txtname");
 			return val;
