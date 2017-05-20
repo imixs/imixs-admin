@@ -1151,7 +1151,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		adminPJobController.model.setItem("job","RENAME_USER");
 		
 		// update blocksize/index properties
-		adminPJobController.model.setItem("numMaxCount",adminPJobController.model.numblocksize_renameuser,'xs:int');
+		adminPJobController.model.setItem("numblocksize",adminPJobController.model.numblocksize_renameuser,'xs:int');
 		adminPJobController.model.setItem("numinterval",adminPJobController.model.numinterval_renameuser,'xs:int');
 		
 		adminPJobController.model.setItem("namfrom",adminPJobController.model.from_user);
