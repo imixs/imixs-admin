@@ -66,8 +66,10 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		this.count = 10;
 		this.maxresult=10; // apiVersion 4.0
 		this.page=0; // apiVersion 4.0
-		this.sortby="$created";
+		this.sortby="$modified";
 		this.sortrevrse=true;
+		this.sortby_update="$created";
+		this.sortrevrse_update=true;
 		this.maxresult_deletion=10; // apiVersion 4.0
 		this.page_deletion=0; // apiVersion 4.0
 		this.maxresult_update=10; // apiVersion 4.0
@@ -256,6 +258,12 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		afterRoute : function(router) {
 			$("#imixs-nav ul li").removeClass('active');
 			$("#imixs-nav ul li:nth-child(3)").addClass('active');
+			
+			// update the priorVersionCheckbox
+			if (restServiceController.model.apiVersion=="4.0") {
+				$('#sortorderreverse_update').prop('checked', worklistController.model.sortrevrse_update);
+			}
+			
 			$('#container').imixsLayout();
 		}
 	}),
@@ -860,9 +868,12 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			url = url + "/documents/search/" + worklistController.model.query;
 			url = url + "?pageSize=" + worklistController.model.maxresult_update + "&pageIndex="
 			+ worklistController.model.page_update;
+			
+			// get sortorderreverse flag manually (not yet supported by benJS)
+			worklistController.model.sortreverse_update=$('#sortorderreverse_update').is(':checked');
+			
+			url = url + "&sortBy=" +  worklistController.model.sortby_update + "&sortReverse=" +  worklistController.model.sortreverse_update;
 		}
-		
-		
 
 		$.ajax({
 			type : "GET",
