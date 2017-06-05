@@ -1,31 +1,29 @@
 <div class="row">
 	<h1>Rest Service</h1>
 	<div data-ben-controller="restServiceController"
-		class="imixs-form-section">
-		<dl>
+		class="row nested">
+		<dl class="col-8">
 			<dt>URL:</dt>
 			<dd>
 				<input type="text" placeholder="Enter Rest Service Base Address"
-					data-ben-model="baseURL" autocomplete="on" /> <br /> <label>Connect
-					to Imixs-Workflow version:</label> <select style="width: 100px;"
+					data-ben-model="baseURL" autocomplete="on" /> 
+			</dd>
+		</dl>
+		<dl class="col-4">
+			<dt>Imixs-Workflow version:</dt>
+			<dd>
+				<select style=""
 					data-ben-model="apiVersion" id="api_version">
 					<option value="4.0">4.0</option>
 					<option value="3.8">3.8</option>
 					<option value="3.7">&lt; 3.8</option>
 				</select>
-
 			</dd>
-
-
-
 		</dl>
-
-
-		<input type="button" value="Connect"
-			onclick="adminclient.restServiceController.connect()" class="btn" />
-
-
 	</div>
+
+	<input type="button" value="Connect"
+			onclick="adminclient.restServiceController.connect()" class="btn" />
 
 	<!-- Status message -->
 	<div id="imixs-status" data-ben-controller="restServiceController">
