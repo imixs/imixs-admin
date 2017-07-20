@@ -837,7 +837,10 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 	worklistController.bulkUpdate = function() {
 
 		worklistController.pull();
-
+		
+		// get bulkupdateappendvalue flag manually (not yet supported by benJS)
+		var bAppendValue=$('#bulkupdateappendvalue').is(':checked');
+		
 		// test fieldname...
 		var re = /[a-zA-Z0-9\-\_\$\~]$/
 		if (!re.test(worklistController.model.fieldName)
@@ -899,12 +902,47 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 
 							updatedWorkitem.setItem("$uniqueid", uniqueid,
 									"xs:string");
-
-							updatedWorkitem.setItem(
-									worklistController.model.fieldName.trim(),
-									worklistController.model.newValue,
-									worklistController.model.fieldType);
-
+							
+							// create an array form the new value...
+							var newValueList;
+							worklistController.model.newValue=worklistController.model.newValue.trim();
+							// if the new value contains \n than we deal this as a single value 
+							if (worklistController.model.newValue.indexOf("\\n")>-1) {
+								// deal as single value 
+								var singleValue = worklistController.model.newValue.split('\\n').join('');
+								// create a single-value-array
+								newValueList= new Array(singleValue);
+							} else {
+								//split new lines into an array with separate values
+								newValueList=worklistController.model.newValue.split("\n");
+							}
+							// if bAppendValue = true 
+							// than we need to add the new values to the existing ones...
+							if (bAppendValue) { 
+								var oldValueList=workitem.getItemList(worklistController.model.fieldName.trim());
+								// now we have a value array
+								// append the new values
+								newValueList = oldValueList.concat(newValueList);
+							} 
+							// create the item...
+							var valueObj = {
+								"name" : worklistController.model.fieldName.trim(),
+								"value" : []
+							};
+							
+							// put all items values....
+							$.each(newValueList,
+									function(index, avalue) {
+								valueObj.value[index]={
+										"xsi:type" : worklistController.model.fieldType,
+										"$" : avalue
+									}
+							});
+							
+							updatedWorkitem.item.push(valueObj);
+							
+					
+			
 							// process or save the workitem?
 							if (worklistController.model.$activityid > 0) {
 								// set activityID

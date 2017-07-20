@@ -18,7 +18,8 @@
 		<div class="imixs-form-section">
 			<p>A bulk update will update all documents selected by the current
 				search term. NOTE: Complex queries can take a
-				long time.</p>
+				long time.
+			</p>
 
 
 			<dl>
@@ -87,9 +88,20 @@
 			</dl>
 
 			<dl style="clear: left">
-				<dt>New Value:</dt>
+				<dt>New Values:</dt>
 				<dd>
 					<textarea data-ben-model="newValue"></textarea>
+				</dd>
+			</dl>
+			
+			<dl class="col-3">
+				<dt>Update Mode:</dt>
+				<dd>
+					<input type="checkbox" id="bulkupdateappendvalue" name="true" value="true" >Append Values
+					
+					<br />
+					<br />
+					<strong>Note:</strong> Multi-Values can be separated by new lines. If you want to add a single value with multiple lines, than add '\n' at the end of a line.
 				</dd>
 			</dl>
 
