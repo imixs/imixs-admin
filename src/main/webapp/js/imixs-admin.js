@@ -1167,6 +1167,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		
 		adminPJobController.model.setItem("namfrom",adminPJobController.model.from_user);
 		adminPJobController.model.setItem("namto",adminPJobController.model.to_user);
+		adminPJobController.model.setItem("typelist",adminPJobController.model.typelist_renameuser);
 		
 		
 		if (!adminPJobController.model.from_user || !adminPJobController.model.to_user) {
