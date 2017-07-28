@@ -70,6 +70,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		this.sortrevrse=true;
 		this.sortby_update="$created";
 		this.sortrevrse_update=true;
+		this.bulkupdateappendvalue=true;
 		this.maxresult_deletion=10; // apiVersion 4.0
 		this.page_deletion=0; // apiVersion 4.0
 		this.maxresult_update=10; // apiVersion 4.0
@@ -227,10 +228,14 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			$("#imixs-nav ul li").removeClass('active');
 			$("#imixs-nav ul li:nth-child(2)").addClass('active');
 			
-			// update the priorVersionCheckbox
+			// update the sortorder
 			if (restServiceController.model.apiVersion=="4.0") {
 				$('#sortorderreverse').prop('checked', worklistController.model.sortrevrse);
 			}
+			// sortorder onchange...
+			$('#sortorderreverse').change(function() {
+				worklistController.model.sortrevrse= $(this).prop("checked");
+		    });
 			
 			worklistController.loadWorklist();
 			$('#container').imixsLayout();
@@ -259,10 +264,25 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			$("#imixs-nav ul li").removeClass('active');
 			$("#imixs-nav ul li:nth-child(3)").addClass('active');
 			
-			// update the priorVersionCheckbox
+			// update the sortorderreverse_update
 			if (restServiceController.model.apiVersion=="4.0") {
 				$('#sortorderreverse_update').prop('checked', worklistController.model.sortrevrse_update);
 			}
+			// sortorderreverse_update onchange...
+			$('#sortorderreverse_update').change(function() {
+				worklistController.model.sortrevrse_update= $(this).prop("checked");
+		    });
+			
+			
+			// update the bulkupdateappendvalue
+			if (restServiceController.model.apiVersion=="4.0") {
+				$('#bulkupdateappendvalue').prop('checked', worklistController.model.bulkupdateappendvalue);
+			}
+			// bulkupdateappendvalue onchange...
+			$('#bulkupdateappendvalue').change(function() {
+				worklistController.model.bulkupdateappendvalue= $(this).prop("checked");
+		    });
+			
 			
 			$('#container').imixsLayout();
 		}
