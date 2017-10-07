@@ -19,7 +19,7 @@ Imixs-Admin is provided as a Maven Web Module and can be build by the maven comm
 The .war file can be deployed into any JEE Application server. It is necessary to provide a security realm 'imixsrealm'. See also the security section in the [Deployment Guide](http://www.imixs.org/jee/deployment/overview.html) on [imixs.org](http://www.imixs.org)
 
 
-<br /><br /><img src="small_h-trans.png" />
+<br /><br /><img src="./small_h-trans.png" />
 
 
 The Imixs-Admin client provides a Docker Image to be used to run the service in a Docker conatiner. 
