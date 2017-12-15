@@ -45,11 +45,133 @@
 	</licenses>
 
 
-
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- Default docker registry -->
+		<org.imixs.docker.registry>localhost:5000</org.imixs.docker.registry>
 	</properties>
+
+	<profiles>
+
+		<profile>
+			<id>docker-build</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.8</version>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<configuration>
+
+									<target>
+										<exec executable="docker">
+											<arg value="build" />
+											<arg value="-t" />
+											<arg value="imixs/imixs-admin" />
+											<arg value="./" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+
+
+		<profile>
+			<id>docker-push</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.8</version>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<configuration>
+									<target>
+										<exec executable="docker">
+											<arg value="build" />
+											<arg value="-t" />
+											<arg
+												value="imixs/imixs-admin:${project.version}" />
+											<arg value="./" />
+										</exec>
+										<exec executable="docker">
+											<arg value="tag" />
+											<arg value="imixs/imixs-admin:${project.version}" />
+											<arg
+												value="${org.imixs.docker.registry}/imixs/imixs-admin:${project.version}" />
+										</exec>
+										<exec executable="docker">
+											<arg value="push" />
+											<arg
+												value="${org.imixs.docker.registry}/imixs/imixs-admin:${project.version}" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+		
+		
+		<profile>
+			<id>docker-hub</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.8</version>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<configuration>
+									<target>
+										<exec executable="docker">
+											<arg value="build" />
+											<arg value="-t" />
+											<arg
+												value="imixs/imixs-admin:${project.version}" />
+											<arg value="./" />
+										</exec>
+										<exec executable="docker">
+											<arg value="push" />
+											<arg
+												value="imixs/imixs-admin:${project.version}" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+
 
 	<build>
 		<resources>
@@ -89,10 +211,11 @@
 
 		</plugins>
 	</build>
-	<dependencies>
-		
-	</dependencies>
 
+
+	<dependencies>
+
+	</dependencies>
 
 
 	<!-- Distributen Management oss.sonatype.org -->

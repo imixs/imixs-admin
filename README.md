@@ -41,9 +41,13 @@ Imixs-Admin is based on maven. To build the Java EE artifact run:
 
 To build the docker image run
 
-	docker build --tag=imixs/imixs-admin .
+	mvn clean install -Pdocker
 
+To push the docker image into a registry run
 
+	mvn clean install -Pdocker-push -Dorg.imixs.docker.registry=localhost:5000
+
+where 'localhost:5000' need to be replaced with your private registry.
 
 
 ### Deployment Notes

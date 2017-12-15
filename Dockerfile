@@ -1,5 +1,4 @@
-FROM imixs/wildfly:latest
+FROM imixs/wildfly:1.2.0
 
-# Deploy imixs-amdin artefact from latest Github Release
-RUN wget https://github.com/imixs/imixs-admin/releases/download/4.2.3/imixs-admin-4.2.3.war \
- && mv imixs-admin-4.2.3.war $WILDFLY_DEPLOYMENT  
+# Deploy artefact
+COPY ./target/imixs-admin-*.war ${WILDFLY_DEPLOYMENT}/
