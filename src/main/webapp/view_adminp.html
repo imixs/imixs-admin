@@ -22,7 +22,8 @@
 				<ul>
 					<li><a href="#tab-1">Rebuild Index</a></li>
 					<li><a href="#tab-2">Rename User</a></li>
-					<li><a href="#tab-3">Migration</a></li>
+					<li><a href="#tab-3">Upgrade</a></li>
+					<li><a href="#tab-4">Migration 3.x</a></li>
 				</ul>
 
 				<!-- Update Index -->
@@ -33,9 +34,8 @@
 								<dt>Filter by creation date:</dt>
 								<dd>
 									<input type="text" class="imixs-date"
-										data-ben-model="getItem('datfrom')"></input> - <input
-										type="text" class="imixs-date"
-										data-ben-model="getItem('datto')"></input>
+										data-ben-model="datfrom_reindex" /> - <input type="text"
+										class="imixs-date" data-ben-model="datto_reindex"></input>
 								</dd>
 							</dl>
 						</div>
@@ -44,7 +44,7 @@
 								<dt>Filter by document type:</dt>
 								<dd>
 									<textarea placeholder="comma separated list of document types"
-										data-ben-model="getItem('typelist')"></textarea>
+										data-ben-model="typelist_reindex"></textarea>
 								</dd>
 							</dl>
 
@@ -53,15 +53,15 @@
 							<dl>
 								<dt>Blocksize:</dt>
 								<dd>
-									<input type="text" placeholder="100"
-										data-ben-model="numblocksize_update"></input>
+									<input type="text" placeholder="500"
+										data-ben-model="numblocksize_reindex"></input>
 								</dd>
 							</dl>
 							<dl>
 								<dt>Interval in minutes:</dt>
 								<dd>
 									<input type="text" placeholder="1"
-										data-ben-model="numinterval_update"></input>
+										data-ben-model="numinterval_reindex"></input>
 								</dd>
 							</dl>
 						</div>
@@ -69,20 +69,32 @@
 					</div>
 
 					<input type="button" value="Start Job"
-						onclick="adminclient.adminPJobController.createReindexJob();" class="btn" />
+						onclick="adminclient.adminPJobController.createReindexJob();"
+						class="btn" />
 
 				</div>
-				
-				
-				
+
+
+
 				<!-- Rename -->
 				<div id="tab-2" class="">
-					<p>This AdminP process updates the ACL and permissions of existing workitems. Enter the userID to be changed.
-					</p>
+					<p>This AdminP process updates the ACL and permissions of
+						existing workitems. Enter the userID to be changed.</p>
 					<div class="row nested">
-					
-					
-						<div class="imixs-form-section-3">
+
+
+						<div class="col-4">
+							<dl>
+								<dt>Filter by creation date:</dt>
+								<dd>
+									<input type="text" class="imixs-date"
+										data-ben-model="datfrom_renameuser" /> - <input type="text"
+										class="imixs-date" data-ben-model="datto_renameuser"></input>
+								</dd>
+							</dl>
+						</div>
+
+						<div class="col-4">
 							<dl>
 								<dt>Filter by document type:</dt>
 								<dd>
@@ -92,33 +104,10 @@
 							</dl>
 
 						</div>
-						
-						
-						<div class="imixs-form-section-3">
-							<dl>
-								<dt>From User-ID:</dt>
-								<dd>
-									<input type="text" placeholder="enter userid"
-										data-ben-model="from_user"></input>
-								</dd>
-							</dl>
-							
-							<dl>
-								<dt>To User-ID:</dt>
-								<dd>
-									<input type="text" placeholder="enter userid"
-										data-ben-model="to_user"></input>
-								</dd>
-							</dl>
-							
-							<dl class="col-3">
-								<dt>Full Replace:</dt>
-								<dd>
-									<input type="checkbox" id="renamefullreplace" name="true" value="true" >YES
-								</dd>
-							</dl>
-						</div>
-						<div class="imixs-form-section-3">
+
+
+
+						<div class="col-4">
 							<dl>
 								<dt>Blocksize:</dt>
 								<dd>
@@ -137,10 +126,93 @@
 
 					</div>
 
+
+					<div class="row nested">
+						<div class="col-4">
+							<dl>
+								<dt>From User-ID:</dt>
+								<dd>
+									<input type="text" placeholder="enter userid"
+										data-ben-model="namfrom"></input>
+								</dd>
+							</dl>
+						</div>
+						<div class="col-4">
+							<dl>
+								<dt>To User-ID:</dt>
+								<dd>
+									<input type="text" placeholder="enter userid"
+										data-ben-model="namto"></input>
+								</dd>
+							</dl>
+						</div>
+						<div class="col-4">
+							<dl>
+								<dt>Full Replace:</dt>
+								<dd>
+									<input type="checkbox" id="renamefullreplace" name="true"
+										value="true">YES
+								</dd>
+							</dl>
+						</div>
+					</div>
+
 					<input type="button" value="Start Job"
-						onclick="adminclient.adminPJobController.createRenameUserJob();" class="btn" />
+						onclick="adminclient.adminPJobController.createRenameUserJob();"
+						class="btn" />
 
 
+
+				</div>
+
+
+
+
+				<!-- Upgrade Workitems -->
+				<div id="tab-3">
+					<div class="row nested">
+						<div class="col-4">
+							<dl>
+								<dt>Filter by creation date:</dt>
+								<dd>
+									<input type="text" class="imixs-date"
+										data-ben-model="datfrom_upgrade"></input> - <input type="text"
+										class="imixs-date" data-ben-model="datto_upgrade"></input>
+								</dd>
+							</dl>
+						</div>
+						<div class="col-4">
+							<dl>
+								<dt>Filter by document type:</dt>
+								<dd>
+									<textarea placeholder="comma separated list of document types"
+										data-ben-model="typelist_upgrade"></textarea>
+								</dd>
+							</dl>
+
+						</div>
+						<div class="col-4">
+							<dl>
+								<dt>Blocksize:</dt>
+								<dd>
+									<input type="text" placeholder="100"
+										data-ben-model="numblocksize_upgrade"></input>
+								</dd>
+							</dl>
+							<dl>
+								<dt>Interval in minutes:</dt>
+								<dd>
+									<input type="text" placeholder="1"
+										data-ben-model="numinterval_upgrade"></input>
+								</dd>
+							</dl>
+						</div>
+
+					</div>
+
+					<input type="button" value="Start Job"
+						onclick="adminclient.adminPJobController.createUpgradeJob();"
+						class="btn" />
 
 				</div>
 
@@ -151,9 +223,9 @@
 
 
 				<!--  Migration -->
-				<div id="tab-3">
-					<p>This AdminP process can be used to migrate an existing Imixs-Workflow Instance 3.x to version 4.0.
-					</p>
+				<div id="tab-4">
+					<p>This AdminP process can be used to migrate an existing
+						Imixs-Workflow Instance 3.x to version 4.0.</p>
 					<div class="row nested">
 						<div class="col-4">
 							<dl>
@@ -182,7 +254,8 @@
 					</div>
 
 					<input type="button" value="Start Job"
-						onclick="adminclient.adminPJobController.createMigrationJob();" class="btn" />
+						onclick="adminclient.adminPJobController.createMigrationJob();"
+						class="btn" />
 				</div>
 			</div>
 
@@ -212,6 +285,7 @@
 							<th>Created</th>
 							<th>Modified</th>
 							<th>Status</th>
+							<th>Processed</th>
 							<th>Updates</th>
 							<th>Action</th>
 						</tr>
@@ -231,8 +305,9 @@
 
 							<td><span data-ben-model="getItem('$workflowstatus')" /></td>
 
-							<td><span data-ben-model="getItem('numupdates')" /></td>
+							<td><span data-ben-model="getItem('numprocessed')" /></td>
 
+							<td><span data-ben-model="getItem('numupdates')" /></td>
 
 							<td><input type="button" value="Delete"
 								onclick="adminclient.adminPViewController.deleteJob({context:this,callback:adminclient.adminPViewController.loadJobs})" /></td>

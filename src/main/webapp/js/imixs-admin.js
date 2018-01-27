@@ -326,18 +326,21 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			adminPJobController.model.setItem('datto','','xs:dateTime');
 			adminPJobController.model.setItem('typelist','');
 
-			adminPJobController.model.numblocksize_update=100;
-			adminPJobController.model.numblocksize_migration=100;
+			adminPJobController.model.numblocksize_reindex=500;
+			adminPJobController.model.numblocksize_upgrade=100;
 			adminPJobController.model.numblocksize_renameuser=100;
+			adminPJobController.model.numblocksize_migration=100;
 
 			
-			adminPJobController.model.numindex_update=0;
+			adminPJobController.model.numindex_reindex=0;
+			adminPJobController.model.numindex_upgrade=0;
 			adminPJobController.model.numindex_renameuser=0;
 			adminPJobController.model.numindex_migration=0;
 			
 			adminPJobController.model.numinterval_update=1;
-			adminPJobController.model.numinterval_migration=1;
+			adminPJobController.model.numinterval_upgrade=1;
 			adminPJobController.model.numinterval_renameuser=1;
+			adminPJobController.model.numinterval_migration=1;
 			
 			
 		},
@@ -1116,10 +1119,7 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 				$("#imixs-error").show();
 			}
 		});
-
 	}
-	
-	
 	
 	
 	/* Custom method to load the adminP jobs */
@@ -1160,52 +1160,17 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		adminPJobController.model.setItem("job","REBUILD_LUCENE_INDEX");
 		
 		// update blocksize/index properties
-		adminPJobController.model.setItem("numblocksize",adminPJobController.model.numblocksize_update,'xs:int');
-		adminPJobController.model.setItem("numinterval",adminPJobController.model.numinterval_update,'xs:int');
-
+		adminPJobController.model.setItem("numblocksize",adminPJobController.model.numblocksize_reindex,'xs:int');
+		adminPJobController.model.setItem("numinterval",adminPJobController.model.numinterval_reindex,'xs:int');
+		adminPJobController.model.setItem("datfrom",adminPJobController.model.datfrom_reindex);
+		adminPJobController.model.setItem("datto",adminPJobController.model.datto_reindex);
+		adminPJobController.model.setItem("typelist",adminPJobController.model.typelist_reindex);
+		
 		 // convert date objects into ISO 8601 format
  		imixsUI.convertDateTimeInput(adminPJobController.model);
-		var xmlData;
-		if (restServiceController.model.apiVersion!="4.0") {
-			xmlData= imixsXML.json2xmlEntity(adminPJobController.model);
-		} else {
-			xmlData= imixsXML.json2xml(adminPJobController.model);
-		}
-		console.debug("create new adminp job...");
+		var xmlData = imixsXML.json2xml(adminPJobController.model);
 
-		var url = restServiceController.model.baseURL;
-		url = url + "/adminp/jobs";
-
-		$.ajax({
-			type : "POST",
-			url : url,
-			data : xmlData,
-			contentType : "text/xml",
-			dataType : "xml",
-			cache : false,
-			error : function(jqXHR, error, errorThrown) {
-				var message = errorThrown;
-				var json = imixsXML.xml2document(jqXHR.responseXML);
-				var workitem = new Workitem(json);
-				if (json.document)
-					workitemController.model.item = json.document.item;
-				else if (json.entity)
-					workitemController.model.item = json.entity.item;
-				var uniqueid = workitem.getItem('$uniqueid');
-				var error_code = workitem.getItem('$error_code');
-				var error_message = workitem.getItem('$error_message');
-
-				printLog("<br />" + uniqueid + " : " + error_code + " - "
-						+ error_message, true);
-
-				$("#error-message").text("Create new job failed");
-				$("#imixs-error").show();
-			},
-			success : function(xml) {
-				printLog(".", true);
-				adminPViewController.loadJobs();
-			}
-		});
+		this.startJob(xmlData);
 	};
 	
 	
@@ -1221,14 +1186,16 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		
 		// update blocksize/index properties
 		adminPJobController.model.setItem("numblocksize",adminPJobController.model.numblocksize_renameuser,'xs:int');
-		adminPJobController.model.setItem("numinterval",adminPJobController.model.numinterval_renameuser,'xs:int');
-		
-		adminPJobController.model.setItem("namfrom",adminPJobController.model.from_user);
-		adminPJobController.model.setItem("namto",adminPJobController.model.to_user);
+		adminPJobController.model.setItem("numinterval",adminPJobController.model.numinterval_renameuser,'xs:int');		
+		adminPJobController.model.setItem("datfrom",adminPJobController.model.datfrom_renameuser);
+		adminPJobController.model.setItem("datto",adminPJobController.model.datto_renameuser);
 		adminPJobController.model.setItem("typelist",adminPJobController.model.typelist_renameuser);
+	
+		adminPJobController.model.setItem("namfrom",adminPJobController.model.namfrom);
+		adminPJobController.model.setItem("namto",adminPJobController.model.namto);
+
 		
-		
-		if (!adminPJobController.model.from_user || !adminPJobController.model.to_user) {
+		if (!adminPJobController.model.namfrom || !adminPJobController.model.namto) {
 			$("#error-message").text("Enter the UserID to migrate");
 			$("#imixs-error").show();
 			return;
@@ -1247,41 +1214,34 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		} else {
 			xmlData= imixsXML.json2xml(adminPJobController.model);
 		}
-		console.debug("create new adminp job...");
+		
+		this.startJob(xmlData);
+	};
+	
+	
 
-		var url = restServiceController.model.baseURL;
-		url = url + "/adminp/jobs";
+	/**
+	 * Create AdminP Job UPGRADE
+	 * 
+	 */
+	adminPJobController.createUpgradeJob = function() {
 
-		$.ajax({
-			type : "POST",
-			url : url,
-			data : xmlData,
-			contentType : "text/xml",
-			dataType : "xml",
-			cache : false,
-			error : function(jqXHR, error, errorThrown) {
-				var message = errorThrown;
-				var json = imixsXML.xml2document(jqXHR.responseXML);
-				var workitem = new Workitem(json);
-				if (json.document)
-					workitemController.model.item = json.document.item;
-				else if (json.entity)
-					workitemController.model.item = json.entity.item;
-				var uniqueid = workitem.getItem('$uniqueid');
-				var error_code = workitem.getItem('$error_code');
-				var error_message = workitem.getItem('$error_message');
-
-				printLog("<br />" + uniqueid + " : " + error_code + " - "
-						+ error_message, true);
-
-				$("#error-message").text("Create new job failed");
-				$("#imixs-error").show();
-			},
-			success : function(xml) {
-				printLog(".", true);
-				adminPViewController.loadJobs();
-			}
-		});
+		adminPJobController.pull();
+		adminPJobController.model.setItem("type","adminp");
+		adminPJobController.model.setItem("job","UPGRADE");
+		
+		// update blocksize/index properties
+		adminPJobController.model.setItem("numblocksize",adminPJobController.model.numblocksize_upgrade,'xs:int');
+		adminPJobController.model.setItem("numinterval",adminPJobController.model.numinterval_upgrade,'xs:int');
+		adminPJobController.model.setItem("datfrom",adminPJobController.model.datfrom_upgrade);
+		adminPJobController.model.setItem("datto",adminPJobController.model.datto_upgrade);
+		adminPJobController.model.setItem("typelist",adminPJobController.model.typelist_upgrade);
+		
+		 // convert date objects into ISO 8601 format
+ 		imixsUI.convertDateTimeInput(adminPJobController.model);
+		var xmlData = imixsXML.json2xml(adminPJobController.model);
+		
+		this.startJob(xmlData);		
 	};
 	
 	
@@ -1310,11 +1270,20 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 		} else {
 			xmlData= imixsXML.json2xml(adminPJobController.model);
 		}
-		console.debug("create new adminp job...");
+		
+		this.startJob(xmlData);
+	};
+	
 
+	/**
+	 * Post a XMLData Item to start a new Admin PJob
+	 * @param xmlData
+	 * @returns
+	 */
+	adminPJobController.startJob = function(xmlData) {
 		var url = restServiceController.model.baseURL;
 		url = url + "/adminp/jobs";
-
+		console.debug("create new adminp job...");
 		$.ajax({
 			type : "POST",
 			url : url,
@@ -1333,11 +1302,11 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 				var uniqueid = workitem.getItem('$uniqueid');
 				var error_code = workitem.getItem('$error_code');
 				var error_message = workitem.getItem('$error_message');
-
-				printLog("<br />" + uniqueid + " : " + error_code + " - "
+		
+				console.error("Create new job failed: " + error_code + " - "
 						+ error_message, true);
-
-				$("#error-message").text("Create new job failed");
+		
+				$("#error-message").text("Create new job failed: "+error_message);
 				$("#imixs-error").show();
 			},
 			success : function(xml) {
@@ -1346,7 +1315,6 @@ IMIXS.org.imixs.workflow.adminclient = (function() {
 			}
 		});
 	};
-	
 	
 	
 	/**
