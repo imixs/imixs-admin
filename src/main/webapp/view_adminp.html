@@ -28,6 +28,14 @@
 
 				<!-- Update Index -->
 				<div id="tab-1">
+
+					<p>This job rebuilds the <a href="http://www.imixs.org/doc/engine/luceneservice.html" target="imixsorg">Lucene fulltext-index</a>. Rebuilding the
+						index may be necessary after a database restore, or in cases where
+						the index has been deleted or corrupted. Rebuilding the index does
+						not change any data. You can set optional filter criteria to limit
+						the selection of the affected data.</p>
+					<hr />
+
 					<div class="row nested">
 						<div class="col-4">
 							<dl>
@@ -78,8 +86,16 @@
 
 				<!-- Rename -->
 				<div id="tab-2" class="">
-					<p>This AdminP process updates the ACL and permissions of
-						existing workitems. Enter the userID to be changed.</p>
+					<p>
+						This job updates the <a
+							href="http://www.imixs.org/doc/engine/acl.html" target="imixsorg">access
+							control list (ACL)</a> and permissions data of existing workitems.
+						Data will only be changed in cases the id <i>"From User-ID"</i> is
+						part of an workitem. You can set optional filter criteria to limit
+						the selection of the affected data.
+					</p>
+					<hr />
+
 					<div class="row nested">
 
 
@@ -170,6 +186,18 @@
 
 				<!-- Upgrade Workitems -->
 				<div id="tab-3">
+					<p>
+						This job upgrades the <a
+							href="http://www.imixs.org/doc/quickstart/workitem.html#Workflow_data"
+							target="imixsorg"> workflow data</a> of existing workitems. Data
+						will only be changed in cases a workitem was not processed by the
+						current version of the Imixs-Workfow engine used in this instance.
+						You can set optional filter criteria to limit the selection of the
+						affected data.
+					</p>
+					<hr />
+
+
 					<div class="row nested">
 						<div class="col-4">
 							<dl>
@@ -219,13 +247,11 @@
 
 
 
-
-
-
 				<!--  Migration -->
 				<div id="tab-4">
-					<p>This AdminP process can be used to migrate an existing
-						Imixs-Workflow Instance 3.x to version 4.0.</p>
+					<p>This job can be used to migrate an existing
+						Imixs-Workflow Instance from version 3.x to version 4.0.</p>
+						<hr />
 					<div class="row nested">
 						<div class="col-4">
 							<dl>
