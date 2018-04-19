@@ -25,7 +25,7 @@
  * representation of an ItemCollection similar to the
  * org.imixs.workflow.ItemCollection class
  * 
- * Version 1.0.1
+ * Version 2.2.0
  */
 
 IMIXS.namespace("org.imixs.xml");
@@ -40,8 +40,10 @@ IMIXS.org.imixs.xml = (function() {
 
 	/**
 	 * converts a Imixs XML result set into an array of entities. This method
-	 * guarantees that an array of entities is returned even if the result
+	 * guarantees that an array of documents is returned even if the result
 	 * colletion size is 0 or 1
+	 * 
+	 * The method supports the old and also new xml/data structure 
 	 */
 	xml2collection = function(xml) {
 		if (!xml) {
@@ -50,22 +52,30 @@ IMIXS.org.imixs.xml = (function() {
 		
 		var json = xml2json(xml)
 		
-		// test if we have the old xml format (imixs-workflow < 4.0)
-		if (json.collection.document) {
-			if (!$.isArray(json.collection.document))
-				json.collection.document = jQuery.makeArray(json.collection.document);
-			return json.collection.document;			
+		// test if we have the lates xml/data format
+		if (json.data) {
+			if (json.data.document && !$.isArray(json.data.document))
+				json.data.document = jQuery.makeArray(json.data.document);
+			return json.data.document;	
 		} else {
-			// try to convert old entity structure...
-			if (!$.isArray(json.collection.entity))
-				json.collection.entity = jQuery.makeArray(json.collection.entity);
-			return json.collection.entity;
+			// test if we have the deprecated xml format (imixs-workflow < 4.0)
+			if (json.collection.document) {
+				if (!$.isArray(json.collection.document))
+					json.collection.document = jQuery.makeArray(json.collection.document);
+				return json.collection.document;			
+			} else {
+				// try to convert deprecated entity structure...
+				if (!$.isArray(json.collection.entity))
+					json.collection.entity = jQuery.makeArray(json.collection.entity);
+				return json.collection.entity;
+			}
 		}
 		
 	}
 
 	/**
-	 * converts a Imixs XML result of an document into an item array
+	 * Converts a Imixs XML result of an document into an item array.
+	 * The method supports the old and also new xml/data structure 
 	 */
 	xml2document = function(xml) {
 		if (!xml) {
@@ -73,16 +83,27 @@ IMIXS.org.imixs.xml = (function() {
 		}
 			
 		var json = xml2json(xml)
-		// test if we have the old xml format (imixs-workflow < 4.0)
-		if (json.document) {
-			if (!$.isArray(json.document.item))
-				json.document.item = jQuery.makeArray(json.document.item);
-			return json.document.item;
+		
+		// test if json contains data root element
+		if (json.data.document) {
+			// take the first document from data....
+			if (!$.isArray(json.data.document.item))
+				json.data.document.item = jQuery.makeArray(json.data.document.item);
+			return json.data.document.item;
+			
 		} else {
-			// try to convert old entity structure...
-			if (!$.isArray(json.entity.item))
-				json.entity.item = jQuery.makeArray(json.entity.item);
-			return json.entity.item;
+			
+			// test if we have the old xml format (imixs-workflow < 4.0)
+			if (json.document) {
+				if (!$.isArray(json.document.item))
+					json.document.item = jQuery.makeArray(json.document.item);
+				return json.document.item;
+			} else {
+				// try to convert old entity structure...
+				if (!$.isArray(json.entity.item))
+					json.entity.item = jQuery.makeArray(json.entity.item);
+				return json.entity.item;
+			}
 		}
 		
 	}
