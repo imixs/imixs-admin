@@ -56,6 +56,12 @@ IMIXS.org.imixs.xml = (function() {
 		if (json.data) {
 			if (json.data.document && !$.isArray(json.data.document))
 				json.data.document = jQuery.makeArray(json.data.document);
+			
+			if (! json.data.document) {
+				console.debug("no result");
+				json.data.document = [];
+			}
+			
 			return json.data.document;	
 		} else {
 			// test if we have the deprecated xml format (imixs-workflow < 4.0)
@@ -85,7 +91,7 @@ IMIXS.org.imixs.xml = (function() {
 		var json = xml2json(xml)
 		
 		// test if json contains data root element
-		if (json.data.document) {
+		if (json.data && json.data.document) {
 			// take the first document from data....
 			if (!$.isArray(json.data.document.item))
 				json.data.document.item = jQuery.makeArray(json.data.document.item);
