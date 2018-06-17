@@ -1,0 +1,57 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/layout/template.xhtml">
+
+
+	<ui:define name="content">
+
+		<script type="text/javascript">
+			/*<![CDATA[*/
+
+			/*]]>*/
+		</script>
+
+
+		<div class="imixs-form">
+			<div class="imixs-header">
+				<h1>
+					<span class="typcn typcn-world"></span>Document:
+					#{documentController.document.uniqueID}
+				</h1>
+			</div>
+			<div class="imixs-body">
+				<div class="imixs-form-panel">
+
+					<table style="width:100%;">
+						<tr>
+							<th></th>
+							<th>ItemName</th>
+							<th>Type / Value</th>
+						</tr>
+
+						<ui:repeat var="itemname" value="#{documentController.itemNames}">
+
+							<tr>
+								<td>#{conectionController.isIndex(itemname)}</td>
+								<td>#{itemname}</td>
+
+								<td>
+								
+								<h:outputText value="#{documentController.getFormatedItemValue(itemname)}" escape="false" />
+								
+								</td>
+							</tr>
+						</ui:repeat>
+					</table>
+
+					<hr />
+				</div>
+			</div>
+		</div>
+
+
+
+	</ui:define>
+</ui:composition>

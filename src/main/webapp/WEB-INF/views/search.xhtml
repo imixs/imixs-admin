@@ -106,8 +106,15 @@
 
 						<div class="imixs-form-section-2"></div>
 
-						<input type="submit" value="Search ..." /><input type="button"
-							value="Next" /><input type="button" value="Prev" />
+						<input type="submit" value="Search ..." /> <input type="button"
+							onclick="document.location.href='#{facesContext.externalContext.requestContextPath}/app/query/next';"
+							value="Next" /> <input type="button"
+							onclick="document.location.href='#{facesContext.externalContext.requestContextPath}/app/query/prev';"
+							value="Prev" />
+
+
+
+
 					</form>
 
 
@@ -130,14 +137,13 @@
 							<ui:repeat var="record" value="#{queryController.documents}">
 								<tr>
 									<td><a
-										href="#{facesContext.externalContext.requestContextPath}/app/query/#{record.item['$uniqueid']}"
-										title="#{record.item['$uniqueid']}">#{record.item['$uniqueid']}</a></td>
+										href="#{facesContext.externalContext.requestContextPath}/app/document/#{record.item['$uniqueid']}">#{record.item['$uniqueid']}</a></td>
 									<td>#{record.item['$created']}</td>
 									<td>#{record.item['$modified']}</td>
 									<td>#{record.item['$workflowstatus']}</td>
 									<td>#{record.item['txtworklfowsummary']}</td>
 									<td><a
-										href="#{facesContext.externalContext.requestContextPath}/app/teams/#{record.item['$uniqueid']}"
+										href="#{facesContext.externalContext.requestContextPath}/app/document/#{record.item['$uniqueid']}"
 										title="#{record.item['$uniqueid']}">edit</a></td>
 								</tr>
 							</ui:repeat>

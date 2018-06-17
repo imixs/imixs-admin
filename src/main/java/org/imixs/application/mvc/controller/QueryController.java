@@ -12,6 +12,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 import org.imixs.melman.BasicAuthenticator;
 import org.imixs.melman.WorkflowClient;
@@ -45,6 +46,7 @@ public class QueryController implements Serializable {
 	String sortBy;
 	String sortOrder;
 	List<ItemCollection> documents;
+	
 
 	public QueryController() {
 		super();
@@ -107,32 +109,69 @@ public class QueryController implements Serializable {
 		this.documents = documents;
 	}
 
+	
 	@GET
 	public String home() {
 		return "search.xhtml";
 	}
 
+	/**
+	 * Page next
+	 * 
+	 * @return
+	 */
+	@GET
+	@Path("/next")
+	public String next() {
+		pageIndex++;
+		updateDocuments();
+		return "search.xhtml";
+	}
+
+	/**
+	 * Page prev
+	 * 
+	 * @return
+	 */
+	@GET
+	@Path("/prev")
+	public String prev() {
+		if (pageIndex > 0) {
+			pageIndex--;
+			updateDocuments();
+		}
+		return "search.xhtml";
+	}
+
+	
 	@POST
-	public String search(@FormParam("query") String query,  @FormParam("sortBy") String sortBy, @FormParam("sortOrder") String sortOrder) {
-		logger.info("query=" + query + " sortBy=" +sortBy + " sortOrder=" + sortOrder);
+	public String search(@FormParam("query") String query, @FormParam("sortBy") String sortBy,
+			@FormParam("sortOrder") String sortOrder) {
+		logger.info("query=" + query + " sortBy=" + sortBy + " sortOrder=" + sortOrder);
 		setQuery(query);
 		setSortBy(sortBy);
 		setSortOrder(sortOrder);
-		
 
+		updateDocuments();
+
+		return "search.xhtml";
+	}
+
+	private void updateDocuments() {
 		WorkflowClient workflowCLient = new WorkflowClient(connectionController.getUrl());
 		// Create a basic authenticator
-		BasicAuthenticator basicAuth = new BasicAuthenticator(connectionController.getUserid(),connectionController.getPassword());
+		BasicAuthenticator basicAuth = new BasicAuthenticator(connectionController.getUserid(),
+				connectionController.getPassword());
 		// register the authenticator
 		workflowCLient.registerClientRequestFilter(basicAuth);
 
 		String uri = "documents/search/" + query + "?pageSize=" + getPageSize() + "&pageIndex=" + getPageIndex()
-		+"&sortBy=" + getSortBy()+ "&sortReverse=" + ("DESC".equals(getSortOrder()));
+				+ "&sortBy=" + getSortBy() + "&sortReverse=" + ("DESC".equals(getSortOrder()));
 
-		logger.info("URI=" + uri);;
+		logger.info("URI=" + uri);
+
 		documents = workflowCLient.getCustomResource(uri);
 
-		return "search.xhtml";
 	}
 
 }

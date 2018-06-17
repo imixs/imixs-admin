@@ -95,13 +95,13 @@ body, html {
 
 
 
-button, input[type="button"], input[type="submit"], .button, a.button {
+button, input[type="button"], input[type="submit"], .button, a.button,.imixs-button {
    background: #fcb802b8;
    border: 1px solid #FCB802;
    margin-right:10px;
 }
 
-button, input[type="button"]:hover, input[type="submit"]:hover, .button:hover, a.button:hover {
+button, input[type="button"]:hover, input[type="submit"]:hover, .button:hover, a.button:hover, .imixs-button:hover{
    background-color: orange;
    color:#fff;
 }

@@ -1,6 +1,7 @@
 package org.imixs.application.mvc.controller;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.SessionScoped;
@@ -10,6 +11,10 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+
+import org.imixs.melman.BasicAuthenticator;
+import org.imixs.melman.WorkflowClient;
+import org.imixs.workflow.ItemCollection;
 
 /**
  * The Connect controller is used to establish a connectio to Imixs-Worklfow
@@ -31,6 +36,8 @@ public class ConnectionController implements Serializable {
 	String url;
 	String userid;
 	String password;
+
+	ItemCollection configuration;
 
 	public ConnectionController() {
 		super();
@@ -72,7 +79,41 @@ public class ConnectionController implements Serializable {
 		setUrl(url);
 		setUserid(userid);
 		setPassword(password);
+
+		// load the index table
+		loadIndex();
+
 		return "search.xhtml";
+	}
+
+	private void loadIndex() {
+
+		if (url != null && !url.isEmpty()) {
+			WorkflowClient workflowCLient = new WorkflowClient(getUrl());
+			// Create a basic authenticator
+			BasicAuthenticator basicAuth = new BasicAuthenticator(getUserid(), getPassword());
+			// register the authenticator
+			workflowCLient.registerClientRequestFilter(basicAuth);
+
+			List<ItemCollection> indexInfo = workflowCLient.deleteCustomResource("documents/configuration");
+
+			if (indexInfo != null && indexInfo.size() > 0) {
+				configuration = indexInfo.get(0);
+			}
+		}
+	}
+
+	public boolean isIndex(String field) {
+
+		if (configuration != null) {
+
+			String s = configuration.getItemValueString("lucence.indexFieldListNoAnalyze");
+			if (s.contains(field)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 }
