@@ -22,6 +22,7 @@ body, html {
 
 .nav-item .typcn {
 	font-size: 24px;
+	margin-right: 20px;
 }
 
 .nav-sidebar {
@@ -34,22 +35,36 @@ body, html {
 	border-right: 1px solid rgb(224, 228, 231);
 }
 
+.nav-sidebar a {
+	color: inherit;
+}
+
+.nav-sidebar a:hover {
+	text-decoration: none;
+}
+
+.nav-sidebar hr {
+	width: 90%;
+}
+
 .main-container {
-	padding:10px;
+	padding: 10px;
 }
 
 .title-bar {
 	background-color: #FCB802;
 	height: 80px;
 	padding: 10px;
+	white-space: nowrap;
 }
 
 .title-bar h1 {
 	font-weight: 600;
 	line-height: .85em;
 }
+
 .title-bar h4 {
-	margin:0;
+	margin: 0;
 }
 
 .nav-item {
@@ -70,14 +85,6 @@ body, html {
 	outline: 0;
 }
 
-.nav-item a {
-	color: inherit;
-}
-
 .nav-item:hover {
 	background-color: #ccc !important
-}
-
-.nav-item a:hover {
-	text-decoration: none;
 }
