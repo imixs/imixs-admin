@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.imixs.workflow</groupId>
@@ -48,6 +49,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<org.imixs.workflow.version>4.3.3-SNAPSHOT</org.imixs.workflow.version>
+		<org.imixs.melman.version>1.0.3-SNAPSHOT</org.imixs.melman.version>
 		<!-- Default docker registry -->
 		<org.imixs.docker.registry>localhost:5000</org.imixs.docker.registry>
 	</properties>
@@ -60,8 +62,8 @@
 			<url>http://oss.sonatype.org/content/repositories/snapshots</url>
 		</repository>
 	</repositories>
-	
-	
+
+
 	<profiles>
 
 		<profile>
@@ -114,8 +116,7 @@
 										<exec executable="docker">
 											<arg value="build" />
 											<arg value="-t" />
-											<arg
-												value="imixs/imixs-admin:${project.version}" />
+											<arg value="imixs/imixs-admin:${project.version}" />
 											<arg value="./" />
 										</exec>
 										<exec executable="docker">
@@ -141,8 +142,8 @@
 				</plugins>
 			</build>
 		</profile>
-		
-		
+
+
 		<profile>
 			<id>docker-hub</id>
 			<build>
@@ -159,14 +160,12 @@
 										<exec executable="docker">
 											<arg value="build" />
 											<arg value="-t" />
-											<arg
-												value="imixs/imixs-admin:${project.version}" />
+											<arg value="imixs/imixs-admin:${project.version}" />
 											<arg value="./" />
 										</exec>
 										<exec executable="docker">
 											<arg value="push" />
-											<arg
-												value="imixs/imixs-admin:${project.version}" />
+											<arg value="imixs/imixs-admin:${project.version}" />
 										</exec>
 									</target>
 								</configuration>
@@ -183,7 +182,7 @@
 	</profiles>
 
 
-<build>
+	<build>
 		<resources>
 			<!-- enable resource filtering for multi language version -->
 			<resource>
@@ -233,8 +232,13 @@
 			<version>${org.imixs.workflow.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		
-		
+
+		<dependency>
+			<groupId>org.imixs.workflow</groupId>
+			<artifactId>imixs-melman</artifactId>
+			<version>${org.imixs.melman.version}</version>
+		</dependency>
+
 		<!-- mvc-api -->
 		<dependency>
 			<groupId>javax.mvc</groupId>
@@ -246,7 +250,7 @@
 			<artifactId>ozark-resteasy</artifactId>
 			<version>1.0.0-m03</version>
 		</dependency>
-		
+
 
 
 

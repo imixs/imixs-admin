@@ -61,6 +61,7 @@ body, html {
 .title-bar h1 {
 	font-weight: 600;
 	line-height: .85em;
+	margin: 0;
 }
 
 .title-bar h4 {
