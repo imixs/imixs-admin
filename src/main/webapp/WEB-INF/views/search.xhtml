@@ -44,7 +44,9 @@
 
 		<div class="imixs-form">
 			<div class="imixs-header">
-				<h1>Search Query:</h1>
+				<h1>
+					<span class="typcn typcn-world"></span>Search:
+				</h1>
 			</div>
 			<div class="imixs-body">
 				<div class="imixs-form-panel">
@@ -92,7 +94,7 @@
 							<dl class="col-3">
 								<dt>Sort Order:</dt>
 								<dd>
-									<select name="sortOrder"  value="#{queryController.sortOrder}">
+									<select name="sortOrder" value="#{queryController.sortOrder}">
 										<option value="DESC">Descanding</option>
 										<option value="ASC">Ascanding</option>
 									</select>
@@ -104,7 +106,8 @@
 
 						<div class="imixs-form-section-2"></div>
 
-						<input type="submit" value="Search ..." />
+						<input type="submit" value="Search ..." /><input type="button"
+							value="Next" /><input type="button" value="Prev" />
 					</form>
 
 
@@ -112,9 +115,10 @@
 
 
 
-					<h2>Instances:</h2>
+
 					<div class="imixs-form-section">
-						<table id="imixsdatatable" class="imixsdatatable">
+						<table id="imixsdatatable" class="imixsdatatable"
+							style="width: 100%;">
 							<tr>
 								<th>ID</th>
 								<th>#{message.crated}</th>
