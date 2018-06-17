@@ -1,0 +1,113 @@
+/* W3.CSS 4.10 February 2018 by Jan Egil and Borge Refsnes */
+html {
+	box-sizing: border-box;
+	-ms-text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%;
+}
+
+body, html {
+	font-family: 'Open Sans', sans-serif;
+	text-rendering: optimizeLegibility !important;
+	-webkit-font-smoothing: antialiased !important;
+	color: #5a5a5a;
+}
+
+*, *:before, *:after {
+	box-sizing: inherit
+}
+
+.nav-sidebar  ul {
+	padding: 0;
+}
+
+.nav-item .typcn {
+	font-size: 24px;
+	margin-right: 20px;
+}
+
+.nav-sidebar {
+	height: 100%;
+	width: 200px;
+	background-color: #fff;
+	position: fixed !important;
+	z-index: 1;
+	overflow: auto;
+	border-right: 1px solid rgb(224, 228, 231);
+}
+
+.nav-sidebar a {
+	color: inherit;
+}
+
+.nav-sidebar a:hover {
+	text-decoration: none;
+}
+
+.nav-sidebar hr {
+	width: 90%;
+}
+
+.main-container {
+	padding: 10px;
+}
+
+.title-bar {
+	background-color: #FCB802;
+	height: 80px;
+	padding: 10px;
+	white-space: nowrap;
+}
+
+.title-bar h1 {
+	font-weight: 600;
+	line-height: .85em;
+}
+
+.title-bar h4 {
+	margin: 0;
+}
+
+.nav-item {
+	font-weight: 200;
+	padding: 8px 16px;
+	vertical-align: middle;
+	overflow: hidden;
+	text-decoration: none;
+	color: inherit;
+	cursor: pointer;
+	white-space: nowrap;
+	width: 100%;
+	display: block;
+	text-align: left;
+	border: none;
+	white-space: normal;
+	float: none;
+	outline: 0;
+}
+
+.nav-item:hover {
+	background-color: #fcb80285 !important
+}
+
+
+
+button, input[type="button"], input[type="submit"], .button, a.button {
+   background: #fcb802b8;
+   border: 1px solid #FCB802;
+}
+
+button, input[type="button"]:hover, input[type="submit"]:hover, .button:hover, a.button:hover {
+   background-color: orange;
+   color:#fff;
+}
+
+
+
+input[type="text"]:focus,input[type="password"]:focus,textarea:focus,select:focus
+	{
+	border: 1px solid #FCB802;
+	border-radius: 3px;
+	outline: 0;
+	outline: thin dotted \9;
+	
+}

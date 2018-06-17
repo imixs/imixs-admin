@@ -1,0 +1,31 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	template="/layout/template.xhtml">
+
+
+	<ui:define name="content">
+
+
+		<div class="imixs-form">
+			<div class="imixs-header">
+				<h1>Welcome</h1>
+				<h2>Imixs-Workflow MVC 1.0 Sample Application</h2>
+			</div>
+
+
+			<br />
+
+			<form
+				action="#{facesContext.externalContext.requestContextPath}/app/ticket/1.0.1/1000"
+				method="post">
+				<input type="submit" value="Start new Ticket" />
+			</form>
+
+
+		</div>
+
+
+
+	</ui:define>
+</ui:composition>

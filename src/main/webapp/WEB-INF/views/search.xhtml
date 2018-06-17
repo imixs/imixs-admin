@@ -1,0 +1,101 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	template="/layout/template.xhtml">
+
+
+	<ui:define name="content">
+
+		<script type="text/javascript">
+			/*<![CDATA[*/
+
+			// The following code is used to layout the tables with the jquery datatable plugin.
+			$(document).ready(function() {
+				updateTableLayout();
+			});
+
+			function updateTable(e) {
+				if (e.status == 'success') {
+					$('.imixsdatatable').layoutImixsTable()
+				}
+			}
+
+			function updateTableLayout() {
+
+				$('[id$=imixsdatatable]').each(function() {
+					// with the following line we test if the jsf datatable realy contains data 
+					// in cases with empty rows on default column is displayed.
+					if ($('tbody tr:nth-child(1) td', $(this)).length > 1)
+						$(this).dataTable({
+							"bRetrieve" : true,
+							"iDisplayLength" : 30,
+							"bLengthChange" : false,
+							"bSortable" : false,
+							"bJQueryUI" : true,
+							'aaSorting' : []
+						// no inital sorting 						
+						});
+				});
+
+			}
+			/*]]>*/
+		</script>
+
+
+		<div class="imixs-form">
+			<div class="imixs-header">
+				<h1>Search Query:</h1>
+			</div>
+			<div class="imixs-body">
+			<div class="imixs-form-panel">
+				<form
+						action="#{facesContext.externalContext.requestContextPath}/app/connection"
+						method="post">
+
+						<div class="imixs-form-section">
+							<dl>
+								<dt>Query:</dt>
+								<dd>
+									<textarea name="members">#{teamController.workitem.item['members']}</textarea>
+								</dd>
+							</dl>
+						</div>
+
+					<div class="imixs-form-section-2">
+							<dl>
+								<dt>Pagesize:</dt>
+								<dd>
+									<input type="text" value="#{connectionController.userid}"
+										name="userid" />
+								</dd>
+
+
+							</dl>
+
+							<dl>
+								<dt>Pageindex:</dt>
+								<dd>
+									<input type="password" value="#{connectionController.password}"
+										name="password" />
+								</dd>
+							</dl>
+						</div>
+
+						<input type="submit" value="Search ..." />
+					</form>
+			
+			
+			
+				
+					<h2>Instances:</h2>
+					
+				</div>
+			</div>
+
+			
+		</div>
+
+
+
+	</ui:define>
+</ui:composition>

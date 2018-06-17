@@ -47,10 +47,21 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<org.imixs.workflow.version>4.3.3-SNAPSHOT</org.imixs.workflow.version>
 		<!-- Default docker registry -->
 		<org.imixs.docker.registry>localhost:5000</org.imixs.docker.registry>
 	</properties>
 
+	<repositories>
+		<!-- Sonatype Snapshot repository -->
+		<repository>
+			<id>sonatype-snaptshots</id>
+			<name>Sonatype Snapshot repository</name>
+			<url>http://oss.sonatype.org/content/repositories/snapshots</url>
+		</repository>
+	</repositories>
+	
+	
 	<profiles>
 
 		<profile>
@@ -172,32 +183,28 @@
 	</profiles>
 
 
-
-	<build>
+<build>
 		<resources>
-			<!-- enable resource filtering -->
+			<!-- enable resource filtering for multi language version -->
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 			</resource>
 		</resources>
 		<plugins>
-			<!-- use JDK 1.6 settings for compiling -->
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
-
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>2.4</version>
+				<version>3.2.0</version>
 			</plugin>
 
 			<plugin>
@@ -209,12 +216,54 @@
 				</configuration>
 			</plugin>
 
+
+			<!-- relase management -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+			</plugin>
+
 		</plugins>
 	</build>
 
-
 	<dependencies>
+		<dependency>
+			<groupId>org.imixs.workflow</groupId>
+			<artifactId>imixs-workflow-core</artifactId>
+			<version>${org.imixs.workflow.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		
+		<!-- mvc-api -->
+		<dependency>
+			<groupId>javax.mvc</groupId>
+			<artifactId>javax.mvc-api</artifactId>
+			<version>1.0-pr</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mvc-spec.ozark</groupId>
+			<artifactId>ozark-resteasy</artifactId>
+			<version>1.0.0-m03</version>
+		</dependency>
+		
 
+
+
+		<!-- Java EE dependencies -->
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>7.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- JUnit Tests -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 

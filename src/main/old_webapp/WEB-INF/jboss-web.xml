@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-web>
+  <!-- see issue #18 
+   <security-domain>imixsrealm</security-domain>
+  -->
+   <context-root>/imixsadmin</context-root>
+</jboss-web>

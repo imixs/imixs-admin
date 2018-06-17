@@ -1,0 +1,78 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:i="http://java.sun.com/jsf/composite/imixs"
+	template="/layout/template.xhtml">
+
+	<ui:define name="content">
+
+
+		<h1>#{message.team_form_title}</h1>
+
+		<!-- **** General info ***** -->
+		<h2>#{message.edit}: #{ticketController.workitem.uniqueID}</h2>
+
+
+		<!--  Edit FOrm -->
+		<form
+			action="#{facesContext.externalContext.requestContextPath}/app/ticket/#{ticketController.workitem.uniqueID}"
+			method="post">
+			<dl>
+
+				<dt>#{message.name}:
+				</dt>
+				<dd>
+					<input type="text" style="width: 20em;"
+						value="#{ticketController.workitem.item['_subject']}"
+						name="txtname" />
+
+				</dd>
+
+				<dt style="clear: left;">
+					Team:
+				</dt>
+				<dd>
+
+					<input type="text" style="width: 20em;"
+						value="#{ticketController.workitem.item['_team']}" name="txtname" />
+				</dd>
+			</dl>
+
+			<div style="clear: left;" />
+
+			<!-- **** save Actions & History ***** -->
+			<h3>#{message.workflow}</h3>
+
+			<input type="text" 
+				value="#{ticketController.workitem.item['$modelversion']}"
+				name="$modelversion"></input> 
+				
+				<input type="text" 
+				value="#{ticketController.workitem.item['$taskid']}"
+				name="$processid"></input> 	
+				
+				
+				<input type="text" 
+				value="#{ticketController.workitem.item['$workflowgroup']}"
+				name="$workflowgorup"></input> 
+				
+				
+				<input type="text" style="width: 20em;"
+				value="#{ticketController.workitem.item['$eventID']}"
+				name="$eventid" /> 
+				
+				<input type="submit" name="save-team"
+				value="#{message.save}" />
+		
+				<a class="imixs-button" href="#{facesContext.externalContext.requestContextPath}/app/home">close</a>
+							
+		</form>
+
+
+
+
+	</ui:define>
+
+
+
+</ui:composition>

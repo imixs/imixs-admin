@@ -50,8 +50,15 @@ To push the docker image into a registry run
 where 'localhost:5000' need to be replaced with your private registry.
 
 
-### Deployment Notes
 
-Because in Wildfly a persistence.xml file is necessary the pom.xml
-includes a 'wildfly' profile just to copy this blank persistence.xml into
-the classes/META-INF/ folder. For GlassFish is file my not be included!
+## Development
+
+During development you can use the docker-compose-dev.yml file. This stack maps the src/docker/deployments folder to the wildfly auto deploy directory. 
+
+	$ docker-compose -f docker-compose-dev.yml up
+	
+you may have to grant the deployment folder first to allow the docker non privileged user to access this location.
+
+	$ sudo chmod 777 src/docker/deployments/
+
+	

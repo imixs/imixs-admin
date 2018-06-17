@@ -1,0 +1,66 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	template="/layout/template.xhtml">
+
+
+	<ui:define name="content">
+
+
+		<div class="imixs-form">
+			<div class="imixs-header">
+				<h1>Connect</h1>
+				<p>Connect to Imixs-Worklfow remote Rest API</p>
+			</div>
+			<hr />
+
+
+			<div class="row">
+
+				<div class="col-6">
+					<form
+						action="#{facesContext.externalContext.requestContextPath}/app/connection"
+						method="post">
+
+						<div class="imixs-form-section">
+							<dl>
+								<dt>URL:</dt>
+								<dd>
+									<input type="text" value="#{connectionController.url}"
+										name="url" />
+								</dd>
+							</dl>
+						</div>
+
+						<div class="imixs-form-section-2">
+							<dl>
+								<dt>UserID:</dt>
+								<dd>
+									<input type="text" value="#{connectionController.userid}"
+										name="userid" />
+								</dd>
+
+
+							</dl>
+
+							<dl>
+								<dt>Password:</dt>
+								<dd>
+									<input type="password" value="#{connectionController.password}"
+										name="password" />
+								</dd>
+							</dl>
+						</div>
+
+						<input type="submit" value="Connect ..." />
+					</form>
+
+				</div>
+			</div>
+		</div>
+
+
+
+
+	</ui:define>
+</ui:composition>
