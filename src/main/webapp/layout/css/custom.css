@@ -116,3 +116,11 @@ input[type="text"]:focus,input[type="password"]:focus,textarea:focus,select:focu
 	outline: thin dotted \9;
 	
 }
+
+table  {
+	font-size: 14px;
+}
+
+th {
+	font-weight: bold;
+}

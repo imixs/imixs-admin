@@ -12,7 +12,6 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 
 import org.imixs.melman.BasicAuthenticator;
 import org.imixs.melman.WorkflowClient;
@@ -46,7 +45,6 @@ public class QueryController implements Serializable {
 	String sortBy;
 	String sortOrder;
 	List<ItemCollection> documents;
-	
 
 	public QueryController() {
 		super();
@@ -109,9 +107,9 @@ public class QueryController implements Serializable {
 		this.documents = documents;
 	}
 
-	
 	@GET
 	public String home() {
+		updateDocuments();
 		return "search.xhtml";
 	}
 
@@ -143,7 +141,6 @@ public class QueryController implements Serializable {
 		return "search.xhtml";
 	}
 
-	
 	@POST
 	public String search(@FormParam("query") String query, @FormParam("sortBy") String sortBy,
 			@FormParam("sortOrder") String sortOrder) {
@@ -158,20 +155,21 @@ public class QueryController implements Serializable {
 	}
 
 	private void updateDocuments() {
-		WorkflowClient workflowCLient = new WorkflowClient(connectionController.getUrl());
-		// Create a basic authenticator
-		BasicAuthenticator basicAuth = new BasicAuthenticator(connectionController.getUserid(),
-				connectionController.getPassword());
-		// register the authenticator
-		workflowCLient.registerClientRequestFilter(basicAuth);
+		if (connectionController.getConfiguration() != null && !connectionController.getUrl().isEmpty()) {
+			WorkflowClient workflowCLient = new WorkflowClient(connectionController.getUrl());
+			// Create a basic authenticator
+			BasicAuthenticator basicAuth = new BasicAuthenticator(connectionController.getUserid(),
+					connectionController.getPassword());
+			// register the authenticator
+			workflowCLient.registerClientRequestFilter(basicAuth);
 
-		String uri = "documents/search/" + query + "?pageSize=" + getPageSize() + "&pageIndex=" + getPageIndex()
-				+ "&sortBy=" + getSortBy() + "&sortReverse=" + ("DESC".equals(getSortOrder()));
+			String uri = "documents/search/" + query + "?pageSize=" + getPageSize() + "&pageIndex=" + getPageIndex()
+					+ "&sortBy=" + getSortBy() + "&sortReverse=" + ("DESC".equals(getSortOrder()));
 
-		logger.info("URI=" + uri);
+			logger.info("URI=" + uri);
 
-		documents = workflowCLient.getCustomResource(uri);
-
+			documents = workflowCLient.getCustomResource(uri);
+		}
 	}
 
 }

@@ -66,35 +66,30 @@ public class DocumentController implements Serializable {
 		return result;
 	}
 
-	
 	/**
 	 * Returns a formated html string of a item value
+	 * 
 	 * @param itemname
 	 * @return
 	 */
+	@SuppressWarnings("rawtypes")
 	public String getFormatedItemValue(String itemname) {
-		String result="";
-		if (document!=null) {
+		String result = "";
+		if (document != null) {
 			List itemvalues = document.getItemValue(itemname);
-			
-			for (Object o: itemvalues) {
-				
-				result+="<strong>"+o.getClass().getSimpleName() + ":</strong> " + o;
-				
-				result+="<br />";
-				
+			for (Object o : itemvalues) {
+				result += "<strong>" + o.getClass().getSimpleName() + ":</strong> " + o;
+				result += "<br />";
 			}
-			
-			
 		}
 		return result;
 	}
-	
-	
+
 	@GET
 	@Path("/{uniqueid}")
 	public String loadDocument(@PathParam("uniqueid") String uniqueid) {
 
+		logger.finest("......load document: " + uniqueid);
 		WorkflowClient workflowCLient = new WorkflowClient(connectionController.getUrl());
 		// Create a basic authenticator
 		BasicAuthenticator basicAuth = new BasicAuthenticator(connectionController.getUserid(),

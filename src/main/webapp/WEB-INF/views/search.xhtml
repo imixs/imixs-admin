@@ -106,14 +106,15 @@
 
 						<div class="imixs-form-section-2"></div>
 
-						<input type="submit" value="Search ..." /> <input type="button"
-							onclick="document.location.href='#{facesContext.externalContext.requestContextPath}/app/query/next';"
-							value="Next" /> <input type="button"
+						<input type="submit" value="Search ..." />
+						
+						<span style="float:right;">
+						 <input type="button"
 							onclick="document.location.href='#{facesContext.externalContext.requestContextPath}/app/query/prev';"
-							value="Prev" />
-
-
-
+							value="« Prev" /><input type="button"
+							onclick="document.location.href='#{facesContext.externalContext.requestContextPath}/app/query/next';"
+							value="Next »" /> 
+							</span>
 
 					</form>
 
@@ -123,16 +124,16 @@
 
 
 
-					<div class="imixs-form-section">
+					<div class="imixs-form-section" >
 						<table id="imixsdatatable" class="imixsdatatable"
 							style="width: 100%;">
 							<tr>
 								<th>ID</th>
-								<th>#{message.crated}</th>
+								<th>#{message.created}</th>
 								<th>#{message.modified}</th>
-								<th>#{message.summary}</th>
 								<th>#{message.status}</th>
-								<th>#{message.action}</th>
+								<th>#{message.summary}</th>
+								<th></th>
 							</tr>
 							<ui:repeat var="record" value="#{queryController.documents}">
 								<tr>
@@ -141,10 +142,10 @@
 									<td>#{record.item['$created']}</td>
 									<td>#{record.item['$modified']}</td>
 									<td>#{record.item['$workflowstatus']}</td>
-									<td>#{record.item['txtworklfowsummary']}</td>
+									<td>#{record.item['txtworkflowsummary']}</td>
 									<td><a
 										href="#{facesContext.externalContext.requestContextPath}/app/document/#{record.item['$uniqueid']}"
-										title="#{record.item['$uniqueid']}">edit</a></td>
+										title="#{record.item['$uniqueid']}"><span class="typcn typcn-trash" style="font-size:18px;" title="delete"></span></a></td>
 								</tr>
 							</ui:repeat>
 						</table>
@@ -152,6 +153,16 @@
 
 
 					</div>
+					
+					<hr />
+					
+					<span style="float:right;">
+						 <input type="button"
+							onclick="document.location.href='#{facesContext.externalContext.requestContextPath}/app/query/prev';"
+							value="« Prev" /><input type="button"
+							onclick="document.location.href='#{facesContext.externalContext.requestContextPath}/app/query/next';"
+							value="Next »" /> 
+							</span>
 				</div>
 			</div>
 
