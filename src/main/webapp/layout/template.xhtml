@@ -21,13 +21,26 @@
 
 	<!-- Fonts
     ================================================== -->
-	<link rel="stylesheet" type="text/css" href="#{facesContext.externalContext.requestContextPath}/layout/css/fonts/open_sans.css" />
-	<link rel="stylesheet" type="text/css" href="#{facesContext.externalContext.requestContextPath}/layout/css/fonts/typicons.css" />
+	<link rel="stylesheet" type="text/css"
+		href="#{facesContext.externalContext.requestContextPath}/layout/css/fonts/open_sans.css" />
+	<link rel="stylesheet" type="text/css"
+		href="#{facesContext.externalContext.requestContextPath}/layout/css/fonts/typicons.css" />
 	<!-- Style
     ================================================== -->
-	<link rel="stylesheet" href="#{facesContext.externalContext.requestContextPath}/layout/css/imixs-basic.css" />
-	<link rel="stylesheet" href="#{facesContext.externalContext.requestContextPath}/layout/css/imixs-layout.css" />
-	<link rel="stylesheet" href="#{facesContext.externalContext.requestContextPath}/layout/css/custom.css" />
+	<link rel="stylesheet"
+		href="#{facesContext.externalContext.requestContextPath}/layout/css/imixs-basic.css" />
+	<link rel="stylesheet"
+		href="#{facesContext.externalContext.requestContextPath}/layout/css/imixs-layout.css" />
+	<link rel="stylesheet"
+		href="#{facesContext.externalContext.requestContextPath}/layout/css/custom.css" />
+
+	<!-- jquery
+    ================================================== -->
+	<script type="text/javascript"
+		src="#{facesContext.externalContext.requestContextPath}/layout/js/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript"
+		src="#{facesContext.externalContext.requestContextPath}/layout/js/jquery-ui.min.js"></script>
+
 </h:head>
 <h:body>
 	<f:view>
@@ -42,28 +55,32 @@
 			</div>
 
 			<ul>
-				<li class="nav-item"><a href="#{facesContext.externalContext.requestContextPath}/app/connection"><span
+				<li class="nav-item"><a
+					href="#{facesContext.externalContext.requestContextPath}/app/connection"><span
 						class="typcn typcn-plug"></span>Connect</a></li>
 			</ul>
 			<hr />
 			<ul>
-				<li class="nav-item"><a href="#{facesContext.externalContext.requestContextPath}/app/query/"><span
+				<li class="nav-item"><a
+					href="#{facesContext.externalContext.requestContextPath}/app/query/"><span
 						class="typcn typcn-world"></span>Search</a></li>
 				<li class="nav-item"><a href="#"><span
 						class="typcn typcn-edit"></span>Update</a></li>
 				<li class="nav-item"><a href="#"><span
 						class="typcn typcn-trash"></span>Delete</a></li>
 
-				<li class="nav-item"><a href="#"><span
+				<li class="nav-item"><a
+					href="#{facesContext.externalContext.requestContextPath}/app/backup"><span
 						class="typcn typcn-cloud-storage-outline"></span>Backup</a></li>
 
 				<li class="nav-item"><a href="#"><span
 						class="typcn typcn-spanner-outline"></span>AdminP</a></li>
 
 
-				<li class="nav-item"><a href="#{facesContext.externalContext.requestContextPath}/app/connection/configuration"><span
+				<li class="nav-item"><a
+					href="#{facesContext.externalContext.requestContextPath}/app/connection/configuration"><span
 						class="typcn typcn-document-text"></span> Index</a></li>
-			</ul> 
+			</ul>
 
 
 
