@@ -19,6 +19,15 @@
 					$('.imixsdatatable').layoutImixsTable()
 				}
 			}
+			
+			
+			function deleteDocument(id) {
+				if (!confirm('Are you sure?\nDelete Entity ' + id + ' now?')) {
+					return false;
+				}
+				// delete...
+				document.location.href="#{facesContext.externalContext.requestContextPath}/app/document/action/delete/"+id;
+			}
 
 			function updateTableLayout() {
 
@@ -144,7 +153,7 @@
 									<td>#{record.item['$workflowstatus']}</td>
 									<td>#{record.item['txtworkflowsummary']}</td>
 									<td><a
-										href="#{facesContext.externalContext.requestContextPath}/app/document/#{record.item['$uniqueid']}"
+										href="#" onclick="deleteDocument('#{record.item['$uniqueid']}')"
 										title="#{record.item['$uniqueid']}"><span class="typcn typcn-trash" style="font-size:18px;" title="delete"></span></a></td>
 								</tr>
 							</ui:repeat>

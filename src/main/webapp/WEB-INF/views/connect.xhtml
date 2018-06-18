@@ -29,7 +29,7 @@
 								<dt>URL:</dt>
 								<dd>
 									<input type="text" value="#{connectionController.url}"
-										name="url" />
+										autocomplete="url" name="url" />
 								</dd>
 							</dl>
 						</div>
@@ -39,7 +39,7 @@
 								<dt>UserID:</dt>
 								<dd>
 									<input type="text" value="#{connectionController.userid}"
-										name="userid" />
+									 autocomplete="username"	name="userid" />
 								</dd>
 
 
@@ -49,6 +49,7 @@
 								<dt>Password:</dt>
 								<dd>
 									<input type="password" value="#{connectionController.password}"
+									autocomplete="current-password"
 										name="password" />
 								</dd>
 							</dl>

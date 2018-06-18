@@ -1,7 +1,6 @@
 package org.imixs.application.mvc.controller;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -70,25 +69,13 @@ public class ConnectionController implements Serializable {
 		this.password = password;
 	}
 
-	/**
-	 * Returns a stirng list of all configuraiton values managed by the lucene
-	 * service
-	 * 
-	 * @return
-	 */
-	public List<String> getConfigurationItems() {
-		List<String> result = new ArrayList<String>();
-		if (configuration != null) {
-			result.addAll(configuration.getItemList().keySet());
-		}
-		return result;
-	}
+	
 	public ItemCollection getConfiguration() {
 		return configuration;
 	}
 
 	@GET
-	public String home() {
+	public String actionHome() {
 		return "connect.xhtml";
 	}
 
@@ -109,7 +96,7 @@ public class ConnectionController implements Serializable {
 	 * @return
 	 */
 	@POST
-	public String connect(@FormParam("url") String url, @FormParam("userid") String userid,
+	public String actionConnect(@FormParam("url") String url, @FormParam("userid") String userid,
 			@FormParam("password") String password) {
 		logger.info("url=" + url);
 		setUrl(url);

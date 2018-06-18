@@ -1,10 +1,7 @@
 package org.imixs.application.mvc.controller;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.SessionScoped;
@@ -55,16 +52,7 @@ public class DocumentController implements Serializable {
 		this.document = document;
 	}
 
-	public List<String> getItemNames() {
-
-		Map<String, ?> itemList = document.getItemList();
-		List<String> result = new ArrayList<String>();
-		result.addAll(itemList.keySet());
-		// sort result
-		Collections.sort(result);
-
-		return result;
-	}
+	
 
 	/**
 	 * Returns a formated html string of a item value
@@ -100,6 +88,23 @@ public class DocumentController implements Serializable {
 		document = workflowCLient.getWorkitem(uniqueid);
 
 		return "document.xhtml";
+	}
+	
+	
+	@GET
+	@Path("/action/delete/{uniqueid}")
+	public String actionDeleteDocument(@PathParam("uniqueid") String uniqueid) {
+
+		logger.finest("......delete document: " + uniqueid);
+		WorkflowClient workflowCLient = new WorkflowClient(connectionController.getUrl());
+		// Create a basic authenticator
+		BasicAuthenticator basicAuth = new BasicAuthenticator(connectionController.getUserid(),
+				connectionController.getPassword());
+		// register the authenticator
+		workflowCLient.registerClientRequestFilter(basicAuth);
+		workflowCLient.deleteWorkitem(uniqueid);
+
+		return "redirect:query/";
 	}
 
 }
