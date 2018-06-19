@@ -13,11 +13,12 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.imixs.melman.BasicAuthenticator;
+import org.imixs.melman.FormAuthenticator;
 import org.imixs.melman.WorkflowClient;
 import org.imixs.workflow.ItemCollection;
 
 /**
- * The Connect controller is used to establish a connectio to Imixs-Worklfow
+ * The Connect controller is used to establish a connection to Imixs-Worklfow
  * remote interface.
  * 
  * @author rsoika
@@ -40,6 +41,8 @@ public class ConnectionController implements Serializable {
 	List<String> indexListNoAnalyse;
 	List<String> indexListAnalyse;
 	ItemCollection configuration;
+
+	WorkflowClient workflowCLient = null;
 
 	public ConnectionController() {
 		super();
@@ -69,7 +72,15 @@ public class ConnectionController implements Serializable {
 		this.password = password;
 	}
 
-	
+	/**
+	 * Return the workflow client
+	 * 
+	 * @return
+	 */
+	public WorkflowClient getWorkflowCLient() {
+		return workflowCLient;
+	}
+
 	public ItemCollection getConfiguration() {
 		return configuration;
 	}
@@ -90,6 +101,9 @@ public class ConnectionController implements Serializable {
 	 * lucene configuration. If the connection was successful, then the search page
 	 * is shown. Otherwise the connect page is shown.
 	 * 
+	 * The method creaats a new instance of a workfowClient that can be reused be
+	 * other beans.
+	 * 
 	 * @param url
 	 * @param userid
 	 * @param password
@@ -97,18 +111,33 @@ public class ConnectionController implements Serializable {
 	 */
 	@POST
 	public String actionConnect(@FormParam("url") String url, @FormParam("userid") String userid,
-			@FormParam("password") String password) {
+			@FormParam("password") String password, @FormParam("authentication") String authentication) {
 		logger.info("url=" + url);
 		setUrl(url);
 		setUserid(userid);
 		setPassword(password);
+
+		workflowCLient = new WorkflowClient(getUrl());
+		// Test authentication method
+		if ("Form".equalsIgnoreCase(authentication)) {
+			// default basic authenticator
+			FormAuthenticator formAuth = new FormAuthenticator(url, getUserid(), getPassword());
+			// register the authenticator
+			workflowCLient.registerClientRequestFilter(formAuth);
+
+		} else {
+			// default basic authenticator
+			BasicAuthenticator basicAuth = new BasicAuthenticator(getUserid(), getPassword());
+			// register the authenticator
+			workflowCLient.registerClientRequestFilter(basicAuth);
+		}
 
 		// load the index table
 		loadIndex();
 
 		if (configuration != null) {
 			logger.info("...connection: " + url + " = OK");
-			//return "search.xhtml";
+			// return "search.xhtml";
 			return "redirect:query/";
 
 		} else {
@@ -130,11 +159,6 @@ public class ConnectionController implements Serializable {
 		configuration = null;
 
 		if (url != null && !url.isEmpty()) {
-			WorkflowClient workflowCLient = new WorkflowClient(getUrl());
-			// Create a basic authenticator
-			BasicAuthenticator basicAuth = new BasicAuthenticator(getUserid(), getPassword());
-			// register the authenticator
-			workflowCLient.registerClientRequestFilter(basicAuth);
 
 			List<ItemCollection> indexInfo = workflowCLient.getCustomResource("documents/configuration");
 

@@ -16,8 +16,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
-import org.imixs.melman.BasicAuthenticator;
-import org.imixs.melman.WorkflowClient;
+
 
 /**
  * The Connect controller is used to establish a connectio to Imixs-Worklfow
@@ -96,24 +95,18 @@ public class BackupController implements Serializable {
 		setQuery(query);
 		setPath(path);
 
-		WorkflowClient workflowCLient = new WorkflowClient(connectionController.getUrl());
-		// Create a basic authenticator
-		BasicAuthenticator basicAuth = new BasicAuthenticator(connectionController.getUserid(),
-				connectionController.getPassword());
-		// register the authenticator
-		workflowCLient.registerClientRequestFilter(basicAuth);
-
+		
 		if ("backup".equals(action)) {
-			String uri = workflowCLient.getBaseURI() + "documents/backup/" + query + "?filepath=" + path;
+			String uri = connectionController.getWorkflowCLient().getBaseURI() + "documents/backup/" + query + "?filepath=" + path;
 			// create put for backup ...
-			Response response = workflowCLient.getClient().target(uri).request().put(null);
+			Response response = connectionController.getWorkflowCLient().getClient().target(uri).request().put(null);
 			status = response.getStatus();
 		}
 
 		if ("restore".equals(action)) {
-			String uri = workflowCLient.getBaseURI() + "documents/restore?filepath=" + path;
+			String uri = connectionController.getWorkflowCLient().getBaseURI() + "documents/restore?filepath=" + path;
 			// create put for backup ...
-			Response response = workflowCLient.getClient().target(uri).request().get();
+			Response response = connectionController.getWorkflowCLient().getClient().target(uri).request().get();
 			status = response.getStatus();
 		}
 

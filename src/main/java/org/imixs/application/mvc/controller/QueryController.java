@@ -13,8 +13,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import org.imixs.melman.BasicAuthenticator;
-import org.imixs.melman.WorkflowClient;
 import org.imixs.workflow.ItemCollection;
 
 /**
@@ -156,19 +154,13 @@ public class QueryController implements Serializable {
 
 	private void updateDocuments() {
 		if (connectionController.getConfiguration() != null && !connectionController.getUrl().isEmpty()) {
-			WorkflowClient workflowCLient = new WorkflowClient(connectionController.getUrl());
-			// Create a basic authenticator
-			BasicAuthenticator basicAuth = new BasicAuthenticator(connectionController.getUserid(),
-					connectionController.getPassword());
-			// register the authenticator
-			workflowCLient.registerClientRequestFilter(basicAuth);
-
+			
 			String uri = "documents/search/" + query + "?pageSize=" + getPageSize() + "&pageIndex=" + getPageIndex()
 					+ "&sortBy=" + getSortBy() + "&sortReverse=" + ("DESC".equals(getSortOrder()));
 
 			logger.info("URI=" + uri);
 
-			documents = workflowCLient.getCustomResource(uri);
+			documents = connectionController.getWorkflowCLient().getCustomResource(uri);
 		}
 	}
 

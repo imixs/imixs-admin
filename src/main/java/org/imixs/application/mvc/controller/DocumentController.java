@@ -12,7 +12,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.imixs.melman.BasicAuthenticator;
+
 import org.imixs.melman.WorkflowClient;
 import org.imixs.workflow.ItemCollection;
 
@@ -78,14 +78,8 @@ public class DocumentController implements Serializable {
 	public String loadDocument(@PathParam("uniqueid") String uniqueid) {
 
 		logger.finest("......load document: " + uniqueid);
-		WorkflowClient workflowCLient = new WorkflowClient(connectionController.getUrl());
-		// Create a basic authenticator
-		BasicAuthenticator basicAuth = new BasicAuthenticator(connectionController.getUserid(),
-				connectionController.getPassword());
-		// register the authenticator
-		workflowCLient.registerClientRequestFilter(basicAuth);
-
-		document = workflowCLient.getWorkitem(uniqueid);
+		
+		document = connectionController.getWorkflowCLient().getWorkitem(uniqueid);
 
 		return "document.xhtml";
 	}
@@ -96,13 +90,7 @@ public class DocumentController implements Serializable {
 	public String actionDeleteDocument(@PathParam("uniqueid") String uniqueid) {
 
 		logger.finest("......delete document: " + uniqueid);
-		WorkflowClient workflowCLient = new WorkflowClient(connectionController.getUrl());
-		// Create a basic authenticator
-		BasicAuthenticator basicAuth = new BasicAuthenticator(connectionController.getUserid(),
-				connectionController.getPassword());
-		// register the authenticator
-		workflowCLient.registerClientRequestFilter(basicAuth);
-		workflowCLient.deleteWorkitem(uniqueid);
+		connectionController.getWorkflowCLient().deleteWorkitem(uniqueid);
 
 		return "redirect:query/";
 	}
