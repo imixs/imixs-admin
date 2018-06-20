@@ -1,4 +1,4 @@
-package org.imixs.application.mvc.controller;
+package org.imixs.application.admin;
 
 import java.io.Serializable;
 import java.util.List;
@@ -6,11 +6,6 @@ import java.util.logging.Logger;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
-import javax.mvc.annotation.Controller;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
 
 import org.imixs.melman.BasicAuthenticator;
 import org.imixs.melman.FormAuthenticator;
@@ -24,10 +19,8 @@ import org.imixs.workflow.ItemCollection;
  * @author rsoika
  *
  */
-@Controller
 @Named
 @SessionScoped
-@Path("/connection")
 public class ConnectionController implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -85,17 +78,7 @@ public class ConnectionController implements Serializable {
 		return configuration;
 	}
 
-	@GET
-	public String actionHome() {
-		return "connect.xhtml";
-	}
-
-	@GET
-	@Path("/configuration")
-	public String showConfiguration() {
-		return "configuration.xhtml";
-	}
-
+	
 	/**
 	 * Establishes a new connection to a remote rest service interface and loads the
 	 * lucene configuration. If the connection was successful, then the search page
@@ -107,11 +90,10 @@ public class ConnectionController implements Serializable {
 	 * @param url
 	 * @param userid
 	 * @param password
-	 * @return
+	 * @return true if connection was established.
 	 */
-	@POST
-	public String actionConnect(@FormParam("url") String url, @FormParam("userid") String userid,
-			@FormParam("password") String password, @FormParam("authentication") String authentication) {
+	public boolean connect( String url, String userid,
+			 String password,  String authMethod) {
 		logger.info("url=" + url);
 		setUrl(url);
 		setUserid(userid);
@@ -119,7 +101,7 @@ public class ConnectionController implements Serializable {
 
 		workflowCLient = new WorkflowClient(getUrl());
 		// Test authentication method
-		if ("Form".equalsIgnoreCase(authentication)) {
+		if ("Form".equalsIgnoreCase(authMethod)) {
 			// default basic authenticator
 			FormAuthenticator formAuth = new FormAuthenticator(url, getUserid(), getPassword());
 			// register the authenticator
@@ -135,15 +117,7 @@ public class ConnectionController implements Serializable {
 		// load the index table
 		loadIndex();
 
-		if (configuration != null) {
-			logger.info("...connection: " + url + " = OK");
-			// return "search.xhtml";
-			return "redirect:query/";
-
-		} else {
-			logger.info("...connection: " + url + " = FAILED");
-			return "connect.xhtml";
-		}
+		return (configuration != null);
 
 	}
 

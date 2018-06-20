@@ -1,4 +1,4 @@
-package org.imixs.application.mvc.example;
+package org.imixs.application.admin;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

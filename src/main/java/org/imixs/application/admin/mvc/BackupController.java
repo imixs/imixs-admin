@@ -1,4 +1,4 @@
-package org.imixs.application.mvc.controller;
+package org.imixs.application.admin.mvc;
 
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -6,15 +6,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Logger;
 
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.mvc.annotation.Controller;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
+
+import org.imixs.application.admin.ConnectionController;
 
 
 
@@ -26,8 +26,7 @@ import javax.ws.rs.core.Response;
  *
  */
 @Controller
-@Named
-@SessionScoped
+
 @Path("/backup")
 public class BackupController implements Serializable {
 

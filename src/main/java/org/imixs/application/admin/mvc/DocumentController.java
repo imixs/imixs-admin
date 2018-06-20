@@ -1,19 +1,16 @@
-package org.imixs.application.mvc.controller;
+package org.imixs.application.admin.mvc;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.mvc.annotation.Controller;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-
-import org.imixs.melman.WorkflowClient;
+import org.imixs.application.admin.ConnectionController;
 import org.imixs.workflow.ItemCollection;
 
 /**
@@ -24,8 +21,6 @@ import org.imixs.workflow.ItemCollection;
  *
  */
 @Controller
-@Named
-@SessionScoped
 @Path("/document")
 public class DocumentController implements Serializable {
 

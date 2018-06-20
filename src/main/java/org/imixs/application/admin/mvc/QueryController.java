@@ -1,10 +1,10 @@
-package org.imixs.application.mvc.controller;
+package org.imixs.application.admin.mvc;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.mvc.annotation.Controller;
@@ -13,6 +13,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
+import org.imixs.application.admin.ConnectionController;
 import org.imixs.workflow.ItemCollection;
 
 /**
@@ -23,9 +24,8 @@ import org.imixs.workflow.ItemCollection;
  *
  */
 @Controller
-@Named
-@SessionScoped
 @Path("/query")
+@Named
 public class QueryController implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -155,7 +155,7 @@ public class QueryController implements Serializable {
 	private void updateDocuments() {
 		if (connectionController.getConfiguration() != null && !connectionController.getUrl().isEmpty()) {
 			
-			String uri = "documents/search/" + query + "?pageSize=" + getPageSize() + "&pageIndex=" + getPageIndex()
+			String uri = "documents/search/" + getQuery() + "?pageSize=" + getPageSize() + "&pageIndex=" + getPageIndex()
 					+ "&sortBy=" + getSortBy() + "&sortReverse=" + ("DESC".equals(getSortOrder()));
 
 			logger.info("URI=" + uri);
