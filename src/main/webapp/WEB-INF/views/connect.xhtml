@@ -45,14 +45,20 @@
 								<dd>
 									<input type="password" value="#{connectionController.password}"
 										autocomplete="current-password" name="password" />
-								</dd>
+								</dd> 
 							</dl>
 							<dl>
 								<dt>Authentication:</dt>
 								<dd>
 									<select name="authentication">
-										<option value="Basic">Basic</option>
-										<option value="Form">Form</option>
+									<ui:fragment rendered="#{connectionController.authMethod eq 'Form'}">
+										<option value="Basic" >Basic</option>
+										<option value="Form" selected="selected">Form</option>
+									 </ui:fragment>
+									<ui:fragment rendered="#{connectionController.authMethod ne 'Form'}">
+											<option value="Basic" selected="selected">Basic</option>
+											<option value="Form">Form</option>
+									 </ui:fragment>
 									</select>
 								</dd>
 							</dl>

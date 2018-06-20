@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.imixs.melman.BasicAuthenticator;
@@ -16,6 +17,8 @@ import org.imixs.workflow.ItemCollection;
  * The Connect controller is used to establish a connection to Imixs-Worklfow
  * remote interface.
  * 
+ * The session scoped bean holds an instance of an Melman WorkfowClient. 
+ * 
  * @author rsoika
  *
  */
@@ -26,16 +29,21 @@ public class ConnectionController implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private static Logger logger = Logger.getLogger(ConnectionController.class.getName());
+	public static int DEFAULT_PAGE_SIZE = 30;
 
 	String url;
 	String userid;
 	String password;
+	String authMethod;
 
 	List<String> indexListNoAnalyse;
 	List<String> indexListAnalyse;
 	ItemCollection configuration;
 
 	WorkflowClient workflowCLient = null;
+
+	@Inject
+	DataController dataController;
 
 	public ConnectionController() {
 		super();
@@ -65,6 +73,22 @@ public class ConnectionController implements Serializable {
 		this.password = password;
 	}
 
+	public String getAuthMethod() {
+		return authMethod;
+	}
+
+	public void setAuthMethod(String authMethod) {
+		this.authMethod = authMethod;
+	}
+
+	public List<String> getIndexListNoAnalyse() {
+		return indexListNoAnalyse;
+	}
+
+	public List<String> getIndexListAnalyse() {
+		return indexListAnalyse;
+	}
+
 	/**
 	 * Return the workflow client
 	 * 
@@ -78,7 +102,6 @@ public class ConnectionController implements Serializable {
 		return configuration;
 	}
 
-	
 	/**
 	 * Establishes a new connection to a remote rest service interface and loads the
 	 * lucene configuration. If the connection was successful, then the search page
@@ -92,8 +115,7 @@ public class ConnectionController implements Serializable {
 	 * @param password
 	 * @return true if connection was established.
 	 */
-	public boolean connect( String url, String userid,
-			 String password,  String authMethod) {
+	public boolean connect(String url, String userid, String password, String authMethod) {
 		logger.info("url=" + url);
 		setUrl(url);
 		setUserid(userid);
@@ -103,13 +125,15 @@ public class ConnectionController implements Serializable {
 		// Test authentication method
 		if ("Form".equalsIgnoreCase(authMethod)) {
 			// default basic authenticator
-			FormAuthenticator formAuth = new FormAuthenticator(url, getUserid(), getPassword());
+			FormAuthenticator formAuth = new FormAuthenticator(url, getUserid(),
+					getPassword());
 			// register the authenticator
 			workflowCLient.registerClientRequestFilter(formAuth);
 
 		} else {
 			// default basic authenticator
-			BasicAuthenticator basicAuth = new BasicAuthenticator(getUserid(), getPassword());
+			BasicAuthenticator basicAuth = new BasicAuthenticator(getUserid(),
+					getPassword());
 			// register the authenticator
 			workflowCLient.registerClientRequestFilter(basicAuth);
 		}
@@ -132,7 +156,7 @@ public class ConnectionController implements Serializable {
 		indexListAnalyse = null;
 		configuration = null;
 
-		if (url != null && !url.isEmpty()) {
+		if (url!= null && !url.isEmpty()) {
 
 			List<ItemCollection> indexInfo = workflowCLient.getCustomResource("documents/configuration");
 

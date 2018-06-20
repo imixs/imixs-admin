@@ -61,6 +61,7 @@ public class LoginController implements Serializable {
 		connectionController.setUrl(url);
 		connectionController.setUserid(userid);
 		connectionController.setPassword(password);
+		connectionController.setAuthMethod(authentication);
 
 		boolean connected = connectionController.connect(url, userid, password, authentication);
 

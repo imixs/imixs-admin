@@ -67,7 +67,7 @@
 							<dl>
 								<dt>Query:</dt>
 								<dd>
-									<textarea name="query">#{queryController.query}</textarea>
+									<textarea name="query">#{dataController.query}</textarea>
 								</dd>
 							</dl>
 						</div>
@@ -80,14 +80,14 @@
 							<dl class="col-3">
 								<dt>Page Size:</dt>
 								<dd>
-									<input type="text" value="#{queryController.pageSize}"
+									<input type="text" value="#{dataController.pageSize}"
 										name="pageSize" />
 								</dd>
 							</dl>
 							<dl class="col-3">
 								<dt>Page Index:</dt>
 								<dd>
-									<input type="text" value="#{queryController.pageIndex}"
+									<input type="text" value="#{dataController.pageIndex}"
 										name="pageIndex" />
 								</dd>
 							</dl>
@@ -95,7 +95,7 @@
 							<dl class="col-3">
 								<dt>Sort By:</dt>
 								<dd>
-									<input type="text" value="#{queryController.sortBy}"
+									<input type="text" value="#{dataController.sortBy}"
 										name="sortBy" />
 								</dd>
 							</dl>
@@ -103,7 +103,7 @@
 							<dl class="col-3">
 								<dt>Sort Order:</dt>
 								<dd>
-									<select name="sortOrder" value="#{queryController.sortOrder}">
+									<select name="sortOrder" value="#{dataController.sortOrder}">
 										<option value="DESC">Descanding</option>
 										<option value="ASC">Ascanding</option>
 									</select>
@@ -127,11 +127,7 @@
 
 					</form>
 
-
 					<hr />
-
-
-
 
 					<div class="imixs-form-section" >
 						<table id="imixsdatatable" class="imixsdatatable"
@@ -144,7 +140,7 @@
 								<th>#{message.summary}</th>
 								<th></th>
 							</tr>
-							<ui:repeat var="record" value="#{queryController.documents}">
+							<ui:repeat var="record" value="#{dataController.documents}">
 								<tr>
 									<td><a
 										href="#{facesContext.externalContext.requestContextPath}/app/document/#{record.item['$uniqueid']}">#{record.item['$uniqueid']}</a></td>

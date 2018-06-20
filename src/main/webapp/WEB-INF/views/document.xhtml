@@ -18,7 +18,7 @@
 			<div class="imixs-header">
 				<h1>
 					<span class="typcn typcn-world"></span>Document:
-					#{documentController.document.uniqueID}
+					#{dataController.document.uniqueID}
 				</h1>
 			</div>
 			<div class="imixs-body">
@@ -33,7 +33,7 @@
 							<th>Data Type / Value</th>
 						</tr>
 
-						<ui:repeat var="itemname" value="#{documentController.document.itemNames}">
+						<ui:repeat var="itemname" value="#{dataController.document.itemNames}">
 
 							<tr>
 								<td>
@@ -50,7 +50,7 @@
 								<td>#{itemname}</td>
 
 								<td><h:outputText
-										value="#{documentController.getFormatedItemValue(itemname)}"
+										value="#{dataController.getFormatedItemValue(itemname)}"
 										escape="false" /></td>
 							</tr>
 						</ui:repeat>

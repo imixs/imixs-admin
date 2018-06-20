@@ -17,8 +17,7 @@
 		<div class="imixs-form">
 			<div class="imixs-header">
 				<h1>
-					<span
-						class="typcn typcn-document-text"></span>Lucene Configuration
+					<span class="typcn typcn-document-text"></span>Lucene Configuration
 				</h1>
 			</div>
 			<div class="imixs-body">
@@ -26,24 +25,21 @@
 					<input type="button"
 						onclick="document.location.href='#{facesContext.externalContext.requestContextPath}/app/query/';"
 						value="Close" />
-						
-						
-					
-					<table style="width: 100%;margin-top:10px;">
+
+
+
+					<table style="width: 100%; margin-top: 10px;">
 						<tr>
-							
+
 							<th>ItemName</th>
 							<th>Data Type / Value</th>
 						</tr>
 
 
-						
-						<ui:repeat var="itemname" value="#{connectionController.configuration.itemNames}">
 
+						<ui:repeat var="itemname"
+							value="#{connectionController.configuration.itemNames}">
 							<tr>
-								
-
-
 								<td>#{itemname}</td>
 
 								<td><h:outputText
