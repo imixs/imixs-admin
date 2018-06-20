@@ -1,6 +1,9 @@
 package org.imixs.application.admin;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.SessionScoped;
@@ -23,6 +26,7 @@ public class DataController implements Serializable {
 	public static int DEFAULT_PAGE_SIZE = 30;
 
 	String query;
+	String backupPath;
 	int pageIndex;
 	int pageSize;
 	String sortBy;
@@ -44,6 +48,19 @@ public class DataController implements Serializable {
 
 	public void setQuery(String query) {
 		this.query = query;
+	}
+
+	public String getBackupPath() {
+		if (backupPath == null || backupPath.isEmpty()) {
+			// create default path from current time
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HHmm");
+			backupPath = "backup_" + df.format(new Date()) + ".xml";
+		}
+		return backupPath;
+	}
+
+	public void setBackupPath(String backupPath) {
+		this.backupPath = backupPath;
 	}
 
 	public int getPageIndex() {

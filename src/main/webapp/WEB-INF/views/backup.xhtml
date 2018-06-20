@@ -42,14 +42,14 @@
 							<dl>
 								<dt>Query:</dt>
 								<dd>
-									<textarea name="query">#{backupController.query}</textarea>
+									<textarea name="query">#{dataController.query}</textarea>
 								</dd>
 							</dl>
 
 							<dl>
 								<dt>Filepath:</dt>
 								<dd>
-									<input type="text" value="#{backupController.path}" name="path" />
+									<input type="text" value="#{dataController.backupPath}" name="backupPath" />
 								</dd>
 							</dl>
 
@@ -70,8 +70,8 @@
 						</div>
 					</form>
 
-					<h3 style="margin-top:10px;color: #{backupController.status lt 300?'green':'red'}">Backup
-						Satus=#{backupController.status}</h3>
+					<h3 style="margin-top:10px;color: #{backupstatus lt 300?'green':'red'}">Backup
+						Satus=#{backupstatus}</h3>
 
 					<hr />
 
