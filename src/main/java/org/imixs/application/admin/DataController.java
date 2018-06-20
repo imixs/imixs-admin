@@ -25,12 +25,22 @@ public class DataController implements Serializable {
 
 	public static int DEFAULT_PAGE_SIZE = 30;
 
+	// search
 	String query;
-	String backupPath;
 	int pageIndex;
 	int pageSize;
 	String sortBy;
 	String sortOrder;
+
+	// bulk update
+	String fieldName;
+	String fieldType;
+	String fieldValues;
+	int workflowEvent;
+	boolean appendValues;
+
+	// backup
+	String backupPath;
 
 	ItemCollection document;
 	List<ItemCollection> documents;
@@ -99,6 +109,49 @@ public class DataController implements Serializable {
 
 	public void setSortOrder(String sortOrder) {
 		this.sortOrder = sortOrder;
+	}
+	
+	
+	
+
+	public String getFieldName() {
+		return fieldName;
+	}
+
+	public void setFieldName(String fieldName) {
+		this.fieldName = fieldName;
+	}
+
+	public String getFieldType() {
+		return fieldType;
+	}
+
+	public void setFieldType(String fieldType) {
+		this.fieldType = fieldType;
+	}
+
+	public String getFieldValues() {
+		return fieldValues;
+	}
+
+	public void setFieldValues(String fieldValues) {
+		this.fieldValues = fieldValues;
+	}
+
+	public int getWorkflowEvent() {
+		return workflowEvent;
+	}
+
+	public void setWorkflowEvent(int workflowEvent) {
+		this.workflowEvent = workflowEvent;
+	}
+
+	public boolean isAppendValues() {
+		return appendValues;
+	}
+
+	public void setAppendValues(boolean appendValues) {
+		this.appendValues = appendValues;
 	}
 
 	public ItemCollection getDocument() {

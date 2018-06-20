@@ -17,8 +17,7 @@ import org.imixs.application.admin.DataController;
 import org.imixs.workflow.ItemCollection;
 
 /**
- * The Connect controller is used to establish a connectio to Imixs-Worklfow
- * remote interface.
+ * The QueryController is used to search for workitems
  * 
  * @author rsoika
  *
