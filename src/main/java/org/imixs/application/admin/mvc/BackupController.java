@@ -15,9 +15,6 @@ import javax.ws.rs.core.Response;
 
 import org.imixs.application.admin.ConnectionController;
 import org.imixs.application.admin.DataController;
-import org.imixs.workflow.ItemCollection;
-import org.imixs.workflow.xml.XMLDocument;
-import org.imixs.workflow.xml.XMLDocumentAdapter;
 
 /**
  * The Connect controller is used to establish a connectio to Imixs-Worklfow
@@ -74,9 +71,7 @@ public class BackupController implements Serializable {
 					+ "?filepath=" + path;
 			// create put for backup ...
 			// here we create a dummmy object 
-			ItemCollection itemCol=new ItemCollection();
-			XMLDocument xmlItemCol=XMLDocumentAdapter.getDocument(itemCol);
-			Response response = connectionController.getWorkflowCLient().getClient().target(uri).request().put(Entity.xml(xmlItemCol));
+			Response response = connectionController.getWorkflowCLient().getClient().target(uri).request().put(Entity.xml(""));
 			model.put("backupstatus", response.getStatus());
 		}
 
