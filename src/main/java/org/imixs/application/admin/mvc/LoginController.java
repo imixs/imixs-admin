@@ -20,7 +20,7 @@ import org.imixs.application.admin.ConnectionController;
  *
  */
 @Controller
-@Path("/connection")
+@Path("/")
 public class LoginController implements Serializable {
 
 	private static final long serialVersionUID = 1L;

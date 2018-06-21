@@ -1,14 +1,13 @@
 version: "3"
 services:
 
-  imixssample-app:
+  imixsadmin-app:
     image: imixs/imixs-admin
     environment:
       WILDFLY_PASS: adminadmin
       DEBUG: "true"
     ports:
       - "8080:8080"
-      - "8787:8787"
       - "9990:9990"
  
 

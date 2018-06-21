@@ -1,8 +1,7 @@
 version: "3"
 services:
 
-
-  imixssample-app:
+  imixsadmin-app:
     image: imixs/imixs-admin
     environment:
       WILDFLY_PASS: adminadmin

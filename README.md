@@ -25,27 +25,26 @@ The .war file can be deployed into any JEE Application server. It is necessary t
 The Imixs-Admin client provides a Docker Image to be used to run the service in a Docker conatiner. 
 The docker image is based on the docker image [imixs/wildfly](https://hub.docker.com/r/imixs/wildfly/).
 
+You can start the latest version of the Imixs-Admin Tool in a docker container run:
 
-## Run Imixs-Admin in a Docker Container
-You can start the Imixs-Admin docker container with the command:
+	$ docker run --name="imixs-admin" -d -p 8080:8080  imixs/imixs-admin
 
-	docker run --name="imixs-admin" -d -p 8080:8080  imixs/imixs-admin
+You can start the application from your browser
+
+	http://localhost:8080/
 
 ## Build Imixs-Admin from sources
 
-Alternatively you can build the imixs-admin client manually by sources
+Alternatively you can build the imixs-admin client manually from sources and start from your local docker image:
 
-Imixs-Admin is based on maven. To build the Java EE artifact run:
+	$ mvn clean install -Pdocker-build
+	$ docker run --name="imixs-admin" -it -p 8080:8080  imixs/imixs-admin
 
-	mvn clean install
 
-To build the docker image run
-
-	mvn clean install -Pdocker
 
 To push the docker image into a registry run
 
-	mvn clean install -Pdocker-push -Dorg.imixs.docker.registry=localhost:5000
+	$ mvn clean install -Pdocker-push -Dorg.imixs.docker.registry=localhost:5000
 
 where 'localhost:5000' need to be replaced with your private registry.
 
