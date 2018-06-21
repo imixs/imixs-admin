@@ -11,23 +11,8 @@
 
 			// The following code is used to layout the tables with the jquery datatable plugin.
 			$(document).ready(function() {
-				updateTableLayout();
 			});
 
-			function updateTable(e) {
-				if (e.status == 'success') {
-					$('.imixsdatatable').layoutImixsTable()
-				}
-			}
-
-			function deleteDocument(id) {
-				if (!confirm('Are you sure?\nDelete Entity ' + id + ' now?')) {
-					return false;
-				}
-				// delete...
-				document.location.href = "#{facesContext.externalContext.requestContextPath}/app/document/action/delete/"
-						+ id;
-			}
 
 			/*]]>*/
 		</script>
@@ -138,7 +123,7 @@
 								<dd>
 									<textarea name="fieldValues">#{dataController.fieldValues}</textarea>
 								</dd>
-								
+
 							</dl>
 
 
@@ -146,7 +131,8 @@
 								<dt>Update Mode:</dt>
 								<dd>
 									<ui:fragment rendered="#{dataController.appendValues}">
-										<input type="checkbox" name="appendValues" value="true" checked="checked" />
+										<input type="checkbox" name="appendValues" value="true"
+											checked="checked" />
 									</ui:fragment>
 									<ui:fragment rendered="#{!dataController.appendValues}">
 										<input type="checkbox" name="appendValues" value="true" />
@@ -155,11 +141,8 @@
 									<p>
 										<small><strong>Note:</strong> Multi-Values can be
 											separated by new lines. If you want to add a single value
-											with multiple lines, than add '\n' at the end of a line.
-											
-											<br />
-											Date values have to be formated as 'yyyy-mm-dd'.
-											</small>
+											with multiple lines, than add '\n' at the end of a line. <br />
+											Date values have to be formated as 'yyyy-mm-dd'. </small>
 									</p>
 								</dd>
 							</dl>
@@ -167,7 +150,10 @@
 
 
 						<hr />
-						<input type="submit" value="Start Update ..." />
+						<div class="danger-zone">
+							<h3><span class="typcn typcn-warning"></span>Danger Zone</h3>
+							<input type="submit" value="Start Update ..." />
+						</div>
 
 
 					</form>

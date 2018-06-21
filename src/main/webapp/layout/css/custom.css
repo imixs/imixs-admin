@@ -24,6 +24,7 @@ body, html {
 	font-size: 24px;
 	margin-right: 20px;
 }
+
 .imixs-header .typcn {
 	margin-right: 10px;
 }
@@ -93,34 +94,46 @@ body, html {
 	background-color: #fcb80285 !important
 }
 
-
-
-button, input[type="button"], input[type="submit"], .button, a.button,.imixs-button {
-   background: #fcb802b8;
-   border: 1px solid #FCB802;
-   margin-right:10px;
+button, input[type="button"], input[type="submit"], .button, a.button,
+	.imixs-button {
+	background: #fcb802b8;
+	border: 1px solid #FCB802;
+	margin-right: 10px;
 }
 
-button, input[type="button"]:hover, input[type="submit"]:hover, .button:hover, a.button:hover, .imixs-button:hover{
-   background-color: orange;
-   color:#fff;
+button, input[type="button"]:hover, input[type="submit"]:hover, .button:hover,
+	a.button:hover, .imixs-button:hover {
+	background-color: orange;
+	color: #fff;
 }
 
-
-
-input[type="text"]:focus,input[type="password"]:focus,textarea:focus,select:focus
-	{
+input[type="text"]:focus, input[type="password"]:focus, textarea:focus,
+	select:focus {
 	border: 1px solid #FCB802;
 	border-radius: 3px;
 	outline: 0;
 	outline: thin dotted \9;
-	
 }
 
-table  {
+table {
 	font-size: 14px;
 }
 
 th {
 	font-weight: bold;
+}
+
+.danger-zone {
+	border: 1px solid #cb2431;
+	border-radius: 4px;
+	padding: 10px 10px;
+}
+
+.danger-zone  .typcn {
+	margin-right: 5px;
+}
+
+.danger-zone button, .danger-zone input[type="button"], .danger-zone input[type="submit"]
+	{
+	color: #cb2431;
 }
