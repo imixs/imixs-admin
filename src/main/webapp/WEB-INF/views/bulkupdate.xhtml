@@ -11,6 +11,9 @@
 
 			// The following code is used to layout the tables with the jquery datatable plugin.
 			$(document).ready(function() {
+				// set select options
+				$("#fieldType").val("#{dataController.fieldType}");
+				$("#sortOrder").val("#{dataController.sortOrder}");
 			});
 
 
@@ -38,8 +41,6 @@
 								</dd>
 							</dl>
 						</div>
-
-
 
 
 						<div class="row nested">
@@ -70,16 +71,13 @@
 							<dl class="col-3">
 								<dt>Sort Order:</dt>
 								<dd>
-									<select name="sortOrder" value="#{dataController.sortOrder}">
+									<select name="sortOrder" id="sortOrder">
 										<option value="DESC">Descanding</option>
 										<option value="ASC">Ascanding</option>
 									</select>
 								</dd>
 							</dl>
-
 						</div>
-
-
 
 						<hr />
 						<div class="imixs-form-section-3">
@@ -94,14 +92,11 @@
 							<dl>
 								<dt>Field Type:</dt>
 								<dd>
-									<select name="fieldType" value="#{dataController.fieldType}">
-
+									<select name="fieldType" id="fieldType">
 										<option>xs:string</option>
 										<option>xs:int</option>
 										<option>xs:boolean</option>
 										<option>xs:dateTime</option>
-
-
 									</select>
 								</dd>
 							</dl>

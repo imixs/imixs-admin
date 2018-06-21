@@ -11,6 +11,9 @@
 
 			// The following code is used to layout the tables with the jquery datatable plugin.
 			$(document).ready(function() {
+				// set select options
+				$("#sortOrder").val("#{dataController.sortOrder}");
+
 				updateTableLayout();
 			});
 
@@ -103,7 +106,7 @@
 							<dl class="col-3">
 								<dt>Sort Order:</dt>
 								<dd>
-									<select name="sortOrder" value="#{dataController.sortOrder}">
+									<select name="sortOrder" id="sortOrder">
 										<option value="DESC">Descanding</option>
 										<option value="ASC">Ascanding</option>
 									</select>

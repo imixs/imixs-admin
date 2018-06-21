@@ -49,15 +49,20 @@
 							<dl>
 								<dt>Filepath:</dt>
 								<dd>
-									<input type="text" value="#{dataController.backupPath}" name="backupPath" />
+									<input type="text" value="#{dataController.backupPath}"
+										name="backupPath" />
 								</dd>
 							</dl>
 
 
 						</div>
 						<hr />
-						<div class="imixs-form-section-2">
+						<div class="danger-zone imixs-form-section-2">
 
+
+							<h3>
+								<span class="typcn typcn-warning"></span>Danger Zone
+							</h3>
 
 							<!-- hidden action field -->
 							<input type="hidden" id="backup_action_id" name="action" /> <input
@@ -70,8 +75,7 @@
 						</div>
 					</form>
 
-					<h3 style="margin-top:10px;color: #{backupstatus lt 300?'green':'red'}">Backup
-						Satus=#{backupstatus}</h3>
+					<h3 style="margin-top: 10px; color: #{backupstatus lt 300?'green':'red'}">Backup Satus=#{backupstatus}</h3>
 
 					<hr />
 

@@ -60,4 +60,7 @@ you may have to grant the deployment folder first to allow the docker non privil
 
 	$ sudo chmod 777 src/docker/deployments/
 
-	
+
+### The Maven 'dev' Profile
+
+Building the applicaiton with the maven profile 'dev' changes the root context of the application from '/' to '/dev/'. This can be used in cases when the admin tool is deployed parallel to other applications. 

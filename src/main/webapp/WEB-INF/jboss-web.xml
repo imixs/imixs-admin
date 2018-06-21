@@ -2,6 +2,6 @@
 <jboss-web>
 
 	<default-encoding>UTF-8</default-encoding>
-	<context-root>/</context-root>
+	<context-root>${root-context}</context-root>
 
 </jboss-web>

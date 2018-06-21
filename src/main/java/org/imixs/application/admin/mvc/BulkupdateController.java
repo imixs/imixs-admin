@@ -108,7 +108,8 @@ public class BulkupdateController implements Serializable {
 			// first convert the newValue in a list of objects based on the selected
 			// fieldType...
 			String fieldType = dataController.getFieldType();
-			String[] rawItems = dataController.getFieldValues().split("\\r?\\n");
+			String newFieldValues=dataController.getFieldValues();
+			String[] rawItems = newFieldValues.split("\\r?\\n");
 			// now convert to selected type
 			List<Object> typedItems = new ArrayList<Object>();
 			for (String rawValue : rawItems) {
