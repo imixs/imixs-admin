@@ -131,7 +131,6 @@
 					</form>
 
 					<hr />
-
 					<div class="imixs-form-section" >
 						<table id="imixsdatatable" class="imixsdatatable"
 							style="width: 100%;">
@@ -144,13 +143,14 @@
 								<th></th>
 							</tr>
 							<ui:repeat var="record" value="#{dataController.documents}">
+								<ui:param name="summary" value="#{(empty record.item['txtworkflowsummary'])?record.item['type']:record.item['txtworkflowsummary']}"></ui:param>
 								<tr>
 									<td><a
 										href="#{facesContext.externalContext.requestContextPath}/imixsadmin/document/#{record.item['$uniqueid']}">#{record.item['$uniqueid']}</a></td>
 									<td>#{record.item['$created']}</td>
 									<td>#{record.item['$modified']}</td>
 									<td>#{record.item['$workflowstatus']}</td>
-									<td>#{record.item['txtworkflowsummary']}</td>
+									<td>#{summary}</td>
 									<td><a
 										href="#" onclick="deleteDocument('#{record.item['$uniqueid']}')"
 										title="#{record.item['$uniqueid']}"><span class="typcn typcn-trash" style="font-size:18px;color:#cb2431;" title="delete"></span></a></td>
