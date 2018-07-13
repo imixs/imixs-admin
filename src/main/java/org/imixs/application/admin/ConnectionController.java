@@ -35,6 +35,7 @@ public class ConnectionController implements Serializable {
 	String userid;
 	String password;
 	String authMethod;
+	String errorMessage;
 
 	List<String> indexListNoAnalyse;
 	List<String> indexListAnalyse;
@@ -79,6 +80,17 @@ public class ConnectionController implements Serializable {
 
 	public void setAuthMethod(String authMethod) {
 		this.authMethod = authMethod;
+	}
+
+	
+	
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+		logger.severe(errorMessage);
 	}
 
 	public List<String> getIndexListNoAnalyse() {

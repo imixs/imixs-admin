@@ -48,7 +48,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<org.imixs.workflow.version>4.3.3-SNAPSHOT</org.imixs.workflow.version>
+		<org.imixs.workflow.version>4.3.4</org.imixs.workflow.version>
 		<org.imixs.melman.version>1.0.3-SNAPSHOT</org.imixs.melman.version>
 		<!-- Default docker registry -->
 		<org.imixs.docker.registry>localhost:5000</org.imixs.docker.registry>

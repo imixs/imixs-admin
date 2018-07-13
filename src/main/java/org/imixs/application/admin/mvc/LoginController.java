@@ -58,19 +58,29 @@ public class LoginController implements Serializable {
 	public String actionConnect(@FormParam("url") String url, @FormParam("userid") String userid,
 			@FormParam("password") String password, @FormParam("authentication") String authentication) {
 		logger.info("url=" + url);
+		connectionController.setErrorMessage("");
 		connectionController.setUrl(url);
 		connectionController.setUserid(userid);
 		connectionController.setPassword(password);
 		connectionController.setAuthMethod(authentication);
 
-		boolean connected = connectionController.connect(url, userid, password, authentication);
+		try {
+			boolean connected = connectionController.connect(url, userid, password, authentication);
 
-		if (connected) {
-			logger.info("...connection: " + url + " = OK");
-			// return "search.xhtml";
-			return "redirect:query/";
-		} else {
-			logger.info("...connection: " + url + " = FAILED");
+			if (connected) {
+				logger.info("...connection: " + url + " = OK");
+				// return "search.xhtml";
+				return "redirect:query/";
+			} else {
+				logger.info("...connection: " + url + " = FAILED");
+				return "connect.xhtml";
+			}
+		} catch (javax.ws.rs.ProcessingException | javax.ws.rs.ClientErrorException e) {
+			connectionController.setErrorMessage("...connection: " + url + " = FAILED - " + e.getMessage());
+			return "connect.xhtml";
+		}
+		catch (java.lang.RuntimeException e) {
+			connectionController.setErrorMessage("...general connection error: " + e.getMessage());
 			return "connect.xhtml";
 		}
 
