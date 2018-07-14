@@ -17,7 +17,7 @@ import org.imixs.workflow.ItemCollection;
  * The Connect controller is used to establish a connection to Imixs-Worklfow
  * remote interface.
  * 
- * The session scoped bean holds an instance of an Melman WorkfowClient. 
+ * The session scoped bean holds an instance of an Melman WorkfowClient.
  * 
  * @author rsoika
  *
@@ -82,15 +82,15 @@ public class ConnectionController implements Serializable {
 		this.authMethod = authMethod;
 	}
 
-	
-	
 	public String getErrorMessage() {
 		return errorMessage;
 	}
 
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
-		logger.severe(errorMessage);
+		if (errorMessage != null && !errorMessage.isEmpty()) {
+			logger.severe(errorMessage);
+		}
 	}
 
 	public List<String> getIndexListNoAnalyse() {
@@ -137,15 +137,13 @@ public class ConnectionController implements Serializable {
 		// Test authentication method
 		if ("Form".equalsIgnoreCase(authMethod)) {
 			// default basic authenticator
-			FormAuthenticator formAuth = new FormAuthenticator(url, getUserid(),
-					getPassword());
+			FormAuthenticator formAuth = new FormAuthenticator(url, getUserid(), getPassword());
 			// register the authenticator
 			workflowCLient.registerClientRequestFilter(formAuth);
 
 		} else {
 			// default basic authenticator
-			BasicAuthenticator basicAuth = new BasicAuthenticator(getUserid(),
-					getPassword());
+			BasicAuthenticator basicAuth = new BasicAuthenticator(getUserid(), getPassword());
 			// register the authenticator
 			workflowCLient.registerClientRequestFilter(basicAuth);
 		}
@@ -168,7 +166,7 @@ public class ConnectionController implements Serializable {
 		indexListAnalyse = null;
 		configuration = null;
 
-		if (url!= null && !url.isEmpty()) {
+		if (url != null && !url.isEmpty()) {
 
 			List<ItemCollection> indexInfo = workflowCLient.getCustomResource("documents/configuration");
 

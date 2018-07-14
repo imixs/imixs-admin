@@ -65,282 +65,318 @@
 			</div>
 			<div class="imixs-body">
 				<div class="imixs-form-panel">
-					<form
-						action="#{facesContext.externalContext.requestContextPath}/imixsadmin/query"
-						method="post">
 
-						
+
+
 					<div class="imixs-tabs" data-ben-controller="adminPJobController">
-				<ul>
-					<li><a href="#tab-1">Rebuild Index</a></li>
-					<li><a href="#tab-2">Rename User</a></li>
-					<li><a href="#tab-3">Upgrade</a></li>
-					<li><a href="#tab-4">Migration 3.x</a></li>
-				</ul>
+						<ul>
+							<li><a href="#tab-1">Rebuild Index</a></li>
+							<li><a href="#tab-2">Rename User</a></li>
+							<li><a href="#tab-3">Upgrade</a></li>
+							<li><a href="#tab-4">Migration 3.x</a></li>
+						</ul>
 
-				<!-- Update Index -->
-				<div id="tab-1">
+						<!-- Update Index -->
+						<div id="tab-1">
 
-					<p>This job rebuilds the <a href="http://www.imixs.org/doc/engine/luceneservice.html" target="imixsorg">Lucene fulltext-index</a>. Rebuilding the
-						index may be necessary after a database restore, or in cases where
-						the index has been deleted or corrupted. Rebuilding the index does
-						not change any data. You can set optional filter criteria to limit
-						the selection of the affected data.</p>
+							<form
+								action="#{facesContext.externalContext.requestContextPath}/imixsadmin/adminp/rebuildindex"
+								method="post">
+
+								<p>
+									This job rebuilds the <a
+										href="http://www.imixs.org/doc/engine/luceneservice.html"
+										target="imixsorg">Lucene fulltext-index</a>. Rebuilding the
+									index may be necessary after a database restore, or in cases
+									where the index has been deleted or corrupted. Rebuilding the
+									index does not change any data. You can set optional filter
+									criteria to limit the selection of the affected data.
+								</p>
+								<hr />
+
+								<div class="row nested">
+									<div class="col-4 ">
+										<dl>
+											<dt>Filter by creation date:</dt>
+											<dd>
+												<input type="text" class="imixs-date" name="datfrom" /> - <input
+													type="text" class="imixs-date" name="datto"></input>
+											</dd>
+										</dl>
+									</div>
+									<div class="col-4">
+										<dl>
+											<dt>Filter by document type:</dt>
+											<dd>
+												<textarea
+													placeholder="comma separated list of document types"
+													name="typelist"></textarea>
+											</dd>
+										</dl>
+
+									</div>
+									<div class="col-4">
+										<dl>
+											<dt>Blocksize:</dt>
+											<dd>
+												<input type="text" placeholder="500" name="numblocksize"></input>
+											</dd>
+										</dl>
+										<dl>
+											<dt>Interval in minutes:</dt>
+											<dd>
+												<input type="text" placeholder="1" name="numinterval"></input>
+											</dd>
+										</dl>
+									</div>
+
+								</div>
+
+								<!-- hidden fields -->
+								<input type="hidden" name="type" value="adminp" /> <input
+									type="hidden" name="job" value="REBUILD_LUCENE_INDEX" />
+
+								<!-- submit -->
+								<input type="submit" value="Start Job" />
+
+
+							</form>
+						</div>
+
+
+
+						<!-- Rename -->
+						<div id="tab-2" class="">
+							<form
+								action="#{facesContext.externalContext.requestContextPath}/imixsadmin/adminp/renameuser"
+								method="post">
+								<p>
+									This job updates the <a
+										href="http://www.imixs.org/doc/engine/acl.html"
+										target="imixsorg">access control list (ACL)</a> and
+									permissions data of existing workitems. Data will only be
+									changed in cases the id <i>"From User-ID"</i> is part of an
+									workitem. You can set optional filter criteria to limit the
+									selection of the affected data.
+								</p>
+								<hr />
+
+								<div class="row nested">
+
+
+									<div class="col-4">
+										<dl>
+											<dt>Filter by creation date:</dt>
+											<dd>
+												<input type="text" class="imixs-date" name="datfrom" /> - <input
+													type="text" class="imixs-date" name="datto"></input>
+											</dd>
+										</dl>
+									</div>
+
+									<div class="col-4">
+										<dl>
+											<dt>Filter by document type:</dt>
+											<dd>
+												<textarea
+													placeholder="comma separated list of document types"
+													name="typelist"></textarea>
+											</dd>
+										</dl>
+
+									</div>
+
+
+
+									<div class="col-4">
+										<dl>
+											<dt>Blocksize:</dt>
+											<dd>
+												<input type="text" placeholder="100" name="numblocksize"></input>
+											</dd>
+										</dl>
+										<dl>
+											<dt>Interval in minutes:</dt>
+											<dd>
+												<input type="text" placeholder="1" name="numinterval"></input>
+											</dd>
+										</dl>
+									</div>
+
+								</div>
+
+
+								<div class="row nested">
+									<div class="col-4">
+										<dl>
+											<dt>From User-ID:</dt>
+											<dd>
+												<input type="text" placeholder="enter userid" name="namfrom"></input>
+											</dd>
+										</dl>
+									</div>
+									<div class="col-4">
+										<dl>
+											<dt>To User-ID:</dt>
+											<dd>
+												<input type="text" placeholder="enter userid" name="namto"></input>
+											</dd>
+										</dl>
+									</div>
+									<div class="col-4">
+										<dl>
+											<dt>Full Replace:</dt>
+											<dd>
+												<input type="checkbox" id="renamefullreplace" name="true"
+													value="true">YES</input>
+											</dd>
+										</dl>
+									</div>
+								</div>
+
+								<!-- hidden fields -->
+								<input type="hidden" name="type" value="adminp" /> <input
+									type="hidden" name="job" value="RENAME_USER" />
+
+								<!-- submit -->
+								<input type="submit" value="Start Job" />
+
+
+							</form>
+
+						</div>
+
+
+
+
+						<!-- Upgrade Workitems -->
+						<div id="tab-3">
+							<form
+								action="#{facesContext.externalContext.requestContextPath}/imixsadmin/adminp/upgrade"
+								method="post">
+								<p>
+									This job upgrades the <a
+										href="http://www.imixs.org/doc/quickstart/workitem.html#Workflow_data"
+										target="imixsorg"> workflow data</a> of existing workitems.
+									Data will only be changed in cases a workitem was not processed
+									by the current version of the Imixs-Workfow engine used in this
+									instance. You can set optional filter criteria to limit the
+									selection of the affected data.
+								</p>
+								<hr />
+
+
+								<div class="row nested">
+									<div class="col-4">
+										<dl>
+											<dt>Filter by creation date:</dt>
+											<dd>
+												<input type="text" class="imixs-date" name="datfrom"></input>
+												- <input type="text" class="imixs-date" name="datto"></input>
+											</dd>
+										</dl>
+									</div>
+									<div class="col-4">
+										<dl>
+											<dt>Filter by document type:</dt>
+											<dd>
+												<textarea
+													placeholder="comma separated list of document types"
+													name="typelist"></textarea>
+											</dd>
+										</dl>
+
+									</div>
+									<div class="col-4">
+										<dl>
+											<dt>Blocksize:</dt>
+											<dd>
+												<input type="text" placeholder="100" name="numblocksize"></input>
+											</dd>
+										</dl>
+										<dl>
+											<dt>Interval in minutes:</dt>
+											<dd>
+												<input type="text" placeholder="1" name="numinterval"></input>
+											</dd>
+										</dl>
+									</div>
+
+								</div>
+
+								<!-- hidden fields -->
+								<input type="hidden" name="type" value="adminp" /> <input
+									type="hidden" name="job" value="UPGRADE" />
+
+								<!-- submit -->
+								<input type="submit" value="Start Job" />
+
+							</form>
+						</div>
+
+
+
+
+						<!--  Migration -->
+						<div id="tab-4">
+							<form
+								action="#{facesContext.externalContext.requestContextPath}/imixsadmin/adminp/migration"
+								method="post">
+								<p>This job can be used to migrate an existing
+									Imixs-Workflow Instance from version 3.x to version 4.0.</p>
+								<hr />
+								<div class="row nested">
+									<div class="col-4">
+										<dl>
+											<dt>Index:</dt>
+											<dd>
+												<input type="text" placeholder="0" name="numindex"></input>
+											</dd>
+										</dl>
+										<dl>
+											<dt>Block Size:</dt>
+											<dd>
+												<input type="text" placeholder="100" name="numblocksize"></input>
+											</dd>
+										</dl>
+										<dl>
+											<dt>Interval in minutes:</dt>
+											<dd>
+												<input type="text" placeholder="1" name="numinterval"></input>
+											</dd>
+										</dl>
+									</div>
+
+								</div>
+
+								<!-- hidden fields -->
+								<input type="hidden" name="type" value="adminp" /> <input
+									type="hidden" name="job" value="MIGRATION" />
+
+								<!-- submit -->
+								<input type="submit" value="Start Job" />
+
+							</form>
+						</div>
+					</div>
+
+
+
+					<!-- Error message -->
+					<ui:fragment
+						rendered="#{! empty connectionController.errorMessage}">
+						<div class="danger-zone">
+							<h3>
+								<span class="typcn typcn-warning"></span>Error:
+							</h3>
+							<p>#{connectionController.errorMessage}</p>
+						</div>
+					</ui:fragment>
+
+					<!-- adminp job list -->
+
 					<hr />
-
-					<div class="row nested">
-						<div class="col-4 ">
-							<dl>
-								<dt>Filter by creation date:</dt>
-								<dd>
-									<input type="text" class="imixs-date"
-										data-ben-model="datfrom_reindex" /> - <input type="text"
-										class="imixs-date" data-ben-model="datto_reindex"></input>
-								</dd>
-							</dl>
-						</div>
-						<div class="col-4">
-							<dl>
-								<dt>Filter by document type:</dt>
-								<dd>
-									<textarea placeholder="comma separated list of document types"
-										data-ben-model="typelist_reindex"></textarea>
-								</dd>
-							</dl>
-
-						</div>
-						<div class="col-4">
-							<dl>
-								<dt>Blocksize:</dt>
-								<dd>
-									<input type="text" placeholder="500"
-										data-ben-model="numblocksize_reindex"></input>
-								</dd>
-							</dl>
-							<dl>
-								<dt>Interval in minutes:</dt>
-								<dd>
-									<input type="text" placeholder="1"
-										data-ben-model="numinterval_reindex"></input>
-								</dd>
-							</dl>
-						</div>
-
-					</div>
-
-					<input type="button" value="Start Job"
-						onclick="adminclient.adminPJobController.createReindexJob();"
-						class="btn" />
-
-				</div>
-
-
-
-				<!-- Rename -->
-				<div id="tab-2" class="">
-					<p>
-						This job updates the <a
-							href="http://www.imixs.org/doc/engine/acl.html" target="imixsorg">access
-							control list (ACL)</a> and permissions data of existing workitems.
-						Data will only be changed in cases the id <i>"From User-ID"</i> is
-						part of an workitem. You can set optional filter criteria to limit
-						the selection of the affected data.
-					</p>
-					<hr />
-
-					<div class="row nested">
-
-
-						<div class="col-4">
-							<dl>
-								<dt>Filter by creation date:</dt>
-								<dd>
-									<input type="text" class="imixs-date"
-										data-ben-model="datfrom_renameuser" /> - <input type="text"
-										class="imixs-date" data-ben-model="datto_renameuser"></input>
-								</dd>
-							</dl>
-						</div>
-
-						<div class="col-4">
-							<dl>
-								<dt>Filter by document type:</dt>
-								<dd>
-									<textarea placeholder="comma separated list of document types"
-										data-ben-model="typelist_renameuser"></textarea>
-								</dd>
-							</dl>
-
-						</div>
-
-
-
-						<div class="col-4">
-							<dl>
-								<dt>Blocksize:</dt>
-								<dd>
-									<input type="text" placeholder="100"
-										data-ben-model="numblocksize_renameuser"></input>
-								</dd>
-							</dl>
-							<dl>
-								<dt>Interval in minutes:</dt>
-								<dd>
-									<input type="text" placeholder="1"
-										data-ben-model="numinterval_renameuser"></input>
-								</dd>
-							</dl>
-						</div>
-
-					</div>
-
-
-					<div class="row nested">
-						<div class="col-4">
-							<dl>
-								<dt>From User-ID:</dt>
-								<dd>
-									<input type="text" placeholder="enter userid"
-										data-ben-model="namfrom"></input>
-								</dd>
-							</dl>
-						</div>
-						<div class="col-4">
-							<dl>
-								<dt>To User-ID:</dt>
-								<dd>
-									<input type="text" placeholder="enter userid"
-										data-ben-model="namto"></input>
-								</dd>
-							</dl>
-						</div>
-						<div class="col-4">
-							<dl>
-								<dt>Full Replace:</dt>
-								<dd>
-									<input type="checkbox" id="renamefullreplace" name="true"
-										value="true">YES</input>
-								</dd>
-							</dl>
-						</div>
-					</div>
-
-					<input type="button" value="Start Job"
-						onclick="adminclient.adminPJobController.createRenameUserJob();"
-						class="btn" />
-
-
-
-				</div>
-
-
-
-
-				<!-- Upgrade Workitems -->
-				<div id="tab-3">
-					<p>
-						This job upgrades the <a
-							href="http://www.imixs.org/doc/quickstart/workitem.html#Workflow_data"
-							target="imixsorg"> workflow data</a> of existing workitems. Data
-						will only be changed in cases a workitem was not processed by the
-						current version of the Imixs-Workfow engine used in this instance.
-						You can set optional filter criteria to limit the selection of the
-						affected data.
-					</p>
-					<hr />
-
-
-					<div class="row nested">
-						<div class="col-4">
-							<dl>
-								<dt>Filter by creation date:</dt>
-								<dd>
-									<input type="text" class="imixs-date"
-										data-ben-model="datfrom_upgrade"></input> - <input type="text"
-										class="imixs-date" data-ben-model="datto_upgrade"></input>
-								</dd>
-							</dl>
-						</div>
-						<div class="col-4">
-							<dl>
-								<dt>Filter by document type:</dt>
-								<dd>
-									<textarea placeholder="comma separated list of document types"
-										data-ben-model="typelist_upgrade"></textarea>
-								</dd>
-							</dl>
-
-						</div>
-						<div class="col-4">
-							<dl>
-								<dt>Blocksize:</dt>
-								<dd>
-									<input type="text" placeholder="100"
-										data-ben-model="numblocksize_upgrade"></input>
-								</dd>
-							</dl>
-							<dl>
-								<dt>Interval in minutes:</dt>
-								<dd>
-									<input type="text" placeholder="1"
-										data-ben-model="numinterval_upgrade"></input>
-								</dd>
-							</dl>
-						</div>
-
-					</div>
-
-					<input type="button" value="Start Job"
-						onclick="adminclient.adminPJobController.createUpgradeJob();"
-						class="btn" />
-
-				</div>
-
-
-
-
-				<!--  Migration -->
-				<div id="tab-4">
-					<p>This job can be used to migrate an existing
-						Imixs-Workflow Instance from version 3.x to version 4.0.</p>
-						<hr />
-					<div class="row nested">
-						<div class="col-4">
-							<dl>
-								<dt>Index:</dt>
-								<dd>
-									<input type="text" placeholder="0"
-										data-ben-model="numindex_migration"></input>
-								</dd>
-							</dl>
-							<dl>
-								<dt>Block Size:</dt>
-								<dd>
-									<input type="text" placeholder="100"
-										data-ben-model="numblocksize_migration"></input>
-								</dd>
-							</dl>
-							<dl>
-								<dt>Interval in minutes:</dt>
-								<dd>
-									<input type="text" placeholder="1"
-										data-ben-model="numinterval_migration"></input>
-								</dd>
-							</dl>
-						</div>
-
-					</div>
-
-					<input type="button" value="Start Job"
-						onclick="adminclient.adminPJobController.createMigrationJob();"
-						class="btn" />
-				</div>
-			</div>
-
-					</form>
-
-					<hr />
-					<div class="imixs-form-section" >
+					<div class="imixs-form-section">
 						<table id="imixsdatatable" class="imixsdatatable"
 							style="width: 100%;">
 							<tr>
@@ -352,7 +388,8 @@
 								<th></th>
 							</tr>
 							<ui:repeat var="record" value="#{dataController.documents}">
-								<ui:param name="summary" value="#{(empty record.item['txtworkflowsummary'])?record.item['type']:record.item['txtworkflowsummary']}"></ui:param>
+								<ui:param name="summary"
+									value="#{(empty record.item['txtworkflowsummary'])?record.item['type']:record.item['txtworkflowsummary']}"></ui:param>
 								<tr>
 									<td><a
 										href="#{facesContext.externalContext.requestContextPath}/imixsadmin/document/#{record.item['$uniqueid']}">#{record.item['$uniqueid']}</a></td>
@@ -360,9 +397,11 @@
 									<td>#{record.item['$modified']}</td>
 									<td>#{record.item['$workflowstatus']}</td>
 									<td>#{summary}</td>
-									<td><a
-										href="#" onclick="deleteDocument('#{record.item['$uniqueid']}')"
-										title="#{record.item['$uniqueid']}"><span class="typcn typcn-trash" style="font-size:18px;color:#cb2431;" title="delete"></span></a></td>
+									<td><a href="#"
+										onclick="deleteDocument('#{record.item['$uniqueid']}')"
+										title="#{record.item['$uniqueid']}"><span
+											class="typcn typcn-trash"
+											style="font-size: 18px; color: #cb2431;" title="delete"></span></a></td>
 								</tr>
 							</ui:repeat>
 						</table>
@@ -370,16 +409,15 @@
 
 
 					</div>
-					
+
 					<hr />
-					
-					<span style="float:right;">
-						 <input type="button"
-							onclick="document.location.href='#{facesContext.externalContext.requestContextPath}/imixsadmin/query/prev';"
-							value="« Prev" /><input type="button"
-							onclick="document.location.href='#{facesContext.externalContext.requestContextPath}/imixsadmin/query/next';"
-							value="Next »" /> 
-							</span>
+
+					<span style="float: right;"> <input type="button"
+						onclick="document.location.href='#{facesContext.externalContext.requestContextPath}/imixsadmin/query/prev';"
+						value="« Prev" /><input type="button"
+						onclick="document.location.href='#{facesContext.externalContext.requestContextPath}/imixsadmin/query/next';"
+						value="Next »" />
+					</span>
 				</div>
 			</div>
 
