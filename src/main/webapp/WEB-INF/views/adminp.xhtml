@@ -27,12 +27,12 @@
 			}
 			
 			
-			function deleteDocument(id) {
-				if (!confirm('Are you sure?\nDelete Entity ' + id + ' now?')) {
+			function deleteJob(id) {
+				if (!confirm('Are you sure?\nDelete Job ' + id + ' now?')) {
 					return false;
 				}
 				// delete...
-				document.location.href="#{facesContext.externalContext.requestContextPath}/imixsadmin/document/action/delete/"+id;
+				document.location.href="#{facesContext.externalContext.requestContextPath}/imixsadmin/adminp/action/delete/"+id;
 			}
 
 			function updateTableLayout() {
@@ -381,24 +381,28 @@
 							style="width: 100%;">
 							<tr>
 								<th>ID</th>
+								<th>Type</th>
 								<th>#{message.created}</th>
 								<th>#{message.modified}</th>
 								<th>#{message.status}</th>
-								<th>#{message.summary}</th>
+								<th>Processed</th>
+								<th>Updates</th>
 								<th></th>
 							</tr>
-							<ui:repeat var="record" value="#{dataController.documents}">
+							<ui:repeat var="record" value="#{dataController.adminPJobs}">
 								<ui:param name="summary"
 									value="#{(empty record.item['txtworkflowsummary'])?record.item['type']:record.item['txtworkflowsummary']}"></ui:param>
 								<tr>
 									<td><a
 										href="#{facesContext.externalContext.requestContextPath}/imixsadmin/document/#{record.item['$uniqueid']}">#{record.item['$uniqueid']}</a></td>
+									<td>#{record.item['job']}</td>
 									<td>#{record.item['$created']}</td>
 									<td>#{record.item['$modified']}</td>
 									<td>#{record.item['$workflowstatus']}</td>
-									<td>#{summary}</td>
+									<td>#{record.item['numprocessed']}</td>
+									<td>#{record.item['numupdates']}</td>
 									<td><a href="#"
-										onclick="deleteDocument('#{record.item['$uniqueid']}')"
+										onclick="deleteJob('#{record.item['$uniqueid']}')"
 										title="#{record.item['$uniqueid']}"><span
 											class="typcn typcn-trash"
 											style="font-size: 18px; color: #cb2431;" title="delete"></span></a></td>
@@ -410,14 +414,7 @@
 
 					</div>
 
-					<hr />
-
-					<span style="float: right;"> <input type="button"
-						onclick="document.location.href='#{facesContext.externalContext.requestContextPath}/imixsadmin/query/prev';"
-						value="« Prev" /><input type="button"
-						onclick="document.location.href='#{facesContext.externalContext.requestContextPath}/imixsadmin/query/next';"
-						value="Next »" />
-					</span>
+					
 				</div>
 			</div>
 

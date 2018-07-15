@@ -12,7 +12,7 @@ import javax.inject.Named;
 import org.imixs.workflow.ItemCollection;
 
 /**
- * Session Scoped CID Bean to hold current data.
+ * Session Scoped CID Bean to hold current adminp-job data.
  * 
  * @author rsoika
  *
@@ -44,6 +44,7 @@ public class DataController implements Serializable {
 
 	ItemCollection document;
 	List<ItemCollection> documents;
+	List<ItemCollection> adminPJobs;
 
 	public DataController() {
 		super();
@@ -168,6 +169,14 @@ public class DataController implements Serializable {
 
 	public void setDocuments(List<ItemCollection> documents) {
 		this.documents = documents;
+	}
+
+	public List<ItemCollection> getAdminPJobs() {
+		return adminPJobs;
+	}
+
+	public void setAdminPJobs(List<ItemCollection> adminPJobs) {
+		this.adminPJobs = adminPJobs;
 	}
 
 	/**

@@ -17,6 +17,7 @@ import javax.mvc.annotation.Controller;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 import org.imixs.application.admin.ConnectionController;
 import org.imixs.application.admin.DataController;
@@ -51,38 +52,57 @@ public class AdminPController implements Serializable {
 
 	@GET
 	public String home() {
-		
+		findJobs();
 		return "adminp.xhtml";
+	}
+	
+	private void findJobs() {
+		if (connectionController.getConfiguration() != null && !connectionController.getUrl().isEmpty()) {
+			String uri = "documents/search/(type:\"adminp\")?pageSize=100&sortBy=$modified&sortReverse=true";
+			List<ItemCollection> jobs = connectionController.getWorkflowCLient().getCustomResource(uri);
+			dataController.setAdminPJobs(jobs);
+		}
 	}
 
 	
-
 	@POST
 	@Path("/rebuildindex")
 	public String rebuildIndex(InputStream requestBodyStream) {
 		createJob(requestBodyStream);
-		return "adminp.xhtml";
+		return "redirect:adminp/";
 	}
 	
 	@POST
 	@Path("/renameuser")
 	public String renameUser(InputStream requestBodyStream) {
 		createJob(requestBodyStream);
-		return "adminp.xhtml";
+		return "redirect:adminp/";
 	}
 	
 	@POST
 	@Path("/upgrade")
 	public String upgrade(InputStream requestBodyStream) {
 		createJob(requestBodyStream);
-		return "adminp.xhtml";
+		return "redirect:adminp/";
 	}
 	
 	@POST
 	@Path("/migration")
 	public String migration(InputStream requestBodyStream) {
 		createJob(requestBodyStream);
-		return "adminp.xhtml";
+		return "redirect:adminp/";
+	}
+
+	
+
+	@GET
+	@Path("/action/delete/{uniqueid}")
+	public String actionDeleteJob(@PathParam("uniqueid") String uniqueid) {
+
+		logger.finest("......delete job: " + uniqueid);
+		connectionController.getWorkflowCLient().deleteWorkitem(uniqueid);
+
+		return "redirect:adminp/";
 	}
 
 	
