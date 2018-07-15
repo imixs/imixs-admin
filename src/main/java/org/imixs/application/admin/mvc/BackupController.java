@@ -10,6 +10,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 
@@ -44,7 +45,6 @@ public class BackupController implements Serializable {
 		super();
 	}
 
-
 	@GET
 	public String home() {
 		return "backup.xhtml";
@@ -61,27 +61,39 @@ public class BackupController implements Serializable {
 	@POST
 	public String backup(@FormParam("query") String query, @FormParam("backupPath") String path,
 			@FormParam("action") String action) {
-		logger.info("backup=" + query + " path=" + path);
+		Client client = null;
 
-		dataController.setQuery(query);
-		dataController.setBackupPath(path);
+		try {
+			client = connectionController.getWorkflowCLient().newClient();
 
-		if ("backup".equals(action)) {
-			String uri = connectionController.getWorkflowCLient().getBaseURI() + "documents/backup/" + query
-					+ "?filepath=" + path;
-			// create put for backup ...
-			// here we create a dummmy object 
-			Response response = connectionController.getWorkflowCLient().getClient().target(uri).request().put(Entity.xml(""));
-			model.put("backupstatus", response.getStatus());
+			logger.info("backup=" + query + " path=" + path);
+
+			dataController.setQuery(query);
+			dataController.setBackupPath(path);
+
+			if ("backup".equals(action)) {
+				String uri = connectionController.getWorkflowCLient().getBaseURI() + "documents/backup/" + query
+						+ "?filepath=" + path;
+				// create put for backup ...
+				// here we create a dummmy object
+				Response response = client.target(uri).request()
+						.put(Entity.xml(""));
+				model.put("backupstatus", response.getStatus());
+			}
+
+			if ("restore".equals(action)) {
+				String uri = connectionController.getWorkflowCLient().getBaseURI() + "documents/restore?filepath="
+						+ path;
+				// create put for backup ...
+				Response response = client.target(uri).request().get();
+				model.put("backupstatus", response.getStatus());
+			}
+
+		} finally {
+			if (client != null) {
+				client.close();
+			}
 		}
-
-		if ("restore".equals(action)) {
-			String uri = connectionController.getWorkflowCLient().getBaseURI() + "documents/restore?filepath=" + path;
-			// create put for backup ...
-			Response response = connectionController.getWorkflowCLient().getClient().target(uri).request().get();
-			model.put("backupstatus", response.getStatus());
-		}
-
 		return "backup.xhtml";
 	}
 
