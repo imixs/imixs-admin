@@ -1,33 +1,28 @@
 # Imixs-Admin
 
 The Imixs-Admin project provides a web based tool to administrate the Imixs-Workflow engine.  
-Imixs-Admin is a web client based on the JavaScript library [Ben.JS](http://www.benjs.org). The client uses the Imixs-Rest API to access an instance of the Imixs-Workflow Engine. 
+Imixs-Admin is a web client based on the web framework ['MVC 1.0'](https://www.mvc-spec.org/). The client interacts with the Imxis-Workflow Engine via the Imixs-Rest API. 
 
 These are the core features of Imixs-Admin:
 
-* Search entities using JPQL statements
-* Update or add properties of entities
+* Search documents using Lucene search queries
+* Update or add properties of documents
 * Process a set of workitems based on the deployed workflow model
-* Delete a set of entities
-* Manage the Imixs-Entity-Index table
+* Delete a set of documents
+* Start AdminP Jobs
  
-## Installation
-Imixs-Admin is provided as a Maven Web Module and can be build by the maven command:
 
-    mvn clean install
-
-The .war file can be deployed into any JEE Application server. It is necessary to provide a security realm 'imixsrealm'. See also the security section in the [Deployment Guide](http://www.imixs.org/jee/deployment/overview.html) on [imixs.org](http://www.imixs.org)
 
 
 <br /><br /><img src="./small_h-trans.png" />
 
 
-The Imixs-Admin client provides a Docker Image to be used to run the service in a Docker conatiner. 
+The Imixs-Admin client provides a Docker Image to be used to run the service in a Docker container. 
 The docker image is based on the docker image [imixs/wildfly](https://hub.docker.com/r/imixs/wildfly/).
 
-You can start the latest version of the Imixs-Admin Tool in a docker container run:
+You can start the latest version of the Imixs-Admin Tool in a docker container runing the provided docker-compose.yml file:
 
-	$ docker run --name="imixs-admin" -d -p 8080:8080  imixs/imixs-admin
+	$ docker-compose up
 
 You can start the application from your browser
 
@@ -38,8 +33,7 @@ You can start the application from your browser
 Alternatively you can build the imixs-admin client manually from sources and start from your local docker image:
 
 	$ mvn clean install -Pdocker-build
-	$ docker run --name="imixs-admin" -it -p 8080:8080  imixs/imixs-admin
-
+	$ docker-compose up
 
 
 To push the docker image into a registry run
@@ -48,9 +42,23 @@ To push the docker image into a registry run
 
 where 'localhost:5000' need to be replaced with your private registry.
 
+### Ozark Implementations
 
+The MVC 1.0 Ozark reference implementation is provided in two different versions optimized for RestEasy (Wildfly) and Jersey (Glassfish). Find installation details [here](https://www.mvc-spec.org/ozark/docs/install-javaee.html).
+
+You can build the admin client for glassfish using the maven profile 'jersey'
+
+	$ mvn clean install -Pjersey 
+	
+**Note:** The default profile uses the RestEasy implementation for Wildfly. 
 
 ## Development
+
+Imixs-Admin is provided as a Maven Web Module and can be build by the maven command:
+
+	$ mvn clean install
+
+The .war file can be deployed into any Jakarta EE Application server.
 
 During development you can use the docker-compose-dev.yml file. This stack maps the src/docker/deployments folder to the wildfly auto deploy directory. 
 
