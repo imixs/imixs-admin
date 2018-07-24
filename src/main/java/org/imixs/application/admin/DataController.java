@@ -1,10 +1,13 @@
 package org.imixs.application.admin;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
@@ -20,6 +23,8 @@ import org.imixs.workflow.ItemCollection;
 @Named
 @SessionScoped
 public class DataController implements Serializable {
+
+	private static Logger logger = Logger.getLogger(DataController.class.getName());
 
 	private static final long serialVersionUID = 1L;
 
@@ -196,5 +201,21 @@ public class DataController implements Serializable {
 			}
 		}
 		return result;
+	}
+	
+	
+	/**
+	 * This method URL-encodes the query string so it can be used by the rest api
+	 *  
+	 * @return
+	 */
+	public String getEncodedQuery() {
+		String escapedQuery=getQuery();
+		try {
+			escapedQuery=URLEncoder.encode(escapedQuery,"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			logger.warning("encoding of query string failed!");
+		}
+		return escapedQuery;
 	}
 }

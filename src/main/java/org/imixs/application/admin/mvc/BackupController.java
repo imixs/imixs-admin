@@ -72,7 +72,11 @@ public class BackupController implements Serializable {
 			dataController.setBackupPath(path);
 
 			if ("backup".equals(action)) {
-				String uri = connectionController.getWorkflowCLient().getBaseURI() + "documents/backup/" + query
+				
+				dataController.setQuery(query);
+				
+				
+				String uri = connectionController.getWorkflowCLient().getBaseURI() + "documents/backup/" + dataController.getEncodedQuery()
 						+ "?filepath=" + path;
 				// create put for backup ...
 				// here we create a dummmy object

@@ -102,7 +102,7 @@ public class BulkupdateController implements Serializable {
 	private void updateSearchResult() {
 		if (connectionController.getConfiguration() != null && !connectionController.getUrl().isEmpty()) {
 
-			String uri = "documents/search/" + dataController.getQuery() + "?pageSize=" + dataController.getPageSize()
+			String uri = "documents/search/" + dataController.getEncodedQuery() + "?pageSize=" + dataController.getPageSize()
 					+ "&pageIndex=" + dataController.getPageIndex() + "&sortBy=" + dataController.getSortBy()
 					+ "&sortReverse=" + ("DESC".equals(dataController.getSortOrder()));
 

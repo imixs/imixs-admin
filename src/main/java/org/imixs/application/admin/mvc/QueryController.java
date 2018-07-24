@@ -91,10 +91,15 @@ public class QueryController implements Serializable {
 		return "search.xhtml";
 	}
 
+	/**
+	 * This mehtod starts a lucene search.
+	 * The query string containing / must be escaped.
+	 * 
+	 */
 	private void updateDocuments() {
 		if (connectionController.getConfiguration() != null && !connectionController.getUrl().isEmpty()) {
 
-			String uri = "documents/search/" + dataController.getQuery() + "?pageSize=" + dataController.getPageSize()
+			String uri = "documents/search/" + dataController.getEncodedQuery() + "?pageSize=" + dataController.getPageSize()
 					+ "&pageIndex=" + dataController.getPageIndex() + "&sortBy=" + dataController.getSortBy()
 					+ "&sortReverse=" + ("DESC".equals(dataController.getSortOrder()));
 
@@ -106,4 +111,6 @@ public class QueryController implements Serializable {
 		}
 	}
 
+	
+	
 }
