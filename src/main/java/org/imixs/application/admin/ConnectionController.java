@@ -36,6 +36,7 @@ public class ConnectionController implements Serializable {
 	String password;
 	String authMethod;
 	String errorMessage;
+	String logMessage;
 
 	List<String> indexListNoAnalyse;
 	List<String> indexListAnalyse;
@@ -91,6 +92,14 @@ public class ConnectionController implements Serializable {
 		if (errorMessage != null && !errorMessage.isEmpty()) {
 			logger.severe(errorMessage);
 		}
+	}
+
+	public String getLogMessage() {
+		return logMessage;
+	}
+
+	public void setLogMessage(String logMessage) {
+		this.logMessage = logMessage;
 	}
 
 	public List<String> getIndexListNoAnalyse() {

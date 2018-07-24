@@ -1,10 +1,6 @@
 package org.imixs.application.admin.mvc;
 
 import java.io.Serializable;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -22,37 +18,38 @@ import org.imixs.application.admin.DataController;
 import org.imixs.workflow.ItemCollection;
 
 /**
- * The bulkupdate controller is used to update a resultset of workitems
+ * The bulkdelete controller is used to delete a resultset of workitems
  * 
  * @author rsoika
  *
  */
 @Controller
-@Path("/bulkupdate")
+@Path("/bulkdelete")
 @Named
-public class BulkupdateController implements Serializable {
+public class BulkdeleteController implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private static Logger logger = Logger.getLogger(BulkupdateController.class.getName());
-
-	@Inject
-	private Models model;
+	private static Logger logger = Logger.getLogger(BulkdeleteController.class.getName());
 
 	@Inject
 	ConnectionController connectionController;
 
 	@Inject
+	private Models model;
+
+	
+	@Inject
 	DataController dataController;
 
-	public BulkupdateController() {
+	public BulkdeleteController() {
 		super();
 	}
 
 	@GET
 	public String home() {
-		model.put("updatestatus","");
-		return "bulkupdate.xhtml";
+		model.put("deletestatus","");
+		return "bulkdelete.xhtml";
 	}
 
 	/**
@@ -67,7 +64,7 @@ public class BulkupdateController implements Serializable {
 	 * @return
 	 */
 	@POST
-	public String update(@FormParam("query") String query, @FormParam("sortBy") String sortBy,
+	public String delete(@FormParam("query") String query, @FormParam("sortBy") String sortBy,
 			@FormParam("sortOrder") String sortOrder, @FormParam("pageIndex") int pageIndex,
 			@FormParam("pageSize") int pageSize,
 
@@ -89,9 +86,9 @@ public class BulkupdateController implements Serializable {
 		dataController.setFieldValues(fieldValues);
 		dataController.setWorkflowEvent(workflowEvent);
 
-		updateSearchResult();
+		deleteSearchResult();
 
-		return "bulkupdate.xhtml";
+		return "bulkdelete.xhtml";
 	}
 
 	/**
@@ -99,8 +96,9 @@ public class BulkupdateController implements Serializable {
 	 * on the given settings stored in the DataController. This method is called by
 	 * the update method.
 	 */
-	private void updateSearchResult() {
+	private void deleteSearchResult() {
 		if (connectionController.getConfiguration() != null && !connectionController.getUrl().isEmpty()) {
+			model.put("deletestatus","");
 
 			String uri = "documents/search/" + dataController.getQuery() + "?pageSize=" + dataController.getPageSize()
 					+ "&pageIndex=" + dataController.getPageIndex() + "&sortBy=" + dataController.getSortBy()
@@ -110,55 +108,12 @@ public class BulkupdateController implements Serializable {
 
 			List<ItemCollection> documents = connectionController.getWorkflowCLient().getCustomResource(uri);
 
-			// first convert the newValue in a list of objects based on the selected
-			// fieldType...
-			String fieldType = dataController.getFieldType();
-			String newFieldValues=dataController.getFieldValues();
-			String[] rawItems = newFieldValues.split("\\r?\\n");
-			// now convert to selected type
-			List<Object> typedItems = new ArrayList<Object>();
-			for (String rawValue : rawItems) {
-				if ("xs:int".equals(fieldType)) {
-					typedItems.add(Integer.parseInt(rawValue));
-				} else if ("xs:dateTime".equals(fieldType)) {
-					SimpleDateFormat dt1 = new SimpleDateFormat("yyyyy-mm-dd");
-					try {
-						Date date = dt1.parse(rawValue);
-						typedItems.add(date);
-					} catch (ParseException e) {
-						logger.warning("...unable to convert '" + rawValue + "' into date object!");
-						typedItems.add(rawValue);
-					}
-
-				} else if ("xs:boolean".equals(fieldType)) {
-					typedItems.add(Boolean.parseBoolean(rawValue));
-				} else {
-					typedItems.add(rawValue);
-				}
-
-			}
-
 			// iterate over all documents....
 			for (ItemCollection document : documents) {
-				// update documetn item
-				if (dataController.isAppendValues()) {
-					// append
-					document.appendItemValue(dataController.getFieldName(), typedItems);
-				} else {
-					// replace
-					document.replaceItemValue(dataController.getFieldName(), typedItems);
-				}
-
-				// Save or Process workitem?
-				if (dataController.getWorkflowEvent() <= 0) {
-				}
-
+				connectionController.getWorkflowCLient().deleteWorkitem(document.getUniqueID());
 			}
-
 			
-			model.put("updatestatus", documents.size() + " documents updated.");
-			dataController.setDocuments(documents);
-			
+			model.put("deletestatus", documents.size() + " documents deleted.");
 		}
 	}
 

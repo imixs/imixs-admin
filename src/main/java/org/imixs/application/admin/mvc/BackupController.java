@@ -78,7 +78,7 @@ public class BackupController implements Serializable {
 				// here we create a dummmy object
 				Response response = client.target(uri).request()
 						.put(Entity.xml(""));
-				model.put("backupstatus", response.getStatus());
+				model.put("backupstatus", "Backup finished - Status="+ response.getStatus()+ " - see server log for details.");
 			}
 
 			if ("restore".equals(action)) {
@@ -86,7 +86,7 @@ public class BackupController implements Serializable {
 						+ path;
 				// create put for backup ...
 				Response response = client.target(uri).request().get();
-				model.put("backupstatus", response.getStatus());
+				model.put("backupstatus", "Restore finished - Status="+ response.getStatus() + " - see server log for details.");
 			}
 
 		} finally {

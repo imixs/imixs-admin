@@ -24,13 +24,13 @@
 		<div class="imixs-form">
 			<div class="imixs-header">
 				<h1>
-					<span class="typcn typcn-edit"></span>Bulk Update:
+					<span class="typcn typcn-trash"></span>Bulk Delete:
 				</h1>
 			</div>
 			<div class="imixs-body">
 				<div class="imixs-form-panel">
 					<form
-						action="#{facesContext.externalContext.requestContextPath}/imixsadmin/bulkupdate"
+						action="#{facesContext.externalContext.requestContextPath}/imixsadmin/bulkdelete"
 						method="post">
 
 						<div class="imixs-form-section">
@@ -79,78 +79,13 @@
 							</dl>
 						</div>
 
-						<hr />
-						<div class="imixs-form-section-3">
-							<dl>
-								<dt>Field Name:</dt>
-								<dd>
-									<input type="text" value="#{dataController.fieldName}"
-										name="fieldName" />
-								</dd>
-							</dl>
-
-							<dl>
-								<dt>Field Type:</dt>
-								<dd>
-									<select name="fieldType" id="fieldType">
-										<option>xs:string</option>
-										<option>xs:int</option>
-										<option>xs:boolean</option>
-										<option>xs:dateTime</option>
-									</select>
-								</dd>
-							</dl>
-
-							<dl>
-								<dt>Workflow Event (optional):</dt>
-								<dd>
-									<input type="text" value="#{dataController.workflowEvent}"
-										name="workflowEvent" />
-								</dd>
-							</dl>
-
-
-						</div>
-						<div class="imixs-form-section-3">
-
-							<dl>
-								<dt>New Values:</dt>
-								<dd>
-									<textarea name="fieldValues">#{dataController.fieldValues}</textarea>
-								</dd>
-
-							</dl>
-
-
-							<dl>
-								<dt>Update Mode:</dt>
-								<dd>
-									<ui:fragment rendered="#{dataController.appendValues}">
-										<input type="checkbox" name="appendValues" value="true"
-											checked="checked" />
-									</ui:fragment>
-									<ui:fragment rendered="#{!dataController.appendValues}">
-										<input type="checkbox" name="appendValues" value="true" />
-									</ui:fragment>
-									Append Values <br />
-									<p>
-										<small><strong>Note:</strong> Multi-Values can be
-											separated by new lines. If you want to add a single value
-											with multiple lines, than add '\n' at the end of a line. <br />
-											Date values have to be formated as 'yyyy-mm-dd'. </small>
-									</p>
-								</dd>
-							</dl>
-						</div>
-
 
 						<hr />
 						<div class="danger-zone">
 							<h3><span class="typcn typcn-warning"></span>Danger Zone</h3>
-							<input type="submit" value="Start Update ..." />
-							
+							<input type="submit" value="Start Deletion ..." />
 							<hr />
-							<h4>Log: #{updatestatus}</h4>
+							<h4>Log: #{deletestatus}</h4>
 						</div>
 
 
