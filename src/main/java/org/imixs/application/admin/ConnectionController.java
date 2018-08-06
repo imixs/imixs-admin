@@ -56,6 +56,10 @@ public class ConnectionController implements Serializable {
 	}
 
 	public void setUrl(String url) {
+		if (url!=null) {
+			// trim url
+			url=url.trim();
+		}
 		this.url = url;
 	}
 
@@ -136,7 +140,7 @@ public class ConnectionController implements Serializable {
 	 * @param password
 	 * @return true if connection was established.
 	 */
-	public boolean connect(String url, String userid, String password, String authMethod) {
+	public boolean connect() {
 		logger.info("url=" + url);
 		setUrl(url);
 		setUserid(userid);
