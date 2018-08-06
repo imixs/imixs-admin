@@ -32,7 +32,7 @@
 					return false;
 				}
 				// delete...
-				document.location.href="#{facesContext.externalContext.requestContextPath}/imixsadmin/adminp/action/delete/"+id;
+				document.location.href="#{facesContext.externalContext.requestContextPath}/app/adminp/action/delete/"+id;
 			}
 
 			function updateTableLayout() {
@@ -80,7 +80,7 @@
 						<div id="tab-1">
 
 							<form
-								action="#{facesContext.externalContext.requestContextPath}/imixsadmin/adminp/rebuildindex"
+								action="#{facesContext.externalContext.requestContextPath}/app/adminp/rebuildindex"
 								method="post">
 
 								<p>
@@ -148,7 +148,7 @@
 						<!-- Rename -->
 						<div id="tab-2" class="">
 							<form
-								action="#{facesContext.externalContext.requestContextPath}/imixsadmin/adminp/renameuser"
+								action="#{facesContext.externalContext.requestContextPath}/app/adminp/renameuser"
 								method="post">
 								<p>
 									This job updates the <a
@@ -252,7 +252,7 @@
 						<!-- Upgrade Workitems -->
 						<div id="tab-3">
 							<form
-								action="#{facesContext.externalContext.requestContextPath}/imixsadmin/adminp/upgrade"
+								action="#{facesContext.externalContext.requestContextPath}/app/adminp/upgrade"
 								method="post">
 								<p>
 									This job upgrades the <a
@@ -320,7 +320,7 @@
 						<!--  Migration -->
 						<div id="tab-4">
 							<form
-								action="#{facesContext.externalContext.requestContextPath}/imixsadmin/adminp/migration"
+								action="#{facesContext.externalContext.requestContextPath}/app/adminp/migration"
 								method="post">
 								<p>This job can be used to migrate an existing
 									Imixs-Workflow Instance from version 3.x to version 4.0.</p>
@@ -394,7 +394,7 @@
 									value="#{(empty record.item['txtworkflowsummary'])?record.item['type']:record.item['txtworkflowsummary']}"></ui:param>
 								<tr>
 									<td><a
-										href="#{facesContext.externalContext.requestContextPath}/imixsadmin/document/#{record.item['$uniqueid']}">#{record.item['$uniqueid']}</a></td>
+										href="#{facesContext.externalContext.requestContextPath}/app/document/#{record.item['$uniqueid']}">#{record.item['$uniqueid']}</a></td>
 									<td>#{record.item['job']}</td>
 									<td>#{record.item['$created']}</td>
 									<td>#{record.item['$modified']}</td>

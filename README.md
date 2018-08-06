@@ -36,6 +36,14 @@ Alternatively you can build the imixs-admin client manually from sources and sta
 	$ docker-compose up
 
 
+### Changing the RootContext
+
+The Imixs-Admin client is installed per default into the root context "/". You can change the root context during the build by setting the property 'root-context'. The following example set the root-context to "/dev/"
+
+	mvn -Droot-context=dev clean install 
+
+### Push Docker Image to a private registry
+
 To push the docker image into a registry run
 
 	$ mvn clean install -Pdocker-push -Dorg.imixs.docker.registry=localhost:5000
