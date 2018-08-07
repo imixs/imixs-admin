@@ -100,6 +100,7 @@ public class BulkupdateController implements Serializable {
 	 * the update method.
 	 */
 	private void updateSearchResult() {
+		int updates=0;
 		if (connectionController.getConfiguration() != null && !connectionController.getUrl().isEmpty()) {
 
 			String uri = "documents/search/" + dataController.getEncodedQuery() + "?pageSize=" + dataController.getPageSize()
@@ -109,6 +110,7 @@ public class BulkupdateController implements Serializable {
 			logger.info("URI=" + uri);
 
 			List<ItemCollection> documents = connectionController.getWorkflowCLient().getCustomResource(uri);
+			logger.info("..." + documents.size() + " documents selected for update...");
 
 			// first convert the newValue in a list of objects based on the selected
 			// fieldType...
@@ -151,12 +153,19 @@ public class BulkupdateController implements Serializable {
 
 				// Save or Process workitem?
 				if (dataController.getWorkflowEvent() <= 0) {
+					// save workitem
+					connectionController.getWorkflowCLient().saveDocument(document);
+					updates++;
+				} else {
+					// process workitem
+					document.setEventID(dataController.getWorkflowEvent());
+					connectionController.getWorkflowCLient().processWorkitem(document);
+					updates++;
 				}
 
 			}
-
-			
-			model.put("updatestatus", documents.size() + " documents updated.");
+			logger.info("... update finished - " + updates + " documents updated.");
+			model.put("updatestatus", updates + " documents updated.");
 			dataController.setDocuments(documents);
 			
 		}
