@@ -6,6 +6,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.net.URLDecoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -107,7 +110,10 @@ public class AdminPController implements Serializable {
 
 	
 	/**
-	 * Creates a new job instance
+	 * Creates a new job instance.
+	 * <p>
+	 * The method did convert the items datto and datfrom into a date obejct...
+	 * <p>
 	 * @param requestBodyStream
 	 */
 	private void createJob(InputStream requestBodyStream) {
@@ -120,6 +126,12 @@ public class AdminPController implements Serializable {
 			if (job.getItemValueInteger("numinterval")==0) {
 				job.replaceItemValue("numinterval", 1);
 			}
+			
+			// convert date values
+			convertDate(job,"datfrom");
+			convertDate(job,"datto");
+			
+			
 			connectionController.getWorkflowCLient().createAdminPJob(job);
 			
 		} catch (AccessDeniedException | ProcessingErrorException e) {
@@ -127,14 +139,35 @@ public class AdminPController implements Serializable {
 			
 		}
 	}
+	
+	
+	/**
+	 * converts a date string into a date object. 
+	 * 
+	 * @param job
+	 * @param itemName
+	 */
+	private void convertDate(ItemCollection job, String itemName) {
+		// convert date values
+		String sDate=job.getItemValueString(itemName);
+		
+		if (!sDate.isEmpty()) {
+			// convert... 05.09.2018
+			SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+			try {
+				Date dat=formatter.parse(sDate);
+				job.replaceItemValue(itemName,dat);
+			} catch (ParseException e) {
+				// failed to convert
+			}
+		}
+	}
 
 	/**
 	 * This method expects a form post. The method parses the input stream to
-	 * extract the provides field/value pairs. NOTE: The method did not(!) assume
-	 * that the put/post request contains a complete workItem. For this reason the
-	 * method loads the existing instance of the corresponding workItem (identified
-	 * by the $uniqueid) and adds the values provided by the put/post request into
-	 * the existing instance.
+	 * extract the provides field/value pairs.
+	 * <p>
+	 * 
 	 * 
 	 * The following kind of lines which can be included in the InputStream will be
 	 * skipped
@@ -196,8 +229,7 @@ public class AdminPController implements Serializable {
 						} else {
 							fieldValue = fieldValue.substring(fieldValue.indexOf('=') + 1);
 							// test for a multiValue field - did we know
-							// this
-							// field....?
+							// this field....?
 							fieldName = fieldName.toLowerCase();
 							if (vMultiValueFieldNames.indexOf(fieldName) > -1) {
 
