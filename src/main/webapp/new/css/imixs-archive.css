@@ -1,0 +1,283 @@
+/* W3.CSS 4.10 February 2018 by Jan Egil and Borge Refsnes */
+html {
+	box-sizing: border-box;
+	-ms-text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%;
+}
+
+body, html {
+	font-family: 'Open Sans', sans-serif;
+	text-rendering: optimizeLegibility !important;
+	-webkit-font-smoothing: antialiased !important;
+	color: #5a5a5a;
+}
+
+*, *:before, *:after {
+	box-sizing: inherit
+}
+
+.title-bar {
+	background-color: #145267;
+	min-height: 120px;
+	color: #fefefe;
+	height: 80px;
+	padding: 16px 10px;
+	white-space: nowrap;
+}
+
+.title-bar h1 {
+	line-height: 36px;
+	font-size: 36px;
+	font-weight: 600;
+}
+
+.title-bar h4 {
+	margin: 0;
+}
+
+.nav-sidebar  ul {
+	padding: 0;
+}
+
+.nav-item .typcn {
+	font-size: 24px;
+	margin-right: 20px;
+}
+
+.imixs-header .typcn {
+	margin-right: 10px;
+}
+
+.nav-sidebar {
+	height: 100%;
+	width: 200px;
+	background-color: #fff;
+	position: fixed !important;
+	z-index: 1;
+	overflow: hidden;
+	border-right: 1px solid rgb(224, 228, 231);
+}
+
+.nav-sidebar .title-bar {
+	min-height: 120px;
+}
+
+.nav-sidebar a {
+	color: inherit;
+}
+
+.nav-sidebar a:hover {
+	text-decoration: none;
+}
+
+.nav-sidebar hr {
+	width: 90%;
+}
+
+.main-container {
+	padding: 16px 20px;
+}
+
+.content {
+	margin-left: 200px;
+}
+
+#imixs-footer {
+	position: fixed;
+	left: 0px;
+	bottom: 0;
+	width: 100%;
+	background-color: #fff;
+	padding: 10px 30px 10px 210px;
+	text-align: right;
+}
+
+#imixs-footer a {
+	color: inherit;
+}
+
+.header {
+	background-image: url(background.png);
+	background-repeat: no-repeat;
+	background-position: right 10px top 16px;
+}
+
+.nav-item {
+	font-weight: 200;
+	padding: 8px 16px;
+	vertical-align: middle;
+	overflow: hidden;
+	text-decoration: none;
+	color: inherit;
+	cursor: pointer;
+	white-space: nowrap;
+	width: 100%;
+	display: block;
+	text-align: left;
+	border: none;
+	white-space: normal;
+	float: none;
+	outline: 0;
+}
+
+.nav-item:hover {
+	background-color: #2284a5 !important;
+	color: #fff;
+}
+
+
+.imixs-form h3 {
+	border-bottom: 1px solid #ddd;
+	line-height: 2em;
+}
+
+button, input[type="button"], input[type="submit"], .button, a.button,
+	.imixs-button {
+	background: #2284a5;
+	color: #fff !important;
+	font-weight: normal !important;
+}
+
+a.button {
+	padding: 0.15em 0.75em;
+	border-radius: 3px;
+}
+input[type="button"]:hover, input[type="submit"]:hover, .button:hover,	a.button:hover, .imixs-button:hover  {
+	background: #31b1dc;
+	color: #ddd !important;
+}
+
+input[type="button"]:active, input[type="submit"]:active,a.button:active,a.button:focus, input[type="button"]:focus, input[type="submit"]:focus  {
+	background: #31b1dc;
+	color: #ddd !important;
+}
+
+
+
+#imixs-content {
+	padding-bottom:80px;
+}
+
+#imixs-content a.imixs-button {
+	color: inherit;
+}
+
+#imixs-content a.imixs-button:hover {
+	color: #fff;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, textarea:focus,
+	select:focus {
+	border: 1px solid #145267;
+	border-radius: 3px;
+	outline: 0;
+	outline: thin dotted \9;
+}
+
+table {
+	font-size: 14px;
+}
+
+th {
+	font-weight: bold;
+}
+
+.imixsdatatable a {
+	color: #428bca !important;
+}
+
+.restore-options input {
+	border: 1px solid #fff;
+}
+
+.restore-options input:hover, .restore-options input:active,.restore-options input:focus {
+	border:1px solid #ccc;
+}
+	
+.restore-options:hover {
+	background: #fff;
+}
+
+.restore-options tr:hover td {
+	background: #fff !important;
+}
+
+
+.danger-zone {
+	border: 1px solid #cb2431;
+	border-radius: 4px;
+	padding: 10px 10px;
+}
+
+.danger-zone  .typcn {
+	margin-right: 5px;
+}
+
+.danger-zone button, .danger-zone input[type="button"], .danger-zone input[type="submit"]
+	{
+	color: #cb2431;
+}
+
+.monitor-portlet {
+	padding: 10px; 
+	background: #eee;
+	min-height: 160px;
+}
+
+.monitor-portlet h1 {
+	border-bottom: 1px solid #999;
+	font-size: 14px;
+	margin-bottom: 0.9em;
+}
+
+.monitor-portlet h1 .typcn{
+    float: right;
+    font-size: 1.3em;
+    line-height: 0.7em;
+}
+
+.monitor-portlet .lead {
+	font-weight: 600;;
+	font-size: 46px;
+	margin-bottom: 0;
+}
+
+.monitor-portlet .lead .typcn {
+	font-weight: normal;
+}
+
+
+.pull-right {
+  float: right;
+}
+
+/* Responsive */
+@media screen and (max-width: 1200px) {
+	.header {
+		background-image: none;
+	}
+}
+
+
+
+@media screen and (max-width: 700px) {
+  
+  
+  .content {
+  margin-left: 60px;
+  }
+  .nav-sidebar{
+    width: 60px;
+  }
+	
+  .nav-sidebar label {
+    display: none;
+  }
+  
+ 
+}
+
+
+
+
+
