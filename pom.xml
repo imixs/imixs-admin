@@ -48,41 +48,14 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<org.imixs.workflow.version>4.3.4</org.imixs.workflow.version>
-		<org.imixs.melman.version>1.0.4</org.imixs.melman.version>
-		<imixs-workflow.applicationname>imixs-admin</imixs-workflow.applicationname>
-		<!-- Default docker registry -->
-		<org.imixs.docker.registry>localhost:5000</org.imixs.docker.registry>
-		<root-context>/</root-context>
-		<ozark.implementation>ozark-resteasy</ozark.implementation>
-		<ozark.version>1.0.0-m03</ozark.version>
+		<org.imixs.workflow.version>5.1.5</org.imixs.workflow.version>
+		<org.imixs.melman.version>1.0.14</org.imixs.melman.version>
+		<org.imixs.jwt.version>1.0.2</org.imixs.jwt.version>
 	</properties>
 
-	<repositories>
-		<!-- Sonatype Snapshot repository -->
-		<repository>
-			<id>sonatype-snaptshots</id>
-			<name>Sonatype Snapshot repository</name>
-			<url>http://oss.sonatype.org/content/repositories/snapshots</url>
-		</repository>
-	</repositories>
 
 	<profiles>
-		<profile>
-			<!-- glassfish profile switches ozark implementation to jersey -->
-			<id>jersey</id>
-			<properties>
-				<ozark.implementation>ozark-jersey</ozark.implementation>
-			</properties>
-		</profile>
 
-		<profile>
-			<!-- dev profile changes root context of application to /dev -->
-			<id>dev</id>
-			<properties>
-				<root-context>/dev</root-context>
-			</properties>
-		</profile>
 
 		<profile>
 			<id>docker</id>
@@ -100,7 +73,7 @@
 										<exec executable="docker">
 											<arg value="build" />
 											<arg value="-t" />
-											<arg value="imixs/${imixs-workflow.applicationname}" />
+											<arg value="imixs/imixs-admin" />
 											<arg value="." />
 										</exec>
 									</target>
@@ -114,80 +87,7 @@
 				</plugins>
 			</build>
 		</profile>
-		<profile>
-			<id>docker-build</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<version>1.8</version>
-						<executions>
-							<execution>
-								<phase>install</phase>
-								<configuration>
-									<target>
-										<exec executable="docker">
-											<arg value="build" />
-											<arg value="-t" />
-											<arg
-												value="imixs/${imixs-workflow.applicationname}:${project.version}" />
-											<arg value="." />
-										</exec>
-									</target>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>docker-push</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<version>1.8</version>
-						<executions>
-							<execution>
-								<phase>install</phase>
-								<configuration>
-									<target>
-										<exec executable="docker">
-											<arg value="build" />
-											<arg value="-t" />
-											<arg
-												value="imixs/${imixs-workflow.applicationname}:${project.version}" />
-											<arg value="." />
-										</exec>
-										<exec executable="docker">
-											<arg value="tag" />
-											<arg
-												value="imixs/${imixs-workflow.applicationname}:${project.version}" />
-											<arg
-												value="${org.imixs.docker.registry}/imixs/${imixs-workflow.applicationname}:${project.version}" />
-										</exec>
-										<exec executable="docker">
-											<arg value="push" />
-											<arg
-												value="${org.imixs.docker.registry}/imixs/${imixs-workflow.applicationname}:${project.version}" />
-										</exec>
-									</target>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
+
 		<profile>
 			<id>docker-hub</id>
 			<build>
@@ -204,14 +104,12 @@
 										<exec executable="docker">
 											<arg value="build" />
 											<arg value="-t" />
-											<arg
-												value="imixs/${imixs-workflow.applicationname}:${project.version}" />
+											<arg value="imixs/imixs-admin:${project.version}" />
 											<arg value="." />
 										</exec>
 										<exec executable="docker">
 											<arg value="push" />
-											<arg
-												value="imixs/${imixs-workflow.applicationname}:${project.version}" />
+											<arg value="imixs/imixs-admin:${project.version}" />
 										</exec>
 									</target>
 								</configuration>
@@ -224,45 +122,86 @@
 				</plugins>
 			</build>
 		</profile>
+		
+		<!-- wildfly profile (development - unpacking war) -->
+		<profile>
+			<id>wildfly</id>
+			<properties>
+				<custom.unpackTypes>war</custom.unpackTypes>
+			</properties>
+		
+			<build>
+				<plugins>
+					<!-- copy artifact into docker/apps -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<version>2.8</version>
+						<executions>
+							<execution>
+								<id>copy-installed</id>
+								<phase>install</phase>
+								<goals>
+									<goal>copy</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>${project.groupId}</groupId>
+											<artifactId>${project.artifactId}</artifactId>
+											<version>${project.version}</version>
+											<type>${project.packaging}</type>
+										</artifactItem>
+									</artifactItems>
+									<outputDirectory>${project.basedir}/src/docker/apps</outputDirectory>
+									<stripVersion>true</stripVersion>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>				
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.8</version>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<configuration>
+
+									<target>
+										<exec executable="docker">
+											<arg value="build" />
+											<arg value="-f" />
+											<arg value="Dockerfile-wildfly" />
+											<arg value="-t" />
+											<arg value="imixs/imixs-admin" />
+											<arg value="./" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>		
 
 	</profiles>
 
 
 	<build>
-		<resources>
-			<!-- enable resource filtering for multi language version -->
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
 
+		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>3.2.0</version>
+				<version>2.4</version>
 				<configuration>
-					<webResources>
-						<resource>
-							<filtering>true</filtering>
-							<!-- this is relative to the pom.xml directory -->
-							<directory>src/main/webapp</directory>
-							<includes>
-								<include>**/WEB-INF/*</include>
-								<include>/src/main/resources/*</include>
-								<!-- include any other file types you want to filter -->
-							</includes>
-						</resource>
-					</webResources>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>
 
@@ -275,14 +214,46 @@
 				</configuration>
 			</plugin>
 
-
-			<!-- relase management -->
+			<!-- copy artifact into docker/apps -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.8</version>
+				<executions>
+					<execution>
+						<id>copy-installed</id>
+						<phase>install</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>${project.artifactId}</artifactId>
+									<version>${project.version}</version>
+									<type>${project.packaging}</type>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>${project.basedir}/src/docker/apps</outputDirectory>
+							<stripVersion>true</stripVersion>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
+
 		</plugins>
+
+		<!-- test directory for junit -->
+		<testResources>
+			<testResource>
+				<directory>${project.parent.basedir}/src/model</directory>
+			</testResource>
+		</testResources>
+
+
+		<finalName>imixs-admin</finalName>
 	</build>
 
 	<dependencies>
@@ -299,34 +270,22 @@
 			<version>${org.imixs.melman.version}</version>
 		</dependency>
 
-		<!-- mvc-api -->
 		<dependency>
-			<groupId>javax.mvc</groupId>
-			<artifactId>javax.mvc-api</artifactId>
-			<version>1.0-pr</version>
+			<groupId>org.imixs.jwt</groupId>
+			<artifactId>imixs-jwt</artifactId>
+			<version>${org.imixs.jwt.version}</version>
 		</dependency>
 
-		<!-- Ozark implementation (depends on maven profile - default is restEasy -->
-		<dependency>
-			<groupId>org.mvc-spec.ozark</groupId>
-			<artifactId>${ozark.implementation}</artifactId>
-			<version>${ozark.version}</version>
-		</dependency>
+
 
 		<!-- Java EE dependencies -->
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
-			<version>7.0</version>
+			<version>8.0</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- JUnit Tests -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8.1</version>
-			<scope>test</scope>
-		</dependency>
+
 	</dependencies>
 
 

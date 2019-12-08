@@ -1,4 +1,6 @@
-FROM imixs/wildfly:1.2.5
+FROM payara/micro:5.194
 
-# Deploy artefact
-COPY ./target/imixs-admin-*.war ${WILDFLY_DEPLOYMENT}/
+MAINTAINER ralph.soika@imixs.com
+# Deploy artefacts
+COPY ./src/docker/apps/* $DEPLOY_DIR
+

@@ -77,8 +77,6 @@ display: inline;
 	height: 80px;
 	padding: 16px 10px;
 	white-space: nowrap;
-	
-	margin-bottom:60px;
 }
 
 .nav-sidebar .nav-title hr {
@@ -155,7 +153,7 @@ display: inline;
 
 button, input[type="button"], input[type="submit"], .button, a.button,
 	.imixs-button {
-	background: #2284a5;
+	background: #FCB802;
 	color: #fff !important;
 	font-weight: normal !important;
 }
