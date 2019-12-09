@@ -27,21 +27,32 @@
 
 package org.imixs.application.admin;
 
-import java.io.InputStream;
+import java.io.StringReader;
+import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.imixs.jwt.JWTException;
+import org.imixs.melman.BasicAuthenticator;
+import org.imixs.melman.FormAuthenticator;
+import org.imixs.melman.JWTAuthenticator;
+import org.imixs.melman.RestAPIException;
+import org.imixs.melman.WorkflowClient;
 import org.imixs.workflow.ItemCollection;
-import org.imixs.workflow.xml.XMLDataCollectionAdapter;
 import org.imixs.workflow.xml.XMLDocument;
 import org.imixs.workflow.xml.XMLDocumentAdapter;
 
@@ -61,9 +72,15 @@ public class AdminRestService {
 
 	private static Logger logger = Logger.getLogger(AdminRestService.class.getName());
 
-	
+	@Context
+	private HttpServletRequest servletRequest;
+
+	@Inject
+	TokenService tokenService;
+
 	/**
-	 * Delegater
+	 * The connect resource generates an access-token for the given api endpoint and
+	 * requests the current index configuration.
 	 * 
 	 * @param workitem
 	 * @return
@@ -82,11 +99,24 @@ public class AdminRestService {
 
 		logger.info("api=" + connectionData.getItemValueString("api"));
 
-		ItemCollection workitem = new ItemCollection();
+		String token;
+		try {
+			token = tokenService.generateAccessToken(connectionData.getItemValueString("api"),
+					connectionData.getItemValueString("userid"), connectionData.getItemValueString("secret"),
+					connectionData.getItemValueString("authmethod"));
+		} catch (JWTException e) {
+			// invalid JWT
+			e.printStackTrace();
+			return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+		}
 
-		String token = JWTGenerator.generateAccessToken(connectionData.getItemValueString("api"),
-				connectionData.getItemValueString("userid"), connectionData.getItemValueString("secret"),
-				connectionData.getItemValueString("authmethod"));
+		ItemCollection workitem;
+		try {
+			workitem = getConfiguration(token);
+		} catch (RestAPIException e) {
+			logger.severe("Rest API Error: " + e.getMessage());
+			return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+		}
 		workitem.setItemValue("token", token);
 
 		logger.info("Token=" + token);
@@ -96,27 +126,98 @@ public class AdminRestService {
 	}
 
 	/**
-	 * Delegater
+	 * Delegater - read schema configuration from DocumentService
 	 * 
 	 * @param workitem
 	 * @return
+	 * @throws RestAPIException
 	 */
-	@GET
-	@Path("/configuration")
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON })
-	public Response getConfiguration() {
+
+	private ItemCollection getConfiguration(String token) throws RestAPIException {
 		boolean debug = logger.isLoggable(Level.FINE);
 		if (debug) {
 			logger.fine("putXMLWorkitem @PUT /workitem  delegate to POST....");
 		}
 
 		logger.info("ok......");
+		WorkflowClient client = createWorkflowClient(token);
 
-		ItemCollection workitem = new ItemCollection();
-		workitem.setItemValue("name", "test test");
-
-		// return workitem....
-		return Response.ok(XMLDataCollectionAdapter.getDataCollection(workitem)).build();
+		List<ItemCollection> result = client.getCustomResource("documents/configuration");
+		if (result != null && result.size() > 0) {
+			return result.get(0);
+		}
+		return null;
 	}
 
+	/**
+	 * creates a new Instance of an Imixs DocumentClient.
+	 * <p>
+	 * The authentication method is build from the access token
+	 * 
+	 * @see DefaultAuthenicator
+	 * @return
+	 */
+	private WorkflowClient createWorkflowClient(String _token) {
+		String authMethod = null;
+		String serviceAPI = null;
+		String userid = null;
+		String password = null;
+
+		// 1st try bearer token...
+		String token = _token;
+		if (token == null) {
+			token = servletRequest.getHeader("Authorization");
+			if (token != null && token.startsWith("Bearer ")) {
+				token = token.substring("Bearer ".length());
+			}
+		}
+		try {
+			// extract the token....
+			String payload = tokenService.getPayload(token);
+			// extract payload.....
+			JsonObject payloadObject = null;
+			JsonReader reader = null;
+
+			reader = Json.createReader(new StringReader(payload));
+			payloadObject = reader.readObject();
+
+			authMethod = payloadObject.getString("autmethod");
+			serviceAPI = payloadObject.getString("api");
+			userid = payloadObject.getString("sub");
+			password = payloadObject.getString("secret");
+			String iat = payloadObject.getString("iat");
+
+			// validate iat
+			long lIat = Long.parseLong(iat); 
+			long lexpireTime = 3600; // 1h
+			long lNow = new Date().getTime();
+			if ((lIat*1000) + (lexpireTime*1000) < lNow) {
+				logger.warning("JWT expired!");
+				return null;
+			}
+
+		} catch (javax.json.stream.JsonParsingException | JWTException j1) {
+			logger.severe("invalid token: " + j1.getMessage());
+			return null;
+		}
+
+		WorkflowClient client = new WorkflowClient(serviceAPI);
+
+		if ("JWT".equalsIgnoreCase(authMethod)) {
+			JWTAuthenticator jwtAuht = new JWTAuthenticator(password);
+			client.registerClientRequestFilter(jwtAuht);
+		}
+
+		if ("FORM".equalsIgnoreCase(authMethod)) {
+			FormAuthenticator formAuth = new FormAuthenticator(serviceAPI, userid, password);
+			client.registerClientRequestFilter(formAuth);
+		}
+
+		if ("BASIC".equalsIgnoreCase(authMethod)) {
+			BasicAuthenticator basicAuth = new BasicAuthenticator(userid, password);
+			client.registerClientRequestFilter(basicAuth);
+		}
+
+		return client;
+	}
 }

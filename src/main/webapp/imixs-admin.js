@@ -10,7 +10,8 @@ $(document).ready(function() {
 	var app = new Vue({
 	  el: '#app',
 	  data: {
-		api: 'http://localhost:8080/api/',
+		connection_status: 0,
+		api: '',
 		info: '',
 		auth_method: 'form',
 		auth_secret: '',
@@ -32,6 +33,9 @@ $(document).ready(function() {
 		    	
 		    	var connectionData=new imixs.ItemCollection();
 		    	connectionData.setItem('api',app.api);
+		    	connectionData.setItem('authmethod',app.auth_method);
+		    	connectionData.setItem('userid',app.auth_userid);
+		    	connectionData.setItem('secret',app.auth_secret);
 		    	// convert to xml
 		    	var xmlData = imixsXML.json2xml(connectionData);
 		    	
@@ -46,7 +50,8 @@ $(document).ready(function() {
 	                    crossDomain:true,
 	                    contentType: 'application/xml',
 	                    success: function (response) {
-	                    	alert('dada da');
+	                    	
+	                    	app.connection_status=200;
 	                    	// output=response.msg;
 	                    	
 	                    	
@@ -59,6 +64,7 @@ $(document).ready(function() {
 	                    	//app.updateHeadUnit(workitem);
 	                    },
 	                    error : function (xhr, ajaxOptions, thrownError){
+	                    	app.connection_status=xhr.status;
 	                    	app.output=xhr.statusText;
 	                        console.log(xhr.status);          
 	                        console.log(thrownError);

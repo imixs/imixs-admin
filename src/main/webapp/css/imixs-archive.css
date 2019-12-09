@@ -218,6 +218,17 @@ input[type="button"]:active, input[type="submit"]:active, a.button:active,
     -webkit-transition: all .3s ease-in-out;
     transition: all .3s ease-in-out;
 }
+.card.error {
+	border: 2px solid #e83636d9;
+	min-height:50px;
+}
+
+.typcn.error {
+	color: #e83636d9;
+}
+.typcn.success {
+	color: green;
+}
 
 input[type="text"]:focus, input[type="password"]:focus, textarea:focus,
 	select:focus {

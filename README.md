@@ -42,23 +42,8 @@ The Imixs-Admin client is installed per default into the root context "/". You c
 
 	mvn -Droot-context=dev clean install 
 
-### Push Docker Image to a private registry
 
-To push the docker image into a registry run
 
-	$ mvn clean install -Pdocker-push -Dorg.imixs.docker.registry=localhost:5000
-
-where 'localhost:5000' need to be replaced with your private registry.
-
-### Ozark Implementations
-
-The MVC 1.0 Ozark reference implementation is provided in two different versions optimized for RestEasy (Wildfly) and Jersey (Glassfish). Find installation details [here](https://www.mvc-spec.org/ozark/docs/install-javaee.html).
-
-You can build the admin client for glassfish using the maven profile 'jersey'
-
-	$ mvn clean install -Pjersey 
-	
-**Note:** The default profile uses the RestEasy implementation for Wildfly. 
 
 ## Development
 
@@ -68,15 +53,17 @@ Imixs-Admin is provided as a Maven Web Module and can be build by the maven comm
 
 The .war file can be deployed into any Jakarta EE Application server.
 
+### The Maven 'wildfly' Profile
+
 During development you can use the docker-compose-dev.yml file. This stack maps the src/docker/deployments folder to the wildfly auto deploy directory. 
 
+	$ mvn clean install -Pwildfly
 	$ docker-compose -f docker-compose-dev.yml up
 	
 you may have to grant the deployment folder first to allow the docker non privileged user to access this location.
 
 	$ sudo chmod 777 src/docker/deployments/
 
+In this mode the deployment directory for wildfly is mapped to '~/git/imixs-admin/src/docker/deployments'
 
-### The Maven 'dev' Profile
 
-Building the applicaiton with the maven profile 'dev' changes the root context of the application from '/' to '/dev/'. This can be used in cases when the admin tool is deployed parallel to other applications. 

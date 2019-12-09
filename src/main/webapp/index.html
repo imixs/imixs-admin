@@ -65,15 +65,15 @@
 							href="#{facesContext.externalContext.requestContextPath}/imixsarchive">
 							<label>Imixs-Admin</label>
 						</a> <span class="pull-right typcn typcn-th-menu-outline"
-							style="margin-right: 10px; cursor: pointer;margin-bottom: 20px;"
+							style="margin-right: 10px; cursor: pointer; margin-bottom: 20px;"
 							onclick="togglemenu();"></span>
 					</h4>
 
 					<small><label>v2.0</label></small>
 
-					
+
 				</div>
-<hr />
+				<hr />
 				<ul>
 					<li class="nav-item"><a
 						href="#{facesContext.externalContext.requestContextPath}/"><span
@@ -127,10 +127,15 @@
 
 				<div class="row">
 					<div class="col-4">
-						<span><strong>API:</strong><a href=""><span
-								class="typcn typcn-world-outline"></span></a> {{api}}</span> <a href=""><span
-							class="typcn typcn-cog"></span></a> <a href=""><span
-							class="typcn typcn-power"></span></a>
+						<span><strong>API: </strong><span
+								v-show="connection_status >= 300"
+								class="typcn typcn-warning error"></span><span
+								v-show="connection_status < 200"
+								class="typcn typcn-world-outline"></span><span
+								v-show="connection_status == 200"
+								class="typcn typcn-world-outline success"></span> {{api}}</span> 
+								<span class="typcn typcn-cog"></span>
+								<span class="typcn typcn-power"></span>
 					</div>
 					<div class="searchbox col-4">
 						<input></input><span class="typcn typcn-zoom-outline"></span>
@@ -177,7 +182,8 @@
 							<dl>
 								<dt>URL:</dt>
 								<dd>
-									<input type="text" autocomplete="url" name="url" v-model="api" placeholder="enter api endpoint">
+									<input type="text" autocomplete="url" name="url" v-model="api"
+										placeholder="enter api endpoint">
 								</dd>
 							</dl>
 						</div>
@@ -196,8 +202,8 @@
 							<dl v-show="auth_method == 'token'">
 								<dt>Token:</dt>
 								<dd>
-									<input type="password" autocomplete="token" placeholder="Bearer Token"
-										v-model="auth_secret" name="token">
+									<input type="password" autocomplete="token"
+										placeholder="Bearer Token" v-model="auth_secret" name="token">
 								</dd>
 							</dl>
 
@@ -208,22 +214,31 @@
 							<dl>
 								<dt>UserID:</dt>
 								<dd>
-									<input type="text" autocomplete="userid" name="userid" placeholder="enter username"
-										v-model="auth_userid">
+									<input type="text" autocomplete="userid" name="userid"
+										placeholder="enter username" v-model="auth_userid">
 								</dd>
 							</dl>
 
 							<dl>
 								<dt>Password:</dt>
 								<dd>
-									<input type="password" autocomplete="password" placeholder="enter password"
-										v-model="auth_secret" name="password">
+									<input type="password" autocomplete="password"
+										placeholder="enter password" v-model="auth_secret"
+										name="password">
 								</dd>
 							</dl>
-							
+
 						</div>
 
 						<button v-on:click="apiConnect();">Connect</button>
+
+					</div>
+
+
+
+					<div class="card error" v-show="connection_status >= 300">
+
+						<p>Failed to connect!</p>
 
 					</div>
 
@@ -267,7 +282,7 @@
 
 
 
-		<div id="imixs-footer">khhk</div>
+		<div id="imixs-footer">www.imixs.org</div>
 
 
 	</div>
