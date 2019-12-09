@@ -12,14 +12,41 @@ body, html {
 	color: #5a5a5a;
 }
 
+
+#imixs-content.loading {
+	overflow: hidden;
+}
+
+#imixs-content.loading .imixs-wait {
+	display: block;
+}
+
+.loading {
+	background: rgba(255, 255, 255, .8) url(../icons/ajax-loader.gif) 50%
+		50% no-repeat;
+	color: #ccc;
+}
+
+/* Ajax loader */
+.imixs-wait {
+	display: none;
+	position: fixed;
+	z-index: 1000;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	background: rgba(255, 255, 255, .8) url('../icons/ajax-loader.gif') 50%
+		50% no-repeat;
+}
+
 *, *:before, *:after {
 	box-sizing: inherit
 }
 
 .header {
 	background-color: #FFF;
-	
-	border-bottom:2px solid #e8e8e8;
+	border-bottom: 2px solid #e8e8e8;
 	min-height: 80px;
 	color: #263544;
 	height: 86px;
@@ -27,21 +54,25 @@ body, html {
 	white-space: nowrap;
 }
 
+.header .nav-sidebar ul li {
+	cursor: pointer;
+}
 .header .typcn {
-	font-size:1.2rem;
+	font-size: 1.3rem;
+	cursor: pointer;
 }
 
 .header .searchbox {
-	padding:0;
+	padding: 0;
 }
+
 .header .searchbox input {
-	margin-right:10px;
-	width:75%;
+	margin-right: 10px;
+	width: 75%;
 }
 
 .header .searchbox .typcn {
-	font-size:1.5rem;
-	
+	font-size: 1.5rem;
 }
 
 .header .linkbox .typcn {
@@ -49,9 +80,9 @@ body, html {
 }
 
 .header .linkbox ul li {
-list-style: none;
-margin-right:20px;
-display: inline;
+	list-style: none;
+	margin-right: 20px;
+	display: inline;
 }
 
 .nav-sidebar {
@@ -119,9 +150,11 @@ display: inline;
 .content {
 	margin-left: 200px;
 	background-color: #F2F7FB;
-	
 }
 
+.form-section {
+	display: none;
+}
 
 .nav-item {
 	font-weight: 200;
@@ -142,7 +175,7 @@ display: inline;
 }
 
 .nav-item:hover {
-	background-color: #1d2531; !important;
+	background-color: #1d2531; ! important;
 	color: #fff;
 }
 
@@ -178,8 +211,6 @@ input[type="button"]:active, input[type="submit"]:active, a.button:active,
 
 #imixs-content {
 	padding-bottom: 80px;
-	
-	
 }
 
 #imixs-content a.imixs-button {
@@ -189,8 +220,6 @@ input[type="button"]:active, input[type="submit"]:active, a.button:active,
 #imixs-content a.imixs-button:hover {
 	color: #fff;
 }
-
-
 
 #imixs-footer {
 	position: fixed;
@@ -205,27 +234,41 @@ input[type="button"]:active, input[type="submit"]:active, a.button:active,
 	color: inherit;
 }
 
-
 .card {
-	min-height:200px;
-	padding:20px;
-	background-color:#ffffff;
-    border-radius: 5px;
-    -webkit-box-shadow: 0 0 5px 0 rgba(43,43,43,.1),0 11px 6px -7px rgba(43,43,43,.1);
-    box-shadow: 0 0 5px 0 rgba(43,43,43,.1),0 11px 6px -7px rgba(43,43,43,.1);
-    border: none;
-    margin-bottom: 30px;
-    -webkit-transition: all .3s ease-in-out;
-    transition: all .3s ease-in-out;
+	min-height: 200px;
+	padding: 20px;
+	background-color: #ffffff;
+	border-radius: 5px;
+	-webkit-box-shadow: 0 0 5px 0 rgba(43, 43, 43, .1), 0 11px 6px -7px
+		rgba(43, 43, 43, .1);
+	box-shadow: 0 0 5px 0 rgba(43, 43, 43, .1), 0 11px 6px -7px
+		rgba(43, 43, 43, .1);
+	border: none;
+	margin-bottom: 30px;
+	-webkit-transition: all .3s ease-in-out;
+	transition: all .3s ease-in-out;
 }
+
 .card.error {
 	border: 2px solid #e83636d9;
-	min-height:50px;
+	min-height: 50px;
+}
+
+.card textarea.search-query {
+	background: #1e2226;
+	width: 100%;
+	height: 7em;
+	color: #23b723;
+	font-family: courier;
+	padding: 10px;
+	box-shadow: 0 0 5px 0 rgba(43, 43, 43, .1), 0 11px 6px -7px
+		rgba(43, 43, 43, .1);
 }
 
 .typcn.error {
 	color: #e83636d9;
 }
+
 .typcn.success {
 	color: green;
 }
@@ -250,23 +293,6 @@ th {
 	color: #428bca !important;
 }
 
-.restore-options input {
-	border: 1px solid #fff;
-}
-
-.restore-options input:hover, .restore-options input:active,
-	.restore-options input:focus {
-	border: 1px solid #ccc;
-}
-
-.restore-options:hover {
-	background: #fff;
-}
-
-.restore-options tr:hover td {
-	background: #fff !important;
-}
-
 .danger-zone {
 	border: 1px solid #cb2431;
 	border-radius: 4px;
@@ -282,33 +308,6 @@ th {
 	color: #cb2431;
 }
 
-.monitor-portlet {
-	padding: 10px;
-	background: #eee;
-	min-height: 160px;
-}
-
-.monitor-portlet h1 {
-	border-bottom: 1px solid #999;
-	font-size: 14px;
-	margin-bottom: 0.9em;
-}
-
-.monitor-portlet h1 .typcn {
-	float: right;
-	font-size: 1.3em;
-	line-height: 0.7em;
-}
-
-.monitor-portlet .lead {
-	font-weight: 600;;
-	font-size: 46px;
-	margin-bottom: 0;
-}
-
-.monitor-portlet .lead .typcn {
-	font-weight: normal;
-}
 
 .pull-right {
 	float: right;

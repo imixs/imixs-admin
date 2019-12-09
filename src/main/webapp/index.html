@@ -75,9 +75,8 @@
 				</div>
 				<hr />
 				<ul>
-					<li class="nav-item"><a
-						href="#{facesContext.externalContext.requestContextPath}/"><span
-							class="typcn typcn-zoom-outline"></span><label>Search</label></a></li>
+					<li class="nav-item" v-on:click="showSection('search')"><span
+							class="typcn typcn-zoom-outline"></span><label>Search</label></li>
 
 				</ul>
 				<hr />
@@ -95,9 +94,8 @@
 						href="#{facesContext.externalContext.requestContextPath}/restore.xhtml"><span
 							class="typcn typcn-spanner"></span><label>Admin-P</label></a></li>
 
-					<li class="nav-item"><a
-						href="#{facesContext.externalContext.requestContextPath}/restore.xhtml"><span
-							class="typcn typcn-map"></span><label>Index</label></a></li>
+					<li class="nav-item" v-on:click="showSection('index')"><span
+							class="typcn typcn-map"></span><label>Index</label></li>
 				</ul>
 				<hr />
 				<ul>
@@ -128,14 +126,16 @@
 				<div class="row">
 					<div class="col-4">
 						<span><strong>API: </strong><span
-								v-show="connection_status >= 300"
-								class="typcn typcn-warning error"></span><span
-								v-show="connection_status < 200"
-								class="typcn typcn-world-outline"></span><span
-								v-show="connection_status == 200"
-								class="typcn typcn-world-outline success"></span> {{api}}</span> 
-								<span class="typcn typcn-cog"></span>
-								<span class="typcn typcn-power"></span>
+							v-show="connection_status >= 300"
+							class="typcn typcn-warning error"></span><span
+							v-show="connection_status < 200"
+							class="typcn typcn-world-outline"></span><span
+							v-show="connection_status == 200"
+							class="typcn typcn-world-outline success"></span> {{api}}</span> 
+							
+							<span
+							class="typcn typcn-cog" v-on:click="showSection('connect')"></span> 
+							<span class="typcn typcn-power" v-on:click="logout()"></span>
 					</div>
 					<div class="searchbox col-4">
 						<input></input><span class="typcn typcn-zoom-outline"></span>
@@ -154,11 +154,6 @@
 					</div>
 				</div>
 
-
-
-
-
-
 			</div>
 
 
@@ -166,18 +161,12 @@
 
 
 				<!--  CONNECT Part -->
-				<div id="connect">
-					<h2>
-						<span class="typcn typcn-link-outline"></span> Connection
-					</h2>
-
-
-
+				<div id="connect" class="form-section">
 					<div class="card">
-
-						<p>Connect to Imixs-Worklfow remote Rest API</p>
-
-
+						<h2>
+							<span class="typcn typcn-link-outline"></span> Connection
+						</h2>
+						<p>Connect to an Imixs-Workflow API endpoint.</p>
 						<div class="imixs-form-section">
 							<dl>
 								<dt>URL:</dt>
@@ -198,7 +187,6 @@
 									</select>
 								</dd>
 							</dl>
-
 							<dl v-show="auth_method == 'token'">
 								<dt>Token:</dt>
 								<dd>
@@ -206,11 +194,8 @@
 										placeholder="Bearer Token" v-model="auth_secret" name="token">
 								</dd>
 							</dl>
-
 						</div>
 						<div class="imixs-form-section-2" v-show="auth_method != 'token'">
-
-
 							<dl>
 								<dt>UserID:</dt>
 								<dd>
@@ -218,7 +203,6 @@
 										placeholder="enter username" v-model="auth_userid">
 								</dd>
 							</dl>
-
 							<dl>
 								<dt>Password:</dt>
 								<dd>
@@ -227,73 +211,158 @@
 										name="password">
 								</dd>
 							</dl>
-
 						</div>
-
 						<button v-on:click="apiConnect();">Connect</button>
-
 					</div>
 
-
-
+					<!-- failure -->
 					<div class="card error" v-show="connection_status >= 300">
 
 						<p>Failed to connect!</p>
 
 					</div>
-
-					<br />
-
-
 				</div>
 
 
-			</div>
 
 
+				<!-- Search -->
+				<div id="search" class="form-section">
+					<div class="card">
+						<h2>
+							<span class="typcn typcn-world-outline"></span> Search Query
+						</h2>
+						<textarea class="search-query" v-model="query" spellcheck="false"></textarea>
+
+<div class="row nested">
+
+							<dl class="col-3">
+								<dt>Page Size:</dt>
+								<dd>
+									<input type="text" value="30" name="pageSize">
+								</dd>
+							</dl>
+							<dl class="col-3">
+								<dt>Page Index:</dt>
+								<dd>
+									<input type="text" value="0" name="pageIndex">
+								</dd>
+							</dl>
+
+							<dl class="col-3">
+								<dt>Sort By:</dt>
+								<dd>
+									<input type="text" value="$modified" name="sortBy">
+								</dd>
+							</dl>
+
+							<dl class="col-3">
+								<dt>Sort Order:</dt>
+								<dd>
+									<select name="sortOrder" id="sortOrder">
+										<option value="DESC">Descanding</option>
+										<option value="ASC">Ascanding</option>
+									</select>
+								</dd>
+							</dl>
+
+						</div>
+						
+						<button v-on:click="search();">Search</button>
+					</div>
+
+					<!-- Search Result -->
+					<div class="card">
+						<h2>
+							<span class="typcn typcn-world-outline"></span> Search Result
+						</h2>
+						<p>Connect to Imixs-Worklfow remote Rest API</p>
 
 
-
-
-			<!-- SEARCH -->
-			<div id="search" style="display: none">
-				<h2>
-					<span class="typcn typcn-world-outline"></span> Search Result
-				</h2>
-
-
-
-				<div class="card">
-
-					<p>Required. The horizontal offset of the shadow. A positive
-						value puts the shadow on the right side of the box, a negative
-						value puts the shadow on the left side of the box</p>
-
-					<custom-button></custom-button>
-
-					<br />
-
-					<display-number :number="4"></display-number>
+					</div>
 				</div>
 
 
+
+				<!-- Index -->
+				<div id="index" class="form-section">
+					<div class="card">
+						<p>Connect to Imixs-Worklfow remote Rest API</p>
+						<table style="width: 100%; margin-top: 10px;">
+							<tbody>
+								<tr>
+
+									<th>Index Field Group</th>
+									<th>Items</th>
+								</tr>
+								<tr>
+									<td>fields</td>
+									<td>{{index_fields}}</td>
+								</tr>
+								<tr>
+									<td>fields analyze</td>
+									<td>{{index_fields_analyze}}</td>
+								</tr>
+								<tr>
+									<td>fields noanalyze</td>
+									<td>{{index_fields_noanalyze}}</td>
+								</tr>
+								<tr>
+									<td>fields store</td>
+									<td>{{index_fields_store}}</td>
+								</tr>
+							</tbody>
+						</table>
+
+
+					</div>
+				</div>
+
+
+
+
+
+
+				<!-- DEMO -->
+				<div id="search" style="display: none">
+					<h2>
+						<span class="typcn typcn-world-outline"></span> Search Result
+					</h2>
+
+
+
+					<div class="card">
+
+						<p>Required. The horizontal offset of the shadow. A positive
+							value puts the shadow on the right side of the box, a negative
+							value puts the shadow on the left side of the box</p>
+
+						<custom-button></custom-button>
+
+						<br />
+
+						<display-number :number="4"></display-number>
+					</div>
+
+
+				
+
+				</div>
+				
+				<div class="imixs-wait">
+					<!-- empty -->
+				</div>
+				
+				
 			</div>
+
+			<!-- FOOTER -->
+			<div id="imixs-footer">www.imixs.org</div>
+
+
+		
 		</div>
-
-
-
-		<div id="imixs-footer">www.imixs.org</div>
-
-
 	</div>
-
-
-
-
-
-
-
-
 </body>
 
 </html>

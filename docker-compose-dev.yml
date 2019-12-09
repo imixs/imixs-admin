@@ -7,9 +7,8 @@ services:
       WILDFLY_PASS: adminadmin
       DEBUG: "true"
     ports:
-      - "8080:8080"
-      - "8787:8787"
-      - "9990:9990"
+      - "8888:8080"
+      - "8788:8787"
     volumes:
       - ~/git/imixs-admin/src/docker/deployments:/opt/wildfly/standalone/deployments/     
 
