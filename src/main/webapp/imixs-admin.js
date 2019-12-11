@@ -4,13 +4,23 @@
 	var imixs = IMIXS.org.imixs.core, 
 				imixsXML = IMIXS.org.imixs.xml;
 			
-			
-// INIT
+	// ImixsDoc represents a document class with a dynamic list of items.
+	// This class is used to display the search result
+	var ImixsDoc = class {
+		  constructor(items) {
+			 if (items) {
+			   var self=this;
+			   $.each(items, function (j, _item) {
+				  var _name=_item.name;
+				  var _val=_item.value[0].$;
+      			  self[_name]=_val;
+      		  });
+		    }
+		  }
+		};
+		
+// INIT vue
 $(document).ready(function() {	
-	
-	
-	
-	// init vue....
 	var app = new Vue({
 	  el: '#app',
 	  data: {
@@ -19,13 +29,20 @@ $(document).ready(function() {
 		token: '',
 		info: '',
 		auth_method: 'form',
-		auth_secret: 'ne-pt-un',
-		auth_userid: 'rsoika',
+		auth_secret: '',
+		auth_userid: '',
 		index_fields: '',
 		index_fields_analyze: '',
 		index_fields_noanalyze: '',
 		index_fields_store: '',
 		query:'(type:*)',
+		page_size:30,
+		page_index:0,
+		sort_by:'$modified',
+		sort_order:"DESC",
+		search_result:  [
+				
+	    ],
 	    message: 'Test'
 	    },
 	    
@@ -36,11 +53,7 @@ $(document).ready(function() {
 	  methods: {
 	    // connect api endpoint
 		apiConnect: function (event) {
-			
-			
-			
-			
-	    	var requestURL='/api/connect';
+			var requestURL='/api/connect';
 	    	var connectionData=new imixs.ItemCollection();
 	    	connectionData.setItem('api',app.api);
 	    	connectionData.setItem('authmethod',app.auth_method);
@@ -86,6 +99,63 @@ $(document).ready(function() {
 	    	
 		    },
 		    
+		    
+		    
+		    
+		 // connect api endpoint
+			search: function (event) {
+				var requestURL='/api/search';
+		    	var requestData=new imixs.ItemCollection();
+		    	requestData.setItem('api',app.api);
+		    	requestData.setItem('query',app.query);
+		    	requestData.setItem('pagesize',app.page_size);
+		    	requestData.setItem('pageindex',app.page_index);
+		    	requestData.setItem('sortby',app.sort_by);
+		    	requestData.setItem('sortorder',app.sort_order);
+		    	// convert to xml
+		    	var xmlData = imixsXML.json2xml(requestData);
+		    	$("#imixs-content").addClass("loading");
+	            	$.ajax({		            		
+	                    url: requestURL,
+	                    type: 'POST',
+	                    beforeSend: function (xhr) {
+	                        xhr.setRequestHeader('Authorization', app.token);
+	                    },
+	                    data: xmlData,
+	                    dataType: 'xml',
+	                    crossDomain:true,
+	                    contentType: 'application/xml',
+	                    success: function (response) {
+	                    	app.connection_status=200;
+	                    	// convert rest response to a document instance
+	                    	documents=imixsXML.xml2collection(response);
+	                    	app.search_result=[];
+	                    	// create a list of ImixsDoc instances
+	                    	$.each(documents, function (index, value) {
+	                    		_doc=new ImixsDoc(value.item);
+		                    	app.search_result.push(_doc);
+                    		});
+	                    	$("#imixs-content").removeClass("loading");
+	                    },
+	                    error : function (xhr, ajaxOptions, thrownError){
+	                    	$("#imixs-content").removeClass("loading");
+	                    	app.connection_status=xhr.status;
+	                    	app.output=xhr.statusText;
+	                        console.log(xhr.status);          
+	                        console.log(thrownError);
+	                    }
+	                });
+	            },
+		    
+		    
+	         // open a document by its id
+			 openDocument: function (event, doc) {
+				 
+			    	alert(doc.$uniqueid);
+			 },
+			    
+		    
+		    
 		    // invalidate token
 		    logout: function (event) {
 		    	app.workitem=null;
@@ -120,7 +190,7 @@ $(document).ready(function() {
 	showSection = function (section) {
 		$('.form-section').hide();
 		$('#'+section).show();
-		$('textarea:first, input:first','#'+section).focus();
+		$('textarea, input','#'+section).first().focus();
 	}
 	
 	var toggleState = false;

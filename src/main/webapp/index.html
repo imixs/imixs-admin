@@ -8,7 +8,7 @@
 <meta content="text/css" http-equiv="Content-Style-Type" />
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
 
-<title>#{app.application_title}</title>
+<title>Imixs-Admin Client</title>
 
 
 <!-- Fonts
@@ -234,32 +234,32 @@
 						</h2>
 						<textarea class="search-query" v-model="query" spellcheck="false"></textarea>
 
-<div class="row nested">
+						<div class="row nested">
 
 							<dl class="col-3">
 								<dt>Page Size:</dt>
 								<dd>
-									<input type="text" value="30" name="pageSize">
+									<input type="text" v-model="page_size" name="pageSize" style="width:7em;">
 								</dd>
 							</dl>
 							<dl class="col-3">
 								<dt>Page Index:</dt>
 								<dd>
-									<input type="text" value="0" name="pageIndex">
+									<input type="text" v-model="page_index" name="pageIndex" style="width:7em;">
 								</dd>
 							</dl>
 
 							<dl class="col-3">
 								<dt>Sort By:</dt>
 								<dd>
-									<input type="text" value="$modified" name="sortBy">
+									<input type="text" value="$modified" v-model="sort_by">
 								</dd>
 							</dl>
 
 							<dl class="col-3">
 								<dt>Sort Order:</dt>
 								<dd>
-									<select name="sortOrder" id="sortOrder">
+									<select name="sortOrder" id="sortOrder" v-model="sort_order">
 										<option value="DESC">Descanding</option>
 										<option value="ASC">Ascanding</option>
 									</select>
@@ -276,7 +276,40 @@
 						<h2>
 							<span class="typcn typcn-world-outline"></span> Search Result
 						</h2>
-						<p>Connect to Imixs-Worklfow remote Rest API</p>
+						
+						<table id="imixsdatatable" class="imixsdatatable" style="width: 100%;">
+						
+							<thead>
+							 <tr>
+								<th>ID</th>
+								<th>Created</th>
+								<th>Modified</th>
+								<th>Status</th>
+								<th>Summary</th>
+								<th></th>
+							</tr>
+						
+						</thead>
+							<tbody v-for="document in search_result">
+							
+							
+								<tr>
+									<td><a href="#"  v-on:click="openDocument($event, document)">{{ document.$uniqueid }}</a></td>
+									<td>{{ document.$created}}</td>
+									<td>{{ document.$modified}}</td>
+									<td>{{ document.$workflowstatus }}</td>
+									<td>{{ document.$workflowsummary }}</td>
+									
+								</tr>
+								
+								
+						
+						</tbody>
+						</table>
+						
+						
+						
+						<p>No Results</p>
 
 
 					</div>

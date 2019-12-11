@@ -43,6 +43,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -53,6 +54,7 @@ import org.imixs.melman.JWTAuthenticator;
 import org.imixs.melman.RestAPIException;
 import org.imixs.melman.WorkflowClient;
 import org.imixs.workflow.ItemCollection;
+import org.imixs.workflow.xml.XMLDataCollection;
 import org.imixs.workflow.xml.XMLDocument;
 import org.imixs.workflow.xml.XMLDocumentAdapter;
 
@@ -126,6 +128,61 @@ public class AdminRestService {
 	}
 
 	/**
+	 * The connect resource generates an access-token for the given api endpoint and
+	 * requests the current index configuration.
+	 * 
+	 * @param workitem
+	 * @return
+	 */
+	@POST
+	@Path("/search")
+	public Response putSearchRequest(XMLDocument xmlBusinessEvent) {
+		boolean debug = logger.isLoggable(Level.FINE);
+		if (debug) {
+			logger.fine("putXMLWorkitem @PUT /search  delegate to POST....");
+		}
+
+		ItemCollection connectionData = XMLDocumentAdapter.putDocument(xmlBusinessEvent);
+		String query = connectionData.getItemValueString("query");
+		String sortBy = connectionData.getItemValueString("sortby");
+		String sortOrder = connectionData.getItemValueString("sortorder");
+		int pageIndex = connectionData.getItemValueInteger("pageindex");
+		int pageSize = connectionData.getItemValueInteger("pagesize");
+
+		// set items!
+		String items = "$uniqueid,$workflowstatus,txtname,$workflowsummary,$modified,$created";
+
+		logger.info("api=" + connectionData.getItemValueString("api"));
+
+		String token = servletRequest.getHeader("Authorization");
+		if (token.toLowerCase().startsWith("bearer")) {
+			token = token.substring(7);
+		}
+
+		WorkflowClient client = createWorkflowClient(token);
+		if (client != null) {
+			XMLDataCollection result;
+			try {
+				result = client.getCustomResourceXML(
+						"documents/search/" + query + "?pageIndex=" + pageIndex + "&pageSize=" + pageSize + "&sortBy="
+								+ sortBy + "&sortReverse=" + (sortOrder.equalsIgnoreCase("desc")) + "&items=" + items);
+
+				return Response
+						// Set the status and Put your entity here.
+						.ok(result)
+						// Add the Content-Type header to tell Jersey which format it should marshall
+						// the entity into.
+						.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML).build();
+			} catch (RestAPIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		// no result
+		return Response.status(Response.Status.NO_CONTENT).build();
+	}
+
+	/**
 	 * Delegater - read schema configuration from DocumentService
 	 * 
 	 * @param workitem
@@ -188,10 +245,10 @@ public class AdminRestService {
 			String iat = payloadObject.getString("iat");
 
 			// validate iat
-			long lIat = Long.parseLong(iat); 
+			long lIat = Long.parseLong(iat);
 			long lexpireTime = 3600; // 1h
 			long lNow = new Date().getTime();
-			if ((lIat*1000) + (lexpireTime*1000) < lNow) {
+			if ((lIat * 1000) + (lexpireTime * 1000) < lNow) {
 				logger.warning("JWT expired!");
 				return null;
 			}
