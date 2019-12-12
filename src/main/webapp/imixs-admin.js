@@ -29,8 +29,8 @@ $(document).ready(function() {
 		token: '',
 		info: '',
 		auth_method: 'form',
-		auth_secret: '',
-		auth_userid: '',
+		auth_secret: 'ne-pt-un',
+		auth_userid: 'rsoika',
 		index_fields: '',
 		index_fields_analyze: '',
 		index_fields_noanalyze: '',
@@ -40,9 +40,8 @@ $(document).ready(function() {
 		page_index:0,
 		sort_by:'$modified',
 		sort_order:"DESC",
-		search_result:  [
-				
-	    ],
+		search_result: [],
+	    document: new imixs.ImixsDocument(),
 	    message: 'Test'
 	    },
 	    
@@ -71,12 +70,10 @@ $(document).ready(function() {
                     type: 'POST',
                     data: xmlData,
                     dataType: 'xml',
-                    crossDomain:true,
                     contentType: 'application/xml',
                     success: function (response) { 
                     	app.connection_status=200;
                     	// convert rest response to a document instance
-                    	//workitem=new imixs.ImixsDocument(imixsXML.xml2document(response));
                     	workitem=imixsXML.xml2document(response);
                     	app.token=workitem.getItem('token');
                     	console.log("token="+app.token);
@@ -96,15 +93,12 @@ $(document).ready(function() {
                         console.log(thrownError);
                     }
                 });
-            	
-            	
-	    	
 		    },
 		    
 		    
 		    
 		    
-		 // connect api endpoint
+		 // search query
 			search: function (event) {
 				var requestURL='/api/search';
 		    	var requestData=new imixs.ImixsDocument();
@@ -125,7 +119,6 @@ $(document).ready(function() {
 	                    },
 	                    data: xmlData,
 	                    dataType: 'xml',
-	                    crossDomain:true,
 	                    contentType: 'application/xml',
 	                    success: function (response) {
 	                    	app.connection_status=200;
@@ -147,11 +140,44 @@ $(document).ready(function() {
 		    
 	         // open a document by its id
 			 openDocument: function (event, doc) {
-				 
-			    	alert(doc.getItem('$uniqueid'));
+   				    var requestURL='/api/documents/'+doc.getItem('$uniqueid');
+			    	$("#imixs-content").addClass("loading");
+		            	$.ajax({		            		
+		                    url: requestURL,
+		                    type: 'GET',
+		                    beforeSend: function (xhr) {
+		                        xhr.setRequestHeader('Authorization', app.token);
+		                    },
+		                    contentType: 'application/xml',
+		                    success: function (response) {
+		                    	app.connection_status=200;
+		                    	// convert rest response to a document instance
+		                    	app.document=imixsXML.xml2document(response);	
+		                    	showSection('document');
+		                    	$("#imixs-content").removeClass("loading");
+		                    },
+		                    error : function (xhr, ajaxOptions, thrownError){
+		                    	$("#imixs-content").removeClass("loading");
+		                    	app.connection_status=xhr.status;
+		                    	app.output=xhr.statusText;
+		                        console.log(xhr.status);          
+		                        console.log(thrownError);
+		                    }
+		                });
 			 },
 			    
 		    
+			 // forward
+			 searchForward: function () {
+			    	app.page_index=app.page_index+1;
+			    	app.search();
+  		     },
+			 searchRewind: function () {
+				 if (app.page_index>0) {
+				    	app.page_index=app.page_index-1;
+				    	app.search();
+				 }
+		     },
 		    
 		    // invalidate token
 		    logout: function (event) {

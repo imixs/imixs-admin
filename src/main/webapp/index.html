@@ -275,10 +275,14 @@
 					<div class="card">
 						<h2>
 							<span class="typcn typcn-world-outline"></span> Search Result
+							
+							<span class="pull-right">
+								<a v-show="page_index >0"><span class="typcn typcn-media-rewind" v-on:click="searchRewind()"></span></a>
+								<span  v-show="page_index <=0" class="typcn typcn-media-rewind-outline"></span>
+								<a><span class="typcn typcn-media-fast-forward" v-on:click="searchForward()"></span></a>
+							</span>
 						</h2>
-						
 						<table id="imixsdatatable" class="imixsdatatable" style="width: 100%;">
-						
 							<thead>
 							 <tr>
 								<th>ID</th>
@@ -288,32 +292,51 @@
 								<th>Summary</th>
 								<th></th>
 							</tr>
-						
 						</thead>
 							<tbody v-for="document in search_result">
-							
-							
 								<tr>
 									<td><a href="#"  v-on:click="openDocument($event, document)">{{ document.$uniqueid[0].text }}</a></td>
 									<td>{{ document.getItem('$created')}}</td>
 									<td>{{ document.$modified[0].text}}</td>
 									<td>{{ document.$workflowstatus[0].text }}</td>
 									<td>{{ document.$workflowsummary[0].text }}</td>
-									
 								</tr>
-								
-								
-						
 						</tbody>
 						</table>
-						
-						
-						
-						<p>No Results</p>
+					</div>
+				</div>
+
+
+				<!-- Document -->
+				<div id="document" class="form-section">
+					<div class="card">
+					
+						<h2><span class="typcn typcn-folder-open"></span> Document: {{ document.getItem('$uniqueid') }}<a><span class="typcn typcn-arrow-forward pull-right" v-on:click="showSection('search')"></span></a></h2>
+						<table style="width: 100%; margin-top: 10px;">
+							<thead>
+								<tr>
+									<th style="width:170px;">Item</th>
+									<th>Type</th>
+									<th>Value</th>
+								</tr>
+							</thead>
+							<tbody v-for="item in document.getItemNames()">
+							
+							    <tr>
+							       <td>{{ item }}</td>
+							       <td>{{ document[item][0]['xsi:type'] }}</td>
+							       <td>{{ document[item][0].text }}</td>
+							    
+							    </tr>
+							</tbody>
+						</table>
 
 
 					</div>
 				</div>
+
+
+
 
 
 

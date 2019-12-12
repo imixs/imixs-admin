@@ -39,9 +39,12 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -151,9 +154,6 @@ public class AdminRestService {
 
 		// set items!
 		String items = "$uniqueid,$workflowstatus,txtname,$workflowsummary,$modified,$created";
-
-		logger.info("api=" + connectionData.getItemValueString("api"));
-
 		String token = servletRequest.getHeader("Authorization");
 		if (token.toLowerCase().startsWith("bearer")) {
 			token = token.substring(7);
@@ -167,6 +167,7 @@ public class AdminRestService {
 						"documents/search/" + query + "?pageIndex=" + pageIndex + "&pageSize=" + pageSize + "&sortBy="
 								+ sortBy + "&sortReverse=" + (sortOrder.equalsIgnoreCase("desc")) + "&items=" + items);
 
+			
 				return Response
 						// Set the status and Put your entity here.
 						.ok(result)
@@ -174,14 +175,53 @@ public class AdminRestService {
 						// the entity into.
 						.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML).build();
 			} catch (RestAPIException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.severe("Rest API Error: " + e.getMessage());
+				return Response.status(Response.Status.NOT_ACCEPTABLE).build();
 			}
 		}
 		// no result
 		return Response.status(Response.Status.NO_CONTENT).build();
 	}
 
+	
+	/**
+	 * The connect resource generates an access-token for the given api endpoint and
+	 * requests the current index configuration.
+	 * 
+	 * @param workitem
+	 * @return
+	 */
+	@GET
+	@Path("/documents/{uniqueid : ([0-9a-f]{8}-.*|[0-9a-f]{11}-.*)}")
+	public Response getDocument(@PathParam("uniqueid") String uniqueid, @QueryParam("items") String items) {
+
+		boolean debug = logger.isLoggable(Level.FINE);
+		if (debug) {
+			logger.fine("getDocument @GET /documents/id delegate to GET....");
+		}
+		
+		String token = servletRequest.getHeader("Authorization");
+		if (token.toLowerCase().startsWith("bearer")) {
+			token = token.substring(7);
+		}
+
+		WorkflowClient client = createWorkflowClient(token);
+		if (client != null) {
+			
+			try {
+				ItemCollection document = client.getDocument(uniqueid);
+				return Response.ok(XMLDocumentAdapter.getDocument(document)).build();
+			} catch (RestAPIException e) {
+				logger.severe("Rest API Error: " + e.getMessage());
+				return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+			}
+		}
+		// no result
+		return Response.status(Response.Status.NO_CONTENT).build();
+	}
+
+	
+	
 	/**
 	 * Delegater - read schema configuration from DocumentService
 	 * 

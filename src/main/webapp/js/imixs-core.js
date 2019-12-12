@@ -90,6 +90,20 @@ IMIXS.org.imixs.core = (function() {
 				return '';
 			}
 			
+			// returns a list of all item names
+			this.getItemNames = function() {
+				var itemNameList = new Array();
+				var self=this;
+				for(var k in self) {
+					var item=self[k];
+					if ($.isArray(item)) {
+					   itemNameList.push(k);
+					}
+				}
+				
+				return itemNameList;
+			}
+			
 			
 			/**
 			 * This method is used to return the value array of a name item inside
@@ -133,209 +147,11 @@ IMIXS.org.imixs.core = (function() {
 		  }
 		};
 
-	/* Imixs ItemCollection */
-	ItemCollection = function(itemarray) {
-
-		if (!itemarray) {
-			// if no itemarray is provided than create an empty one
-			this.item = new Array();
-		} else {
-			if ($.isArray(itemarray)) {
-				this.item = itemarray;
-			} else {
-				// we test now which object is provided - entity or an
-				// item[]....
-				if (itemarray.entity && $.isArray(itemarray.entity.item)) {
-					this.item = itemarray.entity.item;
-				} else if ($.isArray(itemarray.item)) {
-					this.item = itemarray.item;
-				}
-			}
-		}
-		
-
-		
-		// returns the index pos of an item
-		this.findItem = function(fieldName) {
-			var resultKey = -1;
-			$.each(this.item, function(index, aitem) {
-				if (aitem && aitem.name == fieldName) {
-					resultKey = index;
-					return false;
-				}
-			});
-			return resultKey;
-
-		}
-
-		/**
-		 * This method is used to return the first value of an item with the given name
-		 * inside the current ItemCollection. If no item with this name exists the
-		 * method adds a new element with this name.
-		 */
-		this.getItem = function(fieldName) {
-			if (!this.item)
-				return "";
-
-			var resultKey = -1;
-
-			resultKey = this.findItem(fieldName);
-
-			// check if field exists?
-			if (resultKey == -1) {
-				// create a new element
-				valueObj = {
-					"name" : fieldName,
-					"values" : [ {
-						"xsi:type" : "xs:string",
-						"text" : ""
-					} ]
-				};
-				this.item.push(valueObj);
-				resultKey = this.item.length - 1;
-			}
-
-			var valueObj = this.item[resultKey].values[0];
-			if (valueObj) {
-				if (typeof (valueObj['text']) == "undefined")
-					return valueObj;
-				else
-					return valueObj['text'];
-			} else
-				return "";
-
-		}
-		
-		
-		/**
-		 * This method is used to return the value array of a name item inside
-		 * the current ItemCollection. If no item with this name exists the
-		 * method adds a new element with this name.
-		 */
-		this.getItemList = function(fieldName) {
-			if (!this.item)
-				return "";
-
-			var resultKey = -1;
-
-			resultKey = this.findItem(fieldName);
-
-			// check if field exists?
-			if (resultKey == -1) {
-				// create a new element
-				valueObj = {
-					"name" : fieldName,
-					"values" : [ {
-						"xsi:type" : "xs:string",
-						"text" : ""
-					} ]
-				};
-				this.item.push(valueObj);
-				resultKey = this.item.length - 1;
-			}
-
-			var valueListObj = this.item[resultKey].values;
-			var valueList = new Array();
-			if (valueListObj) {
-				// extract values...
-				$.each(valueListObj, function(index, valueObj) {
-					if (typeof (valueObj['text']) == "undefined")
-						valueList.push( valueObj);
-					else
-						valueList.push( valueObj['text']);
-					
-				});
-			}
-	
-			return valueList;
-
-		}
-		
-
-		/**
-		 * Adds a new item into the collection
-		 */
-		this.setItem = function(fieldName, value, xsiType) {
-			// test if item still exists?
-			var resultKey = this.findItem(fieldName);
-
-			if (resultKey>-1) {
-				 this.item[resultKey].values[0]['text']=value;
-			} else {
-				// create item...
-				if (!xsiType)
-					xsiType = "xs:string";
-				var valueObj = {
-					"name" : fieldName,
-					"values" : [ {
-						"xsi:type" : xsiType,
-						"text" : value
-					} ]
-				};
-				this.item.push(valueObj);
-			}
-		}
-
-		/**
-		 * formats a date output.
-		 * 
-		 * The method accepts a format parameter to format the date output. If
-		 * no format is defined the method test if the imixs.ui library is
-		 * available. If not the default output format 'dd.mm.yy' is used.
-		 */
-		this.getItemDate = function(fieldName, format) {
-			// set default date format
-			if (!format) {
-				// test if UI dateFormat is available
-				if (IMIXS.org.imixs.ui) {
-					format = IMIXS.org.imixs.ui.dateFormat;
-				} else {
-					format = 'dd.mm.yy';
-				}
-			}
-			var value = this.getItem(fieldName);
-			if (value) {
-				return $.datepicker.formatDate(format, new Date(value));
-			} else {
-				return "";
-			}
-		}
-
-		/**
-		 * Update the item array depending on the provided object type. The
-		 * method accepts entity, item[] or XMLDocuments
-		 */
-		this.setEntity = function(data) {
-
-			if (!data) {
-				// if no itemarray is provided than create an empty one
-				this.item = new Array();
-			} else
-			// test if xmlDocument
-			if ($.isXMLDoc(data)) {
-				// parse xml doc...
-				var json = IMIXS.org.imixs.xml.xml2json(data);
-				this.item = json.entity.item;
-			} else
-			// test if data is an item[]
-			if ($.isArray(data)) {
-				this.item = data;
-			} else
-			// test if data is entity
-			if (data.entity && $.isArray(data.entity.item)) {
-				this.item = data.entity.item;
-			} else if ($.isArray(data.item)) {
-				this.item = data.item;
-			}
-		}
-
-	};
 
 	// public API
 	return {
 		hasLocalStorage : hasLocalStorage,
-		ImixsDocument : ImixsDocument,
-		ItemCollection : ItemCollection
+		ImixsDocument : ImixsDocument
 	};
 
 }());
