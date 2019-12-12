@@ -6,18 +6,18 @@
 			
 	// ImixsDoc represents a document class with a dynamic list of items.
 	// This class is used to display the search result
-	var ImixsDoc = class {
-		  constructor(items) {
-			 if (items) {
-			   var self=this;
-			   $.each(items, function (j, _item) {
-				  var _name=_item.name;
-				  var _val=_item.value[0].$;
-      			  self[_name]=_val;
-      		  });
-		    }
-		  }
-		};
+//	var ImixsDoc = class {
+//		  constructor(items) {
+//			 if (items) {
+//			   var self=this;
+//			   $.each(items, function (j, _item) {
+//				  var _name=_item.name;
+//				  var _val=_item.values[0].text;
+//      			  self[_name]=_val;
+//      		  });
+//		    }
+//		  }
+//		};
 		
 // INIT vue
 $(document).ready(function() {	
@@ -52,13 +52,14 @@ $(document).ready(function() {
 	 
 	  methods: {
 	    // connect api endpoint
-		apiConnect: function (event) {
+		apiConnect: function (event) { 
 			var requestURL='/api/connect';
-	    	var connectionData=new imixs.ItemCollection();
+			var connectionData=new imixs.ImixsDocument();
 	    	connectionData.setItem('api',app.api);
 	    	connectionData.setItem('authmethod',app.auth_method);
 	    	connectionData.setItem('userid',app.auth_userid);
 	    	connectionData.setItem('secret',app.auth_secret);
+			
 	    	// convert to xml
 	    	var xmlData = imixsXML.json2xml(connectionData);
 	    	
@@ -72,10 +73,11 @@ $(document).ready(function() {
                     dataType: 'xml',
                     crossDomain:true,
                     contentType: 'application/xml',
-                    success: function (response) {
+                    success: function (response) { 
                     	app.connection_status=200;
                     	// convert rest response to a document instance
-                    	workitem=new imixs.ItemCollection(imixsXML.xml2document(response));
+                    	//workitem=new imixs.ImixsDocument(imixsXML.xml2document(response));
+                    	workitem=imixsXML.xml2document(response);
                     	app.token=workitem.getItem('token');
                     	console.log("token="+app.token);
                     	app.index_fields=workitem.getItemList('lucence.fulltextfieldlist');
@@ -105,7 +107,7 @@ $(document).ready(function() {
 		 // connect api endpoint
 			search: function (event) {
 				var requestURL='/api/search';
-		    	var requestData=new imixs.ItemCollection();
+		    	var requestData=new imixs.ImixsDocument();
 		    	requestData.setItem('api',app.api);
 		    	requestData.setItem('query',app.query);
 		    	requestData.setItem('pagesize',app.page_size);
@@ -128,13 +130,8 @@ $(document).ready(function() {
 	                    success: function (response) {
 	                    	app.connection_status=200;
 	                    	// convert rest response to a document instance
-	                    	documents=imixsXML.xml2collection(response);
-	                    	app.search_result=[];
-	                    	// create a list of ImixsDoc instances
-	                    	$.each(documents, function (index, value) {
-	                    		_doc=new ImixsDoc(value.item);
-		                    	app.search_result.push(_doc);
-                    		});
+	                    	//var liste=imixsXML.xml2collection(response);
+	                    	app.search_result=imixsXML.xml2collection(response);
 	                    	$("#imixs-content").removeClass("loading");
 	                    },
 	                    error : function (xhr, ajaxOptions, thrownError){
@@ -151,7 +148,7 @@ $(document).ready(function() {
 	         // open a document by its id
 			 openDocument: function (event, doc) {
 				 
-			    	alert(doc.$uniqueid);
+			    	alert(doc.getItem('$uniqueid'));
 			 },
 			    
 		    

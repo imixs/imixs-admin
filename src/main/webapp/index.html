@@ -294,11 +294,11 @@
 							
 							
 								<tr>
-									<td><a href="#"  v-on:click="openDocument($event, document)">{{ document.$uniqueid }}</a></td>
-									<td>{{ document.$created}}</td>
-									<td>{{ document.$modified}}</td>
-									<td>{{ document.$workflowstatus }}</td>
-									<td>{{ document.$workflowsummary }}</td>
+									<td><a href="#"  v-on:click="openDocument($event, document)">{{ document.$uniqueid[0].text }}</a></td>
+									<td>{{ document.getItem('$created')}}</td>
+									<td>{{ document.$modified[0].text}}</td>
+									<td>{{ document.$workflowstatus[0].text }}</td>
+									<td>{{ document.$workflowsummary[0].text }}</td>
 									
 								</tr>
 								
@@ -320,28 +320,29 @@
 				<!-- Index -->
 				<div id="index" class="form-section">
 					<div class="card">
-						<p>Connect to Imixs-Worklfow remote Rest API</p>
+						<h2><span class="typcn typcn-map"></span> Index Schema</h2>
 						<table style="width: 100%; margin-top: 10px;">
-							<tbody>
+							<thead>
 								<tr>
-
-									<th>Index Field Group</th>
+									<th style="width:170px;">Index Field Group</th>
 									<th>Items</th>
 								</tr>
+							</thead>
+							<tbody>
 								<tr>
-									<td>fields</td>
+									<td>index.fields</td>
 									<td>{{index_fields}}</td>
 								</tr>
 								<tr>
-									<td>fields analyze</td>
+									<td>index.fields.analyze</td>
 									<td>{{index_fields_analyze}}</td>
 								</tr>
 								<tr>
-									<td>fields noanalyze</td>
+									<td>index.fields.noanalyze</td>
 									<td>{{index_fields_noanalyze}}</td>
 								</tr>
 								<tr>
-									<td>fields store</td>
+									<td>index.fields.store</td>
 									<td>{{index_fields_store}}</td>
 								</tr>
 							</tbody>

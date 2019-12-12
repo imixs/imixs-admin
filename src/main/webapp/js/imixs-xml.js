@@ -34,13 +34,13 @@ IMIXS.org.imixs.xml = (function() {
 	if (!IMIXS.org.imixs.core) {
 		console.error("ERROR - missing dependency: imixs-core.js");
 	}
-
+	var imixs = IMIXS.org.imixs.core;
 	// private properties
 	var _not_used,
 
 	/**
-	 * converts a Imixs XML result set into an array of entities. This method
-	 * guarantees that an array of documents is returned even if the result
+	 * converts a Imixs XML result set into an array of ImixsDocuments classes
+	 * This method guarantees that an array of documents is returned even if the result
 	 * colletion size is 0 or 1
 	 * 
 	 * The method supports the old and also new xml/data structure 
@@ -50,6 +50,7 @@ IMIXS.org.imixs.xml = (function() {
 			return {};
 		}
 		
+		var docData;
 		var json = xml2json(xml)
 		
 		// test if we have the lates xml/data format
@@ -62,25 +63,36 @@ IMIXS.org.imixs.xml = (function() {
 				json.data.document = [];
 			}
 			
-			return json.data.document;	
+			docData= json.data.document;	
 		} else {
 			// test if we have the deprecated xml format (imixs-workflow < 4.0)
 			if (json.collection.document) {
 				if (!$.isArray(json.collection.document))
 					json.collection.document = jQuery.makeArray(json.collection.document);
-				return json.collection.document;			
+				docData=json.collection.document;			
 			} else {
 				// try to convert deprecated entity structure...
 				if (!$.isArray(json.collection.entity))
 					json.collection.entity = jQuery.makeArray(json.collection.entity);
-				return json.collection.entity;
+				docData=json.collection.entity;
 			}
-		}
+		}		
 		
+		
+		// convert docData into an array of ImixsDocuments
+		var _result=[];
+		$.each(docData, function (index, doc) {
+    		var _doc=new imixs.ImixsDocument(doc.item);
+        	_result.push(_doc);
+		});
+		return _result;
 	}
+	
+	
+	
 
 	/**
-	 * Converts a Imixs XML result of an document into an item array.
+	 * Converts a Imixs XML result of an document into an ImixsDocument array.
 	 * The method supports the old and also new xml/data structure 
 	 */
 	xml2document = function(xml) {
@@ -95,7 +107,7 @@ IMIXS.org.imixs.xml = (function() {
 			// take the first document from data....
 			if (!$.isArray(json.data.document.item))
 				json.data.document.item = jQuery.makeArray(json.data.document.item);
-			return json.data.document.item;
+			return new imixs.ImixsDocument(json.data.document.item);
 			
 		} else {
 			
@@ -103,25 +115,25 @@ IMIXS.org.imixs.xml = (function() {
 			if (json.document) {
 				if (!$.isArray(json.document.item))
 					json.document.item = jQuery.makeArray(json.document.item);
-				return json.document.item;
+				return new imixs.ImixsDocument(json.document.item);
 			} else {
 				// try to convert old entity structure...
 				if (!$.isArray(json.entity.item))
 					json.entity.item = jQuery.makeArray(json.entity.item);
-				return json.entity.item;
+				return new imixs.ImixsDocument(json.entity.item);
 			}
 		}
 		
 	}
 
-	/**
-	 * converts a XML result set form the Imixs Rest Service API into a JSON
-	 * object. Based on the idears from David Walsh
-	 * (http://davidwalsh.name/convert-xml-json)
-	 * 
-	 * 
-	 * </code>
-	 */
+		/**
+		 * converts a XML result set form the Imixs Rest Service API into a JSON
+		 * object. Based on the idears from David Walsh
+		 * (http://davidwalsh.name/convert-xml-json)
+		 * 
+		 * 
+		 * </code>
+		 */
 			xml2json = function(xml) {
 				// Create the return object
 				var obj = {};
@@ -145,50 +157,63 @@ IMIXS.org.imixs.xml = (function() {
 				// process item? in this case we construct the properties name,
 				// value and
 				// type...
+				// example
+				//	<item name="$uniqueidref">
+				//       <value xsi:type="xs:string">a4cd63d6-66a9-4e66-964c-1fb6ba124bda</value>
+				//       <value xsi:type="xs:string">f37237ca-ffcf-4706-8ca0-f688a1b9e15e</value>
+				//       <value xsi:type="xs:string">49f41b8b-d3f2-4d9c-aa9d-12fc8fa04225</value>
+				//  </item>
 				if (xml.nodeName == "item") {
 					if (xml.hasChildNodes()) {
+						
+						// find name....
+						if (xml.attributes.length > 0) {
+							for (var j = 0; j < xml.attributes.length; j++) {
+								var attribute = xml.attributes.item(j);
+								if (attribute.nodeName=="name") {
+									obj.name = attribute.nodeValue;
+									break;
+								}								
+							}
+						}
+						// parse values....
 						for (var i = 0; i < xml.childNodes.length; i++) {
 							var item = xml.childNodes.item(i);
-							var nodeName = item.nodeName;
-
-							if (nodeName == 'name')
-								obj.name = item.textContent;
-
-							if (nodeName == 'value') {
+							if (item.nodeName == 'value') {
 								// value is an array
-								if (typeof (obj['value']) == "undefined") {
-									obj.value = new Array();
+								if (typeof (obj['values']) == "undefined") {
+									obj.values = new Array();
 								}
 
 								var valobj = {};
-								valobj['$'] = item.textContent;
+								valobj['text'] = item.textContent;
 								if (item.attributes.length > 0) {
 									for (var j = 0; j < item.attributes.length; j++) {
 										var attribute = item.attributes.item(j);
 										valobj[attribute.nodeName] = attribute.nodeValue;
 									}
 								}
-								obj.value.push(valobj);
+								obj.values.push(valobj);
 							}
 						}
 					}
-				} else
-
-				// do children
-				if (xml.hasChildNodes()) {
-					for (var i = 0; i < xml.childNodes.length; i++) {
-						var item = xml.childNodes.item(i);
-						var nodeName = item.nodeName;
-
-						if (typeof (obj[nodeName]) == "undefined") {
-							obj[nodeName] = xml2json(item);
-						} else {
-							if (typeof (obj[nodeName].push) == "undefined") {
-								var old = obj[nodeName];
-								obj[nodeName] = [];
-								obj[nodeName].push(old);
+				} else {
+					// do children
+					if (xml.hasChildNodes()) {
+						for (var i = 0; i < xml.childNodes.length; i++) {
+							var item = xml.childNodes.item(i);
+							var nodeName = item.nodeName;
+	
+							if (typeof (obj[nodeName]) == "undefined") {
+								obj[nodeName] = xml2json(item);
+							} else {
+								if (typeof (obj[nodeName].push) == "undefined") {
+									var old = obj[nodeName];
+									obj[nodeName] = [];
+									obj[nodeName].push(old);
+								}
+								obj[nodeName].push(xml2json(item));
 							}
-							obj[nodeName].push(xml2json(item));
 						}
 					}
 				}
@@ -207,38 +232,33 @@ IMIXS.org.imixs.xml = (function() {
 			 *   </entity>
 			 */
 			json2xml = function(workitem) {
-				var result = '<?xml version="1.0" encoding="UTF-8"?>\n<document xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">';
-
-				if (workitem && workitem.item) {
-					$.each(workitem.item, function(index, aitem) {
-						result = result + '<item name="' + aitem.name + '">';
-
-						if (aitem.value) {
-							$.each(aitem.value, function(index, avalue) {
-								// if the value is undefined we skip this entry
-								if (avalue["$"]) {
-									result = result + '<value xsi:type="'
-											+ avalue["xsi:type"] + '">';
-									/*  
-									 * in case of xsi:type==xs:string we embed the
-									 * value into a CDATA element
-									 */
-									if (avalue["xsi:type"]==="xs:string") {
-										result = result + "<![CDATA[" + avalue["$"]
-												+ "]]>";
-									} else {
-										result = result + avalue["$"];
-									}
-									result = result + '</value>';
+ 				 var result = '<?xml version="1.0" encoding="UTF-8"?>\n<document xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">';
+				
+				 for(var itemname in workitem) {
+				    // test if item with values...
+					if (workitem[itemname].values) {
+					    result = result + '<item name="' + itemname + '">';
+						$.each(workitem[itemname], function(index, avalue) {
+							// if the value is undefined we skip this entry
+							if (avalue["text"]) {
+								result = result + '<value xsi:type="'
+										+ avalue["xsi:type"] + '">';
+								/*  
+								 * in case of xsi:type==xs:string we embed the
+								 * value into a CDATA element
+								 */
+								if (avalue["xsi:type"]==="xs:string") {
+									result = result + "<![CDATA[" + avalue["text"]
+											+ "]]>";
+								} else {
+									result = result + avalue["text"];
 								}
-							});
-						}
-
+								result = result + '</value>';
+							}
+						});
 						result = result + '</item>';
-					});
-
-				}
-
+					}
+				 }
 				result = result + '</document>';
 				return result;
 			};
@@ -263,10 +283,10 @@ IMIXS.org.imixs.xml = (function() {
 						result = result + '<item><name>' + aitem.name
 								+ '</name>';
 
-						if (aitem.value) {
-							$.each(aitem.value, function(index, avalue) {
+						if (aitem.values) {
+							$.each(aitem.values, function(index, avalue) {
 								// if the value is undefined we skip this entry
-								if (avalue["$"]) {
+								if (avalue["text"]) {
 									result = result + '<value xsi:type="'
 											+ avalue["xsi:type"] + '">';
 									/*  
@@ -274,10 +294,10 @@ IMIXS.org.imixs.xml = (function() {
 									 * value into a CDATA element
 									 */
 									if (avalue["xsi:type"]==="xs:string") {
-										result = result + "<![CDATA[" + avalue["$"]
+										result = result + "<![CDATA[" + avalue["text"]
 												+ "]]>";
 									} else {
-										result = result + avalue["$"];
+										result = result + avalue["text"];
 									}
 									result = result + '</value>';
 								}

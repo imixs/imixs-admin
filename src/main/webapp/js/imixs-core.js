@@ -66,6 +66,72 @@ IMIXS.org.imixs.core = (function() {
 			return false;
 		}
 	},
+	
+	// ImixsDoc represents a document class with a dynamic list of items.
+	// This class is used to display the search result
+	ImixsDocument = function(items) {
+		  if (items) {
+			  var _items = items.slice(0);
+			  var self=this;
+			  $.each(_items, function (j, _item) {
+				var _name=_item.name;
+				var _val=_item.values;
+      			self[_name]=_val;
+      		  });
+		    }
+		 
+			// returns the first text value of an item
+			this.getItem = function(fieldName) {
+				
+				var item=this[fieldName];
+				if (item && item[0]) {
+					return item[0].text;
+				}
+				return '';
+			}
+			
+			
+			/**
+			 * This method is used to return the value array of a name item inside
+			 * the current ItemCollection. If no item with this name exists the
+			 * method adds a new element with this name.
+			 */
+			this.getItemList = function(fieldName) {
+				var valueList = new Array();
+				var items=this[fieldName];
+				if (items && items[0]) {
+					
+					$.each(items, function(index, _item) {
+						valueList.push( _item['text']);
+						
+					});
+				}
+				return valueList;
+			}
+			
+			
+	      /**
+	 	   * Adds a new item into the collection
+		   */
+	      this.setItem = function(fieldName, value, xsiType) {
+			// test if item still exists?
+			var _values = this[fieldName];
+
+			if (_values) {
+				 this.this[fieldName][0]['text']=value;
+			} else { 
+				// create item...
+				if (!xsiType)
+					xsiType = "xs:string";
+				var valueObj = {
+						"xsi:type" : xsiType,
+						"text" : value
+                         };
+				this[fieldName]=new Array();
+				this[fieldName].push(valueObj);
+			}
+		  }
+		};
 
 	/* Imixs ItemCollection */
 	ItemCollection = function(itemarray) {
@@ -86,7 +152,9 @@ IMIXS.org.imixs.core = (function() {
 				}
 			}
 		}
+		
 
+		
 		// returns the index pos of an item
 		this.findItem = function(fieldName) {
 			var resultKey = -1;
@@ -118,21 +186,21 @@ IMIXS.org.imixs.core = (function() {
 				// create a new element
 				valueObj = {
 					"name" : fieldName,
-					"value" : [ {
+					"values" : [ {
 						"xsi:type" : "xs:string",
-						"$" : ""
+						"text" : ""
 					} ]
 				};
 				this.item.push(valueObj);
 				resultKey = this.item.length - 1;
 			}
 
-			var valueObj = this.item[resultKey].value[0];
+			var valueObj = this.item[resultKey].values[0];
 			if (valueObj) {
-				if (typeof (valueObj['$']) == "undefined")
+				if (typeof (valueObj['text']) == "undefined")
 					return valueObj;
 				else
-					return valueObj['$'];
+					return valueObj['text'];
 			} else
 				return "";
 
@@ -157,24 +225,24 @@ IMIXS.org.imixs.core = (function() {
 				// create a new element
 				valueObj = {
 					"name" : fieldName,
-					"value" : [ {
+					"values" : [ {
 						"xsi:type" : "xs:string",
-						"$" : ""
+						"text" : ""
 					} ]
 				};
 				this.item.push(valueObj);
 				resultKey = this.item.length - 1;
 			}
 
-			var valueListObj = this.item[resultKey].value;
+			var valueListObj = this.item[resultKey].values;
 			var valueList = new Array();
 			if (valueListObj) {
 				// extract values...
 				$.each(valueListObj, function(index, valueObj) {
-					if (typeof (valueObj['$']) == "undefined")
+					if (typeof (valueObj['text']) == "undefined")
 						valueList.push( valueObj);
 					else
-						valueList.push( valueObj['$']);
+						valueList.push( valueObj['text']);
 					
 				});
 			}
@@ -192,16 +260,16 @@ IMIXS.org.imixs.core = (function() {
 			var resultKey = this.findItem(fieldName);
 
 			if (resultKey>-1) {
-				 this.item[resultKey].value[0]['$']=value;
+				 this.item[resultKey].values[0]['text']=value;
 			} else {
 				// create item...
 				if (!xsiType)
 					xsiType = "xs:string";
 				var valueObj = {
 					"name" : fieldName,
-					"value" : [ {
+					"values" : [ {
 						"xsi:type" : xsiType,
-						"$" : value
+						"text" : value
 					} ]
 				};
 				this.item.push(valueObj);
@@ -266,6 +334,7 @@ IMIXS.org.imixs.core = (function() {
 	// public API
 	return {
 		hasLocalStorage : hasLocalStorage,
+		ImixsDocument : ImixsDocument,
 		ItemCollection : ItemCollection
 	};
 
