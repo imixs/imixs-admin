@@ -22,7 +22,7 @@
 /**
  * This library provides the core module functionality
  * 
- * Version 1.0.2
+ * Version 3.0.0
  */
 
 var IMIXS = IMIXS || {};

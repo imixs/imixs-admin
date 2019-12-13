@@ -222,9 +222,6 @@ input[type="button"]:active, input[type="submit"]:active, a.button:active,
 }
 
 #imixs-footer {
-	position: fixed;
-	left: 0px;
-	bottom: 0;
 	width: 100%;
 	padding: 10px 30px 10px 210px;
 	text-align: right;

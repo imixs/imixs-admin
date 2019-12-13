@@ -39,6 +39,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -211,6 +212,44 @@ public class AdminRestService {
 			try {
 				ItemCollection document = client.getDocument(uniqueid);
 				return Response.ok(XMLDocumentAdapter.getDocument(document)).build();
+			} catch (RestAPIException e) {
+				logger.severe("Rest API Error: " + e.getMessage());
+				return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+			}
+		}
+		// no result
+		return Response.status(Response.Status.NO_CONTENT).build();
+	}
+
+	
+	
+	/**
+	 * The connect resource generates an access-token for the given api endpoint and
+	 * requests the current index configuration.
+	 * 
+	 * @param workitem
+	 * @return
+	 */
+	@DELETE
+	@Path("/documents/{uniqueid : ([0-9a-f]{8}-.*|[0-9a-f]{11}-.*)}")
+	public Response deleteDocument(@PathParam("uniqueid") String uniqueid) {
+
+		boolean debug = logger.isLoggable(Level.FINE);
+		if (debug) {
+			logger.fine("getDocument @DELETE /documents/id delegate to DELETE....");
+		}
+		
+		String token = servletRequest.getHeader("Authorization");
+		if (token.toLowerCase().startsWith("bearer")) {
+			token = token.substring(7);
+		}
+
+		WorkflowClient client = createWorkflowClient(token);
+		if (client != null) {
+			
+			try {
+				client.deleteDocument(uniqueid);
+				return Response.status(Response.Status.OK).build();
 			} catch (RestAPIException e) {
 				logger.severe("Rest API Error: " + e.getMessage());
 				return Response.status(Response.Status.NOT_ACCEPTABLE).build();

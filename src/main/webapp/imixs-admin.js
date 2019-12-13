@@ -4,20 +4,7 @@
 	var imixs = IMIXS.org.imixs.core, 
 				imixsXML = IMIXS.org.imixs.xml;
 			
-	// ImixsDoc represents a document class with a dynamic list of items.
-	// This class is used to display the search result
-//	var ImixsDoc = class {
-//		  constructor(items) {
-//			 if (items) {
-//			   var self=this;
-//			   $.each(items, function (j, _item) {
-//				  var _name=_item.name;
-//				  var _val=_item.values[0].text;
-//      			  self[_name]=_val;
-//      		  });
-//		    }
-//		  }
-//		};
+
 		
 // INIT vue
 $(document).ready(function() {	
