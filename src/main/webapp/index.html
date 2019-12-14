@@ -138,7 +138,7 @@
 							<span class="typcn typcn-power" v-on:click="logout()"></span>
 					</div>
 					<div class="searchbox col-4">
-						<input></input><span class="typcn typcn-zoom-outline"></span>
+						<input v-model="query_short" id="quick_search"></input><span class="typcn typcn-zoom-outline" v-on:click="quickSearch()"></span>
 					</div>
 					<div class="linkbox col-4">
 						<div class="pull-right">
@@ -230,7 +230,7 @@
 				<div id="search" class="form-section">
 					<div class="card">
 						<h2>
-							<span class="typcn typcn-world-outline"></span> Search Query
+							<span class="typcn typcn-zoom-outline"></span> Search Query
 						</h2>
 						<textarea class="search-query" v-model="query" spellcheck="false"></textarea>
 
@@ -285,7 +285,7 @@
 						<table id="imixsdatatable" class="imixsdatatable" style="width: 100%;">
 							<thead>
 							 <tr>
-								<th>ID</th>
+								<th>UUID</th>
 								<th>Created</th>
 								<th>Modified</th>
 								<th>Status</th>
@@ -300,6 +300,7 @@
 									<td>{{ document.$modified[0].text}}</td>
 									<td>{{ document.$workflowstatus[0].text }}</td>
 									<td>{{ document.$workflowsummary[0].text }}</td>
+									<td><a><span class="typcn typcn-trash pull-right error" v-on:click="deleteDocument($event,document)"></span></a></td>
 								</tr>
 						</tbody>
 						</table>
@@ -311,7 +312,9 @@
 				<div id="document" class="form-section">
 					<div class="card">
 					
-						<h2><span class="typcn typcn-folder-open"></span> Document: {{ document.getItem('$uniqueid') }}<a><span class="typcn typcn-arrow-forward pull-right" v-on:click="showSection('search')"></span></a></h2>
+						<h2><span class="typcn typcn-folder-open"></span> Document: {{ document.getItem('$uniqueid') }} 
+						<a><span class="typcn typcn-link" v-on:click="linkDocument($event, document)"></span></a>
+						<a><span class="typcn typcn-arrow-forward pull-right" v-on:click="showSection('search')"></span></a></h2>
 						<table style="width: 100%; margin-top: 10px;">
 							<thead>
 								<tr>

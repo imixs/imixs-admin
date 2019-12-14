@@ -8,22 +8,26 @@
 		
 // INIT vue
 $(document).ready(function() {	
+	
+
+	
 	var app = new Vue({
 	  el: '#app',
 	  data: {
 		connection_status: 0,
-		api: 'https://demo.office-workflow.de/api',
+		api: 'http://imixssample-app:8080/api',
 		token: '',
 		info: '',
-		auth_method: 'form',
-		auth_secret: '',
-		auth_userid: '',
+		auth_method: 'basic',
+		auth_secret: 'adminadmin',
+		auth_userid: 'admin',
 		index_fields: '',
 		index_fields_analyze: '',
 		index_fields_noanalyze: '',
 		index_fields_store: '',
 		query:'(type:*)',
-		page_size:30,
+		query_short:'',
+		page_size:25, 
 		page_index:0,
 		sort_by:'$modified',
 		sort_order:"DESC",
@@ -87,6 +91,9 @@ $(document).ready(function() {
 		    
 		 // search query
 			search: function (event) {
+				if (app.token=='') {
+					return;
+				}
 				var requestURL='/api/search';
 		    	var requestData=new imixs.ImixsDocument();
 		    	requestData.setItem('api',app.api);
@@ -165,6 +172,49 @@ $(document).ready(function() {
 				    	app.search();
 				 }
 		     },
+		     
+		     // search from top nav
+		     quickSearch: function () {
+		    	 app.query="(" + app.query_short.toLowerCase() + ")";
+		    	 app.search();
+		     },
+		     
+		     
+		     // open document via rest api
+		     linkDocument: function ( event, doc) {
+		    	 window.open(app.api + '/documents/'+doc.getItem('$uniqueid'))
+		     },
+		     
+		     
+		     // Delete a single document
+		     deleteDocument: function ( event, doc) {
+		    	 if (!confirm('Are you sure?\n\nDelete Document: \n\n' + doc.getItem('$uniqueid'))) {
+						return false;
+					}
+					// delete...
+		    	    var requestURL='/api/documents/'+doc.getItem('$uniqueid');
+			    	$("#imixs-content").addClass("loading");
+		            	$.ajax({		            		
+		                    url: requestURL,
+		                    type: 'DELETE',
+		                    beforeSend: function (xhr) {
+		                        xhr.setRequestHeader('Authorization', app.token);
+		                    },
+		                    contentType: 'application/xml',
+		                    success: function (response) {
+		                    	app.connection_status=200;
+		                    	app.search();
+		                    	
+		                    },
+		                    error : function (xhr, ajaxOptions, thrownError){
+		                    	$("#imixs-content").removeClass("loading");
+		                    	app.connection_status=xhr.status;
+		                    	app.output=xhr.statusText;
+		                        console.log(xhr.status);          
+		                        console.log(thrownError);
+		                    }
+		                });
+		     },
 		    
 		    // invalidate token
 		    logout: function (event) {
@@ -187,6 +237,11 @@ $(document).ready(function() {
 	  
 	});
 	
+	$("#quick_search").on('keyup', function (e) {
+	    if (e.keyCode === 13) {
+	        app.quickSearch();
+	    }
+	});
 	
 	// show connect
 	showSection('connect');
