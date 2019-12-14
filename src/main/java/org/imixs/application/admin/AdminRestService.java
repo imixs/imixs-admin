@@ -28,6 +28,9 @@
 package org.imixs.application.admin;
 
 import java.io.StringReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -168,7 +171,6 @@ public class AdminRestService {
 						"documents/search/" + query + "?pageIndex=" + pageIndex + "&pageSize=" + pageSize + "&sortBy="
 								+ sortBy + "&sortReverse=" + (sortOrder.equalsIgnoreCase("desc")) + "&items=" + items);
 
-			
 				return Response
 						// Set the status and Put your entity here.
 						.ok(result)
@@ -184,7 +186,123 @@ public class AdminRestService {
 		return Response.status(Response.Status.NO_CONTENT).build();
 	}
 
-	
+	/**
+	 * The update resource starts a bulk update 
+	 * 
+	 * @param workitem
+	 * @return
+	 */
+	@POST
+	@Path("/update")
+	public Response putBulkUpdate(XMLDocument xmlBusinessEvent) {
+		boolean debug = logger.isLoggable(Level.FINE);
+		int updates = 0;
+		if (debug) {
+			logger.fine("putXMLWorkitem @PUT /update  delegate to POST....");
+		}
+
+		ItemCollection connectionData = XMLDocumentAdapter.putDocument(xmlBusinessEvent);
+		String query = connectionData.getItemValueString("query");
+		String sortBy = connectionData.getItemValueString("sortby");
+		String sortOrder = connectionData.getItemValueString("sortorder");
+		int pageIndex = connectionData.getItemValueInteger("pageindex");
+		int pageSize = connectionData.getItemValueInteger("pagesize");
+
+		String fieldname = connectionData.getItemValueString("fieldname");
+		String fieldType = connectionData.getItemValueString("fieldtype");
+		boolean append = connectionData.getItemValueBoolean("append");
+		String newFieldValues = connectionData.getItemValueString("values");
+		int event = connectionData.getItemValueInteger("event");
+
+		// set items!
+		String items = "$uniqueid,$taskid,$modelversion," + fieldname;
+		String token = servletRequest.getHeader("Authorization");
+		if (token.toLowerCase().startsWith("bearer")) {
+			token = token.substring(7);
+		}
+
+		WorkflowClient client = createWorkflowClient(token);
+		if (client != null) {
+			List<ItemCollection> documents = null;
+			try {
+				documents = client.getCustomResource(
+						"documents/search/" + query + "?pageIndex=" + pageIndex + "&pageSize=" + pageSize + "&sortBy="
+								+ sortBy + "&sortReverse=" + (sortOrder.equalsIgnoreCase("desc")) + "&items=" + items);
+
+				logger.info("..." + documents.size() + " documents selected for bulk update...");
+
+				// first convert the newValue in a list of objects based on the selected
+				// fieldType...
+				String[] rawItems = newFieldValues.split("\\r?\\n");
+				// now convert to selected type
+				List<Object> typedItems = new ArrayList<Object>();
+				for (String rawValue : rawItems) {
+					if ("xs:int".equals(fieldType)) {
+						typedItems.add(Integer.parseInt(rawValue));
+					} else if ("xs:dateTime".equals(fieldType)) {
+						SimpleDateFormat dt1 = new SimpleDateFormat("yyyyy-mm-dd");
+						try {
+							Date date = dt1.parse(rawValue);
+							typedItems.add(date);
+						} catch (ParseException e) {
+							logger.warning("...unable to convert '" + rawValue + "' into date object!");
+							typedItems.add(rawValue);
+						}
+
+					} else if ("xs:boolean".equals(fieldType)) {
+						typedItems.add(Boolean.parseBoolean(rawValue));
+					} else {
+						typedItems.add(rawValue);
+					}
+
+				}
+
+				// iterate over all documents....
+				for (ItemCollection document : documents) {
+					// update documetn item
+					if (append) {
+						// append
+						document.appendItemValue(fieldname, typedItems);
+					} else {
+						// replace
+						document.replaceItemValue(fieldname, typedItems);
+					}
+
+					// Save or Process workitem?
+					if (event <= 0) {
+						// save workitem
+						client.saveDocument(document);
+						updates++;
+					} else {
+						// process workitem
+						document.setEventID(event);
+						client.processWorkitem(document);
+						updates++;
+					}
+
+				}
+
+				logger.info("...update finished: " + updates + " udpates.");
+
+				ItemCollection result = new ItemCollection();
+				result.setItemValue("updates", updates);
+				result.setItemValue("message", updates + " documents updated.");
+				return Response
+						// Set the status and Put your entity here.
+						.ok(XMLDocumentAdapter.getDocument(result))
+						// Add the Content-Type header to tell Jersey which format it should marshall
+						// the entity into.
+						.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML).build();
+
+			} catch (RestAPIException e) {
+				logger.severe("Rest API Error: " + e.getMessage());
+				return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+			}
+		}
+		// no result
+		return Response.status(Response.Status.NO_CONTENT).build();
+	}
+
 	/**
 	 * The connect resource generates an access-token for the given api endpoint and
 	 * requests the current index configuration.
@@ -200,7 +318,7 @@ public class AdminRestService {
 		if (debug) {
 			logger.fine("getDocument @GET /documents/id delegate to GET....");
 		}
-		
+
 		String token = servletRequest.getHeader("Authorization");
 		if (token.toLowerCase().startsWith("bearer")) {
 			token = token.substring(7);
@@ -208,7 +326,7 @@ public class AdminRestService {
 
 		WorkflowClient client = createWorkflowClient(token);
 		if (client != null) {
-			
+
 			try {
 				ItemCollection document = client.getDocument(uniqueid);
 				return Response.ok(XMLDocumentAdapter.getDocument(document)).build();
@@ -221,8 +339,6 @@ public class AdminRestService {
 		return Response.status(Response.Status.NO_CONTENT).build();
 	}
 
-	
-	
 	/**
 	 * The connect resource generates an access-token for the given api endpoint and
 	 * requests the current index configuration.
@@ -238,7 +354,7 @@ public class AdminRestService {
 		if (debug) {
 			logger.fine("getDocument @DELETE /documents/id delegate to DELETE....");
 		}
-		
+
 		String token = servletRequest.getHeader("Authorization");
 		if (token.toLowerCase().startsWith("bearer")) {
 			token = token.substring(7);
@@ -246,7 +362,7 @@ public class AdminRestService {
 
 		WorkflowClient client = createWorkflowClient(token);
 		if (client != null) {
-			
+
 			try {
 				client.deleteDocument(uniqueid);
 				return Response.status(Response.Status.OK).build();
@@ -259,8 +375,6 @@ public class AdminRestService {
 		return Response.status(Response.Status.NO_CONTENT).build();
 	}
 
-	
-	
 	/**
 	 * Delegater - read schema configuration from DocumentService
 	 * 

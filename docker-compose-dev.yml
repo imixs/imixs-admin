@@ -29,3 +29,4 @@ services:
       POSTGRES_CONNECTION: "jdbc:postgresql://imixssample-db/workflow-db"
     ports:
       - "8080:8080" 
+      - "8787:8787"

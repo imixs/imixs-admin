@@ -251,6 +251,23 @@ input[type="button"]:active, input[type="submit"]:active, a.button:active,
 	min-height: 50px;
 }
 
+.card.error .typcn {
+	color:#e83636d9;
+	font-size:1.7rem;
+	margin-right: 10px;
+}
+
+.card.message {
+	border: 2px solid green;
+	min-height: 50px;
+}
+
+.card.message .typcn {
+	color:green;
+	font-size:1.7rem;
+	margin-right: 10px;
+}
+
 
 .card th {
 	background-color: #5a5a5a;

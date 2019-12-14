@@ -33,7 +33,13 @@ $(document).ready(function() {
 		sort_order:"DESC",
 		search_result: [],
 	    document: new imixs.ImixsDocument(),
-	    message: 'Test'
+	    update_fieldname:'',
+	    update_fieldtype:'',
+	    update_append:'',
+	    update_values:'',
+	    update_event:'',
+	    message: '',
+	    error: '',
 	    },
 	    
 	  created () {
@@ -43,6 +49,7 @@ $(document).ready(function() {
 	  methods: {
 	    // connect api endpoint
 		apiConnect: function (event) { 
+			
 			var requestURL='/api/connect';
 			var connectionData=new imixs.ImixsDocument();
 	    	connectionData.setItem('api',app.api);
@@ -53,6 +60,8 @@ $(document).ready(function() {
 	    	// convert to xml
 	    	var xmlData = imixsXML.json2xml(connectionData);
 	    	
+	    	app.message='';
+	    	app.error='';
 	    	app.token='';
 		    console.log("...connecting '" +requestURL + "'...");
 		    $("#imixs-content").addClass("loading");
@@ -73,7 +82,7 @@ $(document).ready(function() {
                     	app.index_fields_noanalyze=workitem.getItemList('lucence.indexfieldlistnoanalyze');
                     	app.index_fields_store=workitem.getItemList('lucence.indexfieldliststore');
                     	
-                    	showSection('search');
+                    	app.showSection('search');
                     	$("#imixs-content").removeClass("loading");
                     },
                     error : function (xhr, ajaxOptions, thrownError){
@@ -82,6 +91,7 @@ $(document).ready(function() {
                     	app.output=xhr.statusText;
                         console.log(xhr.status);          
                         console.log(thrownError);
+                        app.error='Failed to connect: ' + thrownError;
                     }
                 });
 		    },
@@ -94,6 +104,8 @@ $(document).ready(function() {
 				if (app.token=='') {
 					return;
 				}
+		    	app.message='';
+		    	app.error='';
 				var requestURL='/api/search';
 		    	var requestData=new imixs.ImixsDocument();
 		    	requestData.setItem('api',app.api);
@@ -124,9 +136,7 @@ $(document).ready(function() {
 	                    error : function (xhr, ajaxOptions, thrownError){
 	                    	$("#imixs-content").removeClass("loading");
 	                    	app.connection_status=xhr.status;
-	                    	app.output=xhr.statusText;
-	                        console.log(xhr.status);          
-	                        console.log(thrownError);
+	                        app.error=xhr.status+ " " + thrownError;
 	                    }
 	                });
 	            },
@@ -134,6 +144,8 @@ $(document).ready(function() {
 		    
 	         // open a document by its id
 			 openDocument: function (event, doc) {
+			    	app.message='';
+			    	app.error='';
    				    var requestURL='/api/documents/'+doc.getItem('$uniqueid');
 			    	$("#imixs-content").addClass("loading");
 		            	$.ajax({		            		
@@ -147,7 +159,7 @@ $(document).ready(function() {
 		                    	app.connection_status=200;
 		                    	// convert rest response to a document instance
 		                    	app.document=imixsXML.xml2document(response);	
-		                    	showSection('document');
+		                    	app.showSection('document');
 		                    	$("#imixs-content").removeClass("loading");
 		                    },
 		                    error : function (xhr, ajaxOptions, thrownError){
@@ -160,6 +172,65 @@ $(document).ready(function() {
 		                });
 			 },
 			    
+			 
+			 
+			    
+			 // Bulk Update
+				bulkUpdate: function (event) {
+					if (app.token=='') {
+						return;
+					}
+					if (!confirm('Staring Bulk Update now?\n\nOperation can not be undone!')) {
+						return false;
+					}
+			    	app.message='';
+			    	app.error='';
+					
+					var requestURL='/api/update';
+			    	var requestData=new imixs.ImixsDocument();
+			    	requestData.setItem('api',app.api);
+			    	requestData.setItem('query',app.query);
+			    	requestData.setItem('pagesize',app.page_size);
+			    	requestData.setItem('pageindex',app.page_index);
+			    	requestData.setItem('sortby',app.sort_by);
+			    	requestData.setItem('sortorder',app.sort_order);
+			    	
+			    	requestData.setItem('fieldname',app.update_fieldname);
+			    	requestData.setItem('fieldtype',app.update_fieldtype);
+			    	requestData.setItem('append',app.update_append);
+			    	requestData.setItem('values',app.update_values);
+			    	requestData.setItem('event',app.update_event);
+
+			    	// convert to xml
+			    	var xmlData = imixsXML.json2xml(requestData);
+			    	$("#imixs-content").addClass("loading");
+		            	$.ajax({		            		
+		                    url: requestURL,
+		                    type: 'POST',
+		                    beforeSend: function (xhr) {
+		                        xhr.setRequestHeader('Authorization', app.token);
+		                    },
+		                    data: xmlData,
+		                    dataType: 'xml',
+		                    contentType: 'application/xml',
+		                    success: function (response) {
+		                    	app.connection_status=200;		           
+		                    	workitem=imixsXML.xml2document(response);		                    	
+		                    	app.message=workitem.getItem('message');
+		                    	
+		                    	$("#imixs-content").removeClass("loading");
+		                    },
+		                    error : function (xhr, ajaxOptions, thrownError){
+		                    	$("#imixs-content").removeClass("loading");
+		                    	app.connection_status=xhr.status;
+		                    	app.output=xhr.statusText;
+		                        console.log(xhr.status);          
+		                        console.log(thrownError);
+		                    }
+		                });
+		            },
+			    
+		            
 		    
 			 // forward
 			 searchForward: function () {
@@ -191,6 +262,9 @@ $(document).ready(function() {
 		    	 if (!confirm('Are you sure?\n\nDelete Document: \n\n' + doc.getItem('$uniqueid'))) {
 						return false;
 					}
+			    	app.message='';
+			    	app.error='';
+
 					// delete...
 		    	    var requestURL='/api/documents/'+doc.getItem('$uniqueid');
 			    	$("#imixs-content").addClass("loading");
@@ -224,14 +298,26 @@ $(document).ready(function() {
 		    	app.api='';
 		    	app.auth_secret= '';
 		    	app.auth_userid= '';
-		    	showSection('connect');
+		    	app.showSection('connect');
 		    },
 		    
 		    
 		    // method to simulate click on cacel ($event=90)
 		    submitCancel: function (event) {
 		    	alert('cancel');
-		    }
+		    },
+		    
+		    
+
+			// hides all panels and shows only the given form-panel
+			showSection : function (section) {
+				app.message='';
+		    	app.error='';
+				$('.form-section').hide();
+				$('#'+section).show();
+				$('textarea, input','#'+section).first().focus();
+			
+			}
 		    
 	    }
 	  
@@ -244,19 +330,13 @@ $(document).ready(function() {
 	});
 	
 	// show connect
-	showSection('connect');
+	app.showSection('connect');
 	
 	
 });
 
 	
 
-	// hides all panels and shows only the given form-panel
-	showSection = function (section) {
-		$('.form-section').hide();
-		$('#'+section).show();
-		$('textarea, input','#'+section).first().focus();
-	}
 	
 	var toggleState = false;
 	togglemenu = function() {

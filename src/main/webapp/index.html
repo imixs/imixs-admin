@@ -76,13 +76,13 @@
 				<hr />
 				<ul>
 					<li class="nav-item" v-on:click="showSection('search')"><span
-							class="typcn typcn-zoom-outline"></span><label>Search</label></li>
+						class="typcn typcn-zoom-outline"></span><label>Search</label></li>
 
 				</ul>
 				<hr />
 				<ul>
 
-					<li class="nav-item"><a
+					<li class="nav-item" v-on:click="showSection('bulkupdate')"><a
 						href="#{facesContext.externalContext.requestContextPath}/inspect.xhtml"><span
 							class="typcn typcn-edit"></span><label>Update</label></a></li>
 
@@ -95,7 +95,7 @@
 							class="typcn typcn-spanner"></span><label>Admin-P</label></a></li>
 
 					<li class="nav-item" v-on:click="showSection('index')"><span
-							class="typcn typcn-map"></span><label>Index</label></li>
+						class="typcn typcn-map"></span><label>Index</label></li>
 				</ul>
 				<hr />
 				<ul>
@@ -131,14 +131,13 @@
 							v-show="connection_status < 200"
 							class="typcn typcn-world-outline"></span><span
 							v-show="connection_status == 200"
-							class="typcn typcn-world-outline success"></span> {{api}}</span> 
-							
-							<span
-							class="typcn typcn-cog" v-on:click="showSection('connect')"></span> 
-							<span class="typcn typcn-power" v-on:click="logout()"></span>
+							class="typcn typcn-world-outline success"></span> {{api}}</span> <span
+							class="typcn typcn-cog" v-on:click="showSection('connect')"></span>
+						<span class="typcn typcn-power" v-on:click="logout()"></span>
 					</div>
 					<div class="searchbox col-4">
-						<input v-model="query_short" id="quick_search"></input><span class="typcn typcn-zoom-outline" v-on:click="quickSearch()"></span>
+						<input v-model="query_short" id="quick_search"></input><span
+							class="typcn typcn-zoom-outline" v-on:click="quickSearch()"></span>
 					</div>
 					<div class="linkbox col-4">
 						<div class="pull-right">
@@ -215,12 +214,7 @@
 						<button v-on:click="apiConnect();">Connect</button>
 					</div>
 
-					<!-- failure -->
-					<div class="card error" v-show="connection_status >= 300">
 
-						<p>Failed to connect!</p>
-
-					</div>
 				</div>
 
 
@@ -239,13 +233,15 @@
 							<dl class="col-3">
 								<dt>Page Size:</dt>
 								<dd>
-									<input type="text" v-model="page_size" name="pageSize" style="width:7em;">
+									<input type="text" v-model="page_size" name="pageSize"
+										style="width: 7em;">
 								</dd>
 							</dl>
 							<dl class="col-3">
 								<dt>Page Index:</dt>
 								<dd>
-									<input type="text" v-model="page_index" name="pageIndex" style="width:7em;">
+									<input type="text" v-model="page_index" name="pageIndex"
+										style="width: 7em;">
 								</dd>
 							</dl>
 
@@ -267,42 +263,48 @@
 							</dl>
 
 						</div>
-						
+
 						<button v-on:click="search();">Search</button>
 					</div>
 
 					<!-- Search Result -->
 					<div class="card">
 						<h2>
-							<span class="typcn typcn-world-outline"></span> Search Result
-							
-							<span class="pull-right">
-								<a v-show="page_index >0"><span class="typcn typcn-media-rewind" v-on:click="searchRewind()"></span></a>
-								<span  v-show="page_index <=0" class="typcn typcn-media-rewind-outline"></span>
-								<a><span class="typcn typcn-media-fast-forward" v-on:click="searchForward()"></span></a>
+							<span class="typcn typcn-world-outline"></span> Search Result <span
+								class="pull-right"> <a v-show="page_index >0"><span
+									class="typcn typcn-media-rewind" v-on:click="searchRewind()"></span></a>
+								<span v-show="page_index <=0"
+								class="typcn typcn-media-rewind-outline"></span> <a><span
+									class="typcn typcn-media-fast-forward"
+									v-on:click="searchForward()"></span></a>
 							</span>
 						</h2>
-						<table id="imixsdatatable" class="imixsdatatable" style="width: 100%;">
+						<table id="imixsdatatable" class="imixsdatatable"
+							style="width: 100%;">
 							<thead>
-							 <tr>
-								<th>UUID</th>
-								<th>Created</th>
-								<th>Modified</th>
-								<th>Status</th>
-								<th>Summary</th>
-								<th></th>
-							</tr>
-						</thead>
+								<tr>
+									<th>UUID</th>
+									<th>Created</th>
+									<th>Modified</th>
+									<th>Status</th>
+									<th>Summary</th>
+									<th></th>
+								</tr>
+							</thead>
 							<tbody v-for="document in search_result">
 								<tr>
-									<td><a href="#"  v-on:click="openDocument($event, document)">{{ document.$uniqueid[0].text }}</a></td>
+									<td><a href="#"
+										v-on:click="openDocument($event, document)">{{
+											document.$uniqueid[0].text }}</a></td>
 									<td>{{ document.getItem('$created')}}</td>
 									<td>{{ document.$modified[0].text}}</td>
 									<td>{{ document.$workflowstatus[0].text }}</td>
 									<td>{{ document.$workflowsummary[0].text }}</td>
-									<td><a><span class="typcn typcn-trash pull-right error" v-on:click="deleteDocument($event,document)"></span></a></td>
+									<td><a><span
+											class="typcn typcn-trash pull-right error"
+											v-on:click="deleteDocument($event,document)"></span></a></td>
 								</tr>
-						</tbody>
+							</tbody>
 						</table>
 					</div>
 				</div>
@@ -311,26 +313,31 @@
 				<!-- Document -->
 				<div id="document" class="form-section">
 					<div class="card">
-					
-						<h2><span class="typcn typcn-folder-open"></span> Document: {{ document.getItem('$uniqueid') }} 
-						<a><span class="typcn typcn-link" v-on:click="linkDocument($event, document)"></span></a>
-						<a><span class="typcn typcn-arrow-forward pull-right" v-on:click="showSection('search')"></span></a></h2>
+
+						<h2>
+							<span class="typcn typcn-folder-open"></span> Document: {{
+							document.getItem('$uniqueid') }} <a><span
+								class="typcn typcn-link"
+								v-on:click="linkDocument($event, document)"></span></a> <a><span
+								class="typcn typcn-arrow-forward pull-right"
+								v-on:click="showSection('search')"></span></a>
+						</h2>
 						<table style="width: 100%; margin-top: 10px;">
 							<thead>
 								<tr>
-									<th style="width:170px;">Item</th>
+									<th style="width: 170px;">Item</th>
 									<th>Type</th>
 									<th>Value</th>
 								</tr>
 							</thead>
 							<tbody v-for="item in document.getItemNames()">
-							
-							    <tr>
-							       <td>{{ item }}</td>
-							       <td>{{ document[item][0]['xsi:type'] }}</td>
-							       <td>{{ document[item][0].text }}</td>
-							    
-							    </tr>
+
+								<tr>
+									<td>{{ item }}</td>
+									<td>{{ document[item][0]['xsi:type'] }}</td>
+									<td>{{ document[item][0].text }}</td>
+
+								</tr>
 							</tbody>
 						</table>
 
@@ -340,17 +347,136 @@
 
 
 
+				<!-- Bulk Update -->
+				<div id="bulkupdate" class="form-section">
+					<div class="card">
 
+						<h2>
+							<span class="typcn typcn-world"></span> Bulk Query
+						</h2>
+						<textarea class="search-query" v-model="query" spellcheck="false"></textarea>
+
+						<div class="row nested">
+
+							<dl class="col-3">
+								<dt>Page Size:</dt>
+								<dd>
+									<input type="text" v-model="page_size" name="pageSize"
+										style="width: 7em;">
+								</dd>
+							</dl>
+							<dl class="col-3">
+								<dt>Page Index:</dt>
+								<dd>
+									<input type="text" v-model="page_index" name="pageIndex"
+										style="width: 7em;">
+								</dd>
+							</dl>
+
+							<dl class="col-3">
+								<dt>Sort By:</dt>
+								<dd>
+									<input type="text" value="$modified" v-model="sort_by">
+								</dd>
+							</dl>
+
+							<dl class="col-3">
+								<dt>Sort Order:</dt>
+								<dd>
+									<select name="sortOrder" id="sortOrder" v-model="sort_order">
+										<option value="DESC">Descanding</option>
+										<option value="ASC">Ascanding</option>
+									</select>
+								</dd>
+							</dl>
+
+						</div>
+					</div>
+
+
+					<div class="card">
+
+						<h2>
+							<span class="typcn typcn-edit"></span> Update
+						</h2>
+						<div class="imixs-form-section-3">
+							<dl>
+								<dt>Field Name:</dt>
+								<dd>
+									<input type="text" name="fieldName" v-model="update_fieldname" />
+								</dd>
+							</dl>
+
+							<dl>
+								<dt>Field Type:</dt>
+								<dd>
+									<select name="fieldType" id="fieldType"
+										v-model="update_fieldtype">
+										<option>xs:string</option>
+										<option>xs:int</option>
+										<option>xs:boolean</option>
+										<option>xs:dateTime</option>
+									</select>
+								</dd>
+							</dl>
+
+							<dl>
+								<dt>Workflow Event (optional):</dt>
+								<dd>
+									<input type="text" value="0" name="workflowEvent"
+										v-model="update_event" />
+								</dd>
+							</dl>
+
+
+						</div>
+						<div class="imixs-form-section-3">
+
+							<dl>
+								<dt>New Values:</dt>
+								<dd>
+									<textarea name="fieldValues" v-model="update_values"></textarea>
+								</dd>
+
+							</dl>
+
+
+							<dl>
+								<dt>Update Mode:</dt>
+								<dd>
+									<input type="checkbox" name="appendValues" value="true"
+										v-model="update_append" /> Append Values <br />
+									<p>
+										<small><strong>Note:</strong> Multi-Values can be
+											separated by new lines. If you want to add a single value
+											with multiple lines, than add '\n' at the end of a line. <br />
+											Date values have to be formated as 'yyyy-mm-dd'. </small>
+									</p>
+								</dd>
+							</dl>
+						</div>
+
+						<button v-on:click="bulkUpdate();">Start Update</button>
+
+
+						
+
+
+
+					</div>
+				</div>
 
 
 				<!-- Index -->
 				<div id="index" class="form-section">
 					<div class="card">
-						<h2><span class="typcn typcn-map"></span> Index Schema</h2>
+						<h2>
+							<span class="typcn typcn-map"></span> Index Schema
+						</h2>
 						<table style="width: 100%; margin-top: 10px;">
 							<thead>
 								<tr>
-									<th style="width:170px;">Index Field Group</th>
+									<th style="width: 170px;">Index Field Group</th>
 									<th>Items</th>
 								</tr>
 							</thead>
@@ -380,7 +506,20 @@
 
 
 
+				<!-- Message -->
+				<div class="card message" v-show="message != ''">
 
+					<p><span class="typcn typcn-info-large"></span> {{ message }}</p>
+
+				</div>
+
+
+				<!-- failure -->
+				<div class="card error" v-show="error != ''">
+
+					<p><span class="typcn typcn-info"></span> {{ error}}</p>
+
+				</div>
 
 
 				<!-- DEMO -->
@@ -405,22 +544,22 @@
 					</div>
 
 
-				
+
 
 				</div>
-				
+
 				<div class="imixs-wait">
 					<!-- empty -->
 				</div>
-				
-				
+
+
 			</div>
 
 			<!-- FOOTER -->
 			<div id="imixs-footer">www.imixs.org</div>
 
 
-		
+
 		</div>
 	</div>
 </body>
