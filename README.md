@@ -15,7 +15,7 @@ These are the core features of Imixs-Admin:
 * Import and Export workflow data into the file system. 
  
 
-
+<img src="./imixs-admin-51b.png" style="width:75%;"/>
 
 <br /><br /><img src="./small_h-trans.png" />
 
