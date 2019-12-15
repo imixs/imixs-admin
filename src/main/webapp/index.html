@@ -37,8 +37,6 @@
 <script type="text/javascript" src="js/vue_2.6.10.js"></script>
 
 
-<script type="text/javascript" src="button-template.js"></script>
-
 
 <script src="imixs-admin.js"></script>
 
@@ -82,17 +80,14 @@
 				<hr />
 				<ul>
 
-					<li class="nav-item" v-on:click="showSection('bulkupdate')"><a
-						href="#{facesContext.externalContext.requestContextPath}/inspect.xhtml"><span
-							class="typcn typcn-edit"></span><label>Update</label></a></li>
+					<li class="nav-item" v-on:click="showSection('bulkupdate')"><span
+							class="typcn typcn-edit"></span><label>Update</label></li>
 
-					<li class="nav-item"><a
-						href="#{facesContext.externalContext.requestContextPath}/resync.xhtml"><span
-							class="typcn typcn-trash"></span><label>Delete</label></a></li>
+					<li class="nav-item" v-on:click="showSection('bulkdelete')"><span
+							class="typcn typcn-trash"></span><label>Delete</label></li>
 
-					<li class="nav-item"><a
-						href="#{facesContext.externalContext.requestContextPath}/restore.xhtml"><span
-							class="typcn typcn-spanner"></span><label>Admin-P</label></a></li>
+					<li class="nav-item"><span
+							class="typcn typcn-spanner"></span><label>Admin-P</label></li>
 
 					<li class="nav-item" v-on:click="showSection('index')"><span
 						class="typcn typcn-map"></span><label>Index</label></li>
@@ -100,15 +95,11 @@
 				<hr />
 				<ul>
 
-					<li class="nav-item"><a
-						href="#{facesContext.externalContext.requestContextPath}/export.xhtml"><span
-							class="typcn typcn-upload-outline"></span><label>Export</label></a></li>
+					<li class="nav-item" v-on:click="showSection('export')"><span
+							class="typcn typcn-upload-outline"></span><label>Export</label></li>
 
-					<li class="nav-item"><a
-						href="#{facesContext.externalContext.requestContextPath}/import.xhtml"><span
-							class="typcn typcn-download-outline"></span><label>Import</label></a></li>
-
-
+					<li class="nav-item" v-on:click="showSection('import')"><span
+							class="typcn typcn-download-outline"></span><label>Import</label></li>
 
 				</ul>
 
@@ -350,14 +341,11 @@
 				<!-- Bulk Update -->
 				<div id="bulkupdate" class="form-section">
 					<div class="card">
-
 						<h2>
 							<span class="typcn typcn-world"></span> Bulk Query
 						</h2>
 						<textarea class="search-query" v-model="query" spellcheck="false"></textarea>
-
 						<div class="row nested">
-
 							<dl class="col-3">
 								<dt>Page Size:</dt>
 								<dd>
@@ -372,14 +360,12 @@
 										style="width: 7em;">
 								</dd>
 							</dl>
-
 							<dl class="col-3">
 								<dt>Sort By:</dt>
 								<dd>
 									<input type="text" value="$modified" v-model="sort_by">
 								</dd>
 							</dl>
-
 							<dl class="col-3">
 								<dt>Sort Order:</dt>
 								<dd>
@@ -389,13 +375,9 @@
 									</select>
 								</dd>
 							</dl>
-
 						</div>
 					</div>
-
-
 					<div class="card">
-
 						<h2>
 							<span class="typcn typcn-edit"></span> Update
 						</h2>
@@ -406,7 +388,6 @@
 									<input type="text" name="fieldName" v-model="update_fieldname" />
 								</dd>
 							</dl>
-
 							<dl>
 								<dt>Field Type:</dt>
 								<dd>
@@ -419,7 +400,6 @@
 									</select>
 								</dd>
 							</dl>
-
 							<dl>
 								<dt>Workflow Event (optional):</dt>
 								<dd>
@@ -427,20 +407,14 @@
 										v-model="update_event" />
 								</dd>
 							</dl>
-
-
 						</div>
 						<div class="imixs-form-section-3">
-
 							<dl>
 								<dt>New Values:</dt>
 								<dd>
 									<textarea name="fieldValues" v-model="update_values"></textarea>
 								</dd>
-
 							</dl>
-
-
 							<dl>
 								<dt>Update Mode:</dt>
 								<dd>
@@ -455,16 +429,118 @@
 								</dd>
 							</dl>
 						</div>
-
 						<button v-on:click="bulkUpdate();">Start Update</button>
-
-
-						
-
-
-
 					</div>
 				</div>
+
+
+
+
+
+				<!-- Bulk Update -->
+				<div id="bulkdelete" class="form-section">
+					<div class="card">
+						<h2>
+							<span class="typcn typcn-world"></span> Bulk Query
+						</h2>
+
+						<textarea class="search-query" v-model="query" spellcheck="false"></textarea>
+						<div class="row nested">
+							<dl class="col-3">
+								<dt>Page Size:</dt>
+								<dd>
+									<input type="text" v-model="page_size" name="pageSize"
+										style="width: 7em;">
+								</dd>
+							</dl>
+							<dl class="col-3">
+								<dt>Page Index:</dt>
+								<dd>
+									<input type="text" v-model="page_index" name="pageIndex"
+										style="width: 7em;">
+								</dd>
+							</dl>
+							<dl class="col-3">
+								<dt>Sort By:</dt>
+								<dd>
+									<input type="text" value="$modified" v-model="sort_by">
+								</dd>
+							</dl>
+							<dl class="col-3">
+								<dt>Sort Order:</dt>
+								<dd>
+									<select name="sortOrder" id="sortOrder" v-model="sort_order">
+										<option value="DESC">Descanding</option>
+										<option value="ASC">Ascanding</option>
+									</select>
+								</dd>
+							</dl>
+						</div>
+					</div>
+					<div class="card">
+						<h2>
+							<span class="typcn typcn-trash"></span> Bulk Delete
+						</h2>
+						
+						<button v-on:click="bulkDelete();">Delete</button>
+					</div>
+				</div>
+
+
+
+
+
+
+
+
+
+				<!-- Export -->
+				<div id="export" class="form-section">
+					<div class="card">
+						<h2>
+							<span class="typcn typcn-upload-outline"></span> Export
+						</h2>
+
+						<textarea class="search-query" v-model="query" spellcheck="false"></textarea>
+						<div class="imixs-form-section">
+							<dl>
+								<dt>Filepath:</dt>
+								<dd>
+									<input type="text" v-model="filepath" name="filepath" />
+								</dd>
+							</dl>
+						</div>
+					
+						
+						<button v-on:click="dataExport();">Export</button>
+					</div>
+				</div>
+
+
+
+				<!-- Import -->
+				<div id="import" class="form-section">
+					<div class="card">
+						<h2>
+							<span class="typcn typcn-download-outline"></span> Import
+						</h2>
+						<div class="imixs-form-section">
+							<dl>
+								<dt>Filepath:</dt>
+								<dd>
+									<input type="text" v-model="filepath" name="filepath" />
+								</dd>
+							</dl>
+						</div>
+					
+						
+						<button v-on:click="dataImport();">Import</button>
+					</div>
+				</div>
+
+
+
+
 
 
 				<!-- Index -->
@@ -522,32 +598,7 @@
 				</div>
 
 
-				<!-- DEMO -->
-				<div id="search" style="display: none">
-					<h2>
-						<span class="typcn typcn-world-outline"></span> Search Result
-					</h2>
-
-
-
-					<div class="card">
-
-						<p>Required. The horizontal offset of the shadow. A positive
-							value puts the shadow on the right side of the box, a negative
-							value puts the shadow on the left side of the box</p>
-
-						<custom-button></custom-button>
-
-						<br />
-
-						<display-number :number="4"></display-number>
-					</div>
-
-
-
-
-				</div>
-
+				
 				<div class="imixs-wait">
 					<!-- empty -->
 				</div>
@@ -562,6 +613,7 @@
 
 		</div>
 	</div>
+	
 </body>
 
 </html>

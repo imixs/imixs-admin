@@ -28,6 +28,8 @@
 package org.imixs.application.admin;
 
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,10 +47,13 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -187,7 +192,7 @@ public class AdminRestService {
 	}
 
 	/**
-	 * The update resource starts a bulk update 
+	 * The update resource starts a bulk update
 	 * 
 	 * @param workitem
 	 * @return
@@ -302,6 +307,156 @@ public class AdminRestService {
 		// no result
 		return Response.status(Response.Status.NO_CONTENT).build();
 	}
+
+	/**
+	 * The resource starts a bulk delete
+	 * 
+	 * @param workitem
+	 * @return
+	 */
+	@POST
+	@Path("/delete")
+	public Response putBulkDelete(XMLDocument xmlBusinessEvent) {
+		boolean debug = logger.isLoggable(Level.FINE);
+		int updates = 0;
+		if (debug) {
+			logger.fine("putXMLWorkitem @PUT /delete  delegate to POST....");
+		}
+
+		ItemCollection connectionData = XMLDocumentAdapter.putDocument(xmlBusinessEvent);
+		String query = connectionData.getItemValueString("query");
+		String sortBy = connectionData.getItemValueString("sortby");
+		String sortOrder = connectionData.getItemValueString("sortorder");
+		int pageIndex = connectionData.getItemValueInteger("pageindex");
+		int pageSize = connectionData.getItemValueInteger("pagesize");
+
+		String token = servletRequest.getHeader("Authorization");
+		if (token.toLowerCase().startsWith("bearer")) {
+			token = token.substring(7);
+		}
+
+		WorkflowClient client = createWorkflowClient(token);
+		if (client != null) {
+			List<ItemCollection> documents = null;
+			try {
+				documents = client.getCustomResource(
+						"documents/search/" + query + "?pageIndex=" + pageIndex + "&pageSize=" + pageSize + "&sortBy="
+								+ sortBy + "&sortReverse=" + (sortOrder.equalsIgnoreCase("desc")));
+
+				logger.info("..." + documents.size() + " documents selected for bulk update...");
+				// iterate over all documents....
+				for (ItemCollection document : documents) {
+					client.deleteDocument(document.getUniqueID());
+					updates++;
+
+				}
+
+				logger.info("...bulk delete finished: " + updates + " deletions.");
+
+				ItemCollection result = new ItemCollection();
+				result.setItemValue("updates", updates);
+				result.setItemValue("message", updates + " documents deleted.");
+				return Response
+						// Set the status and Put your entity here.
+						.ok(XMLDocumentAdapter.getDocument(result))
+						// Add the Content-Type header to tell Jersey which format it should marshall
+						// the entity into.
+						.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML).build();
+
+			} catch (RestAPIException e) {
+				logger.severe("Rest API Error: " + e.getMessage());
+				return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+			}
+		}
+		// no result
+		return Response.status(Response.Status.NO_CONTENT).build();
+	}
+
+	/**
+	 * The resource starts a bulk delete
+	 * 
+	 * @param workitem
+	 * @return
+	 */
+	@PUT
+	@Path("/export")
+	public Response putExport(XMLDocument xmlBusinessEvent) {
+		boolean debug = logger.isLoggable(Level.FINE);
+		if (debug) {
+			logger.fine("putXMLWorkitem @PUT /export  delegate to POST....");
+		}
+
+		ItemCollection connectionData = XMLDocumentAdapter.putDocument(xmlBusinessEvent);
+		String query = connectionData.getItemValueString("query");
+		String filepath = connectionData.getItemValueString("filepath");
+
+		String token = servletRequest.getHeader("Authorization");
+		if (token.toLowerCase().startsWith("bearer")) {
+			token = token.substring(7);
+		}
+
+		WorkflowClient client = createWorkflowClient(token);
+		if (client != null) {
+			logger.info("Export=" + query + " path=" + filepath);
+			try {
+				String uri = "documents/backup/" + encode(query) + "?filepath=" + filepath;
+				// create put for backup ...
+				WebTarget target = client.getWebTarget(uri);
+				// here we create a dummmy object
+				target.request().put(Entity.xml(""));
+				return Response.status(Response.Status.OK).build();
+			} catch (RestAPIException e) {
+				logger.severe("Rest API Error: " + e.getMessage());
+				return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+			}
+		}
+		// no result
+		return Response.status(Response.Status.NO_CONTENT).build();
+	}
+	
+	
+	
+	/**
+	 * The resource starts a bulk delete
+	 * 
+	 * @param workitem
+	 * @return
+	 */
+	@PUT
+	@Path("/import")
+	public Response getImport(XMLDocument xmlBusinessEvent) {
+		boolean debug = logger.isLoggable(Level.FINE);
+		if (debug) {
+			logger.fine("putXMLWorkitem @GET /import  delegate to GET....");
+		}
+		ItemCollection connectionData = XMLDocumentAdapter.putDocument(xmlBusinessEvent);
+		String filepath = connectionData.getItemValueString("filepath");
+
+		String token = servletRequest.getHeader("Authorization");
+		if (token.toLowerCase().startsWith("bearer")) {
+			token = token.substring(7);
+		}
+
+		WorkflowClient client = createWorkflowClient(token);
+		if (client != null) {
+			logger.info("Import path=" + filepath);
+			try {
+				String uri = "documents/restore?filepath=" + filepath;
+				// create put for backup ...
+				WebTarget target = client.getWebTarget(uri);
+				// here we create a dummmy object
+				target.request().get();
+				return Response.status(Response.Status.OK).build();
+			} catch (RestAPIException e) {
+				logger.severe("Rest API Error: " + e.getMessage());
+				return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+			}
+		}
+		// no result
+		return Response.status(Response.Status.NO_CONTENT).build();
+	}
+	
+	
 
 	/**
 	 * The connect resource generates an access-token for the given api endpoint and
@@ -470,4 +625,20 @@ public class AdminRestService {
 
 		return client;
 	}
+
+	/**
+	 * This method URL-encodes a data string so it can be used by the rest api
+	 * 
+	 * @return
+	 */
+	public String encode(String _data) {
+		String encodedData = _data;
+		try {
+			encodedData = URLEncoder.encode(encodedData, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			logger.warning("encoding of query string failed!");
+		}
+		return encodedData;
+	}
+
 }

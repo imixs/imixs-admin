@@ -38,6 +38,7 @@ $(document).ready(function() {
 	    update_append:'',
 	    update_values:'',
 	    update_event:'',
+	    filepath: 'backup_'+formatDate(),
 	    message: '',
 	    error: '',
 	    },
@@ -100,13 +101,148 @@ $(document).ready(function() {
 		    
 		    
 		 // search query
-			search: function (event) {
+		search: function (event) {
+			if (app.token=='') {
+				return;
+			}
+	    	app.message='';
+	    	app.error='';
+			var requestURL='/api/search';
+	    	var requestData=new imixs.ImixsDocument();
+	    	requestData.setItem('api',app.api);
+	    	requestData.setItem('query',app.query);
+	    	requestData.setItem('pagesize',app.page_size);
+	    	requestData.setItem('pageindex',app.page_index);
+	    	requestData.setItem('sortby',app.sort_by);
+	    	requestData.setItem('sortorder',app.sort_order);
+	    	// convert to xml
+	    	var xmlData = imixsXML.json2xml(requestData);
+	    	$("#imixs-content").addClass("loading");
+	        	$.ajax({		            		
+	                url: requestURL,
+	                type: 'POST',
+	                beforeSend: function (xhr) {
+	                    xhr.setRequestHeader('Authorization', app.token);
+	                },
+	                data: xmlData,
+	                dataType: 'xml',
+	                contentType: 'application/xml',
+	                success: function (response) {
+	                	app.connection_status=200;
+	                	// convert rest response to a document instance
+	                	//var liste=imixsXML.xml2collection(response);
+	                	app.search_result=imixsXML.xml2collection(response);
+	                	$("#imixs-content").removeClass("loading");
+	                },
+	                error : function (xhr, ajaxOptions, thrownError){
+	                	$("#imixs-content").removeClass("loading");
+	                	app.connection_status=xhr.status;
+	                    app.error=xhr.status+ " " + thrownError;
+	                }
+	            });
+	        },
+	    
+	    
+         // open a document by its id
+		 openDocument: function (event, doc) {
+	    	app.message='';
+	    	app.error='';
+		    var requestURL='/api/documents/'+doc.getItem('$uniqueid');
+	    	$("#imixs-content").addClass("loading");
+            	$.ajax({		            		
+                    url: requestURL,
+                    type: 'GET',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('Authorization', app.token);
+                    },
+                    contentType: 'application/xml',
+                    success: function (response) {
+                    	app.connection_status=200;
+                    	// convert rest response to a document instance
+                    	app.document=imixsXML.xml2document(response);	
+                    	app.showSection('document');
+                    	$("#imixs-content").removeClass("loading");
+                    },
+                    error : function (xhr, ajaxOptions, thrownError){
+                    	$("#imixs-content").removeClass("loading");
+                    	app.connection_status=xhr.status;
+                    	app.output=xhr.statusText;
+                        console.log(xhr.status);          
+                        console.log(thrownError);
+                    }
+                });
+			 },
+			    
+			 
+			 
+	    
+	 // Bulk Update
+		bulkUpdate: function (event) {
+			if (app.token=='') {
+				return;
+			}
+			if (!confirm('Staring Bulk Update now?\n\nOperation can not be undone!')) {
+				return false;
+			}
+	    	app.message='';
+	    	app.error='';
+			
+			var requestURL='/api/update';
+	    	var requestData=new imixs.ImixsDocument();
+	    	requestData.setItem('api',app.api);
+	    	requestData.setItem('query',app.query);
+	    	requestData.setItem('pagesize',app.page_size);
+	    	requestData.setItem('pageindex',app.page_index);
+	    	requestData.setItem('sortby',app.sort_by);
+	    	requestData.setItem('sortorder',app.sort_order);
+	    	
+	    	requestData.setItem('fieldname',app.update_fieldname);
+	    	requestData.setItem('fieldtype',app.update_fieldtype);
+	    	requestData.setItem('append',app.update_append);
+	    	requestData.setItem('values',app.update_values);
+	    	requestData.setItem('event',app.update_event);
+
+	    	// convert to xml
+	    	var xmlData = imixsXML.json2xml(requestData);
+	    	$("#imixs-content").addClass("loading");
+            	$.ajax({		            		
+                    url: requestURL,
+                    type: 'POST',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('Authorization', app.token);
+                    },
+                    data: xmlData,
+                    dataType: 'xml',
+                    contentType: 'application/xml',
+                    success: function (response) {
+                    	app.connection_status=200;		           
+                    	workitem=imixsXML.xml2document(response);		                    	
+                    	app.message=workitem.getItem('message');
+                    	
+                    	$("#imixs-content").removeClass("loading");
+                    },
+                    error : function (xhr, ajaxOptions, thrownError){
+                    	$("#imixs-content").removeClass("loading");
+                    	app.connection_status=xhr.status;
+                    	app.output=xhr.statusText;
+                        console.log(xhr.status);          
+                        console.log(thrownError);
+                    }
+                });
+            },
+	    
+			 // Bulk Delete
+			bulkDelete: function (event) {
 				if (app.token=='') {
 					return;
 				}
+				if (!confirm('Staring Bulk Delete now?\n\nOperation can not be undone!')) {
+					return false;
+				}
 		    	app.message='';
 		    	app.error='';
-				var requestURL='/api/search';
+				
+				var requestURL='/api/delete';
 		    	var requestData=new imixs.ImixsDocument();
 		    	requestData.setItem('api',app.api);
 		    	requestData.setItem('query',app.query);
@@ -114,6 +250,7 @@ $(document).ready(function() {
 		    	requestData.setItem('pageindex',app.page_index);
 		    	requestData.setItem('sortby',app.sort_by);
 		    	requestData.setItem('sortorder',app.sort_order);
+
 		    	// convert to xml
 		    	var xmlData = imixsXML.json2xml(requestData);
 		    	$("#imixs-content").addClass("loading");
@@ -127,86 +264,91 @@ $(document).ready(function() {
 	                    dataType: 'xml',
 	                    contentType: 'application/xml',
 	                    success: function (response) {
-	                    	app.connection_status=200;
-	                    	// convert rest response to a document instance
-	                    	//var liste=imixsXML.xml2collection(response);
-	                    	app.search_result=imixsXML.xml2collection(response);
+	                    	app.connection_status=200;		           
+	                    	workitem=imixsXML.xml2document(response);		                    	
+	                    	app.message=workitem.getItem('message');
+	                    	app.search_result=new Array();
 	                    	$("#imixs-content").removeClass("loading");
 	                    },
 	                    error : function (xhr, ajaxOptions, thrownError){
 	                    	$("#imixs-content").removeClass("loading");
 	                    	app.connection_status=xhr.status;
-	                        app.error=xhr.status+ " " + thrownError;
+	                    	app.output=xhr.statusText;
+	                        console.log(xhr.status);          
+	                        console.log(thrownError);
 	                    }
 	                });
 	            },
-		    
-		    
-	         // open a document by its id
-			 openDocument: function (event, doc) {
-			    	app.message='';
-			    	app.error='';
-   				    var requestURL='/api/documents/'+doc.getItem('$uniqueid');
-			    	$("#imixs-content").addClass("loading");
-		            	$.ajax({		            		
-		                    url: requestURL,
-		                    type: 'GET',
-		                    beforeSend: function (xhr) {
-		                        xhr.setRequestHeader('Authorization', app.token);
-		                    },
-		                    contentType: 'application/xml',
-		                    success: function (response) {
-		                    	app.connection_status=200;
-		                    	// convert rest response to a document instance
-		                    	app.document=imixsXML.xml2document(response);	
-		                    	app.showSection('document');
-		                    	$("#imixs-content").removeClass("loading");
-		                    },
-		                    error : function (xhr, ajaxOptions, thrownError){
-		                    	$("#imixs-content").removeClass("loading");
-		                    	app.connection_status=xhr.status;
-		                    	app.output=xhr.statusText;
-		                        console.log(xhr.status);          
-		                        console.log(thrownError);
-		                    }
-		                });
-			 },
-			    
-			 
-			 
-			    
-			 // Bulk Update
-				bulkUpdate: function (event) {
+		    		            
+
+            
+			 // Import 
+			dataImport: function (e) {
+				if (app.token=='') {
+					return;
+				}
+				if (!confirm('Staring Import now?\n\nOperation can take some time!')) {
+					return false;
+				}
+		    	app.message='';
+		    	app.error='';
+				
+				var requestURL='/api/import';
+		    	var requestData=new imixs.ImixsDocument();
+		    	requestData.setItem('api',app.api);
+		    	requestData.setItem('filepath',app.filepath);
+
+		    	// convert to xml
+		    	var xmlData = imixsXML.json2xml(requestData);
+		    	$("#imixs-content").addClass("loading");
+	            	$.ajax({		            		
+	                    url: requestURL,
+	                    type: 'PUT',
+	                    beforeSend: function (xhr) {
+	                        xhr.setRequestHeader('Authorization', app.token);
+	                    },
+	                    data: xmlData,
+	                    dataType: 'xml',
+	                    contentType: 'application/xml',
+	                    success: function (response) {
+	                    	app.connection_status=200;		           
+	                    	$("#imixs-content").removeClass("loading");
+	                    },
+	                    error : function (xhr, ajaxOptions, thrownError){
+	                    	$("#imixs-content").removeClass("loading");
+	                    	app.connection_status=xhr.status;
+	                    	app.output=xhr.statusText;
+	                        console.log(xhr.status);          
+	                        console.log(thrownError);
+	                    }
+	                });
+	            },
+            
+			            
+	       	   //  Export
+				dataExport: function () {
 					if (app.token=='') {
 						return;
 					}
-					if (!confirm('Staring Bulk Update now?\n\nOperation can not be undone!')) {
+					if (!confirm('Staring Export now?\n\nOperation can take some time!')) {
 						return false;
 					}
 			    	app.message='';
 			    	app.error='';
 					
-					var requestURL='/api/update';
+					var requestURL='/api/export';
+					
 			    	var requestData=new imixs.ImixsDocument();
 			    	requestData.setItem('api',app.api);
 			    	requestData.setItem('query',app.query);
-			    	requestData.setItem('pagesize',app.page_size);
-			    	requestData.setItem('pageindex',app.page_index);
-			    	requestData.setItem('sortby',app.sort_by);
-			    	requestData.setItem('sortorder',app.sort_order);
-			    	
-			    	requestData.setItem('fieldname',app.update_fieldname);
-			    	requestData.setItem('fieldtype',app.update_fieldtype);
-			    	requestData.setItem('append',app.update_append);
-			    	requestData.setItem('values',app.update_values);
-			    	requestData.setItem('event',app.update_event);
+			    	requestData.setItem('filepath',app.filepath);
 
 			    	// convert to xml
 			    	var xmlData = imixsXML.json2xml(requestData);
 			    	$("#imixs-content").addClass("loading");
 		            	$.ajax({		            		
 		                    url: requestURL,
-		                    type: 'POST',
+		                    type: 'PUT',
 		                    beforeSend: function (xhr) {
 		                        xhr.setRequestHeader('Authorization', app.token);
 		                    },
@@ -215,9 +357,6 @@ $(document).ready(function() {
 		                    contentType: 'application/xml',
 		                    success: function (response) {
 		                    	app.connection_status=200;		           
-		                    	workitem=imixsXML.xml2document(response);		                    	
-		                    	app.message=workitem.getItem('message');
-		                    	
 		                    	$("#imixs-content").removeClass("loading");
 		                    },
 		                    error : function (xhr, ajaxOptions, thrownError){
@@ -229,9 +368,10 @@ $(document).ready(function() {
 		                    }
 		                });
 		            },
-			    
-		            
-		    
+	            
+				            	  
+				            				            
+			            
 			 // forward
 			 searchForward: function () {
 			    	app.page_index=app.page_index+1;
@@ -355,3 +495,35 @@ $(document).ready(function() {
 		toggleState = !toggleState;
 	
 	};
+	
+	
+	formatDate = function() {
+	    var d = new Date(),
+	        month = '' + (d.getMonth() + 1),
+	        day = '' + d.getDate(),
+	        year = d.getFullYear(),
+	        hour='' +d.getHours(),
+	        minute='' +d.getMinutes(),
+	        second='' +d.getSeconds();
+	    
+	    	
+
+	    if (month.length < 2) 
+	        month = '0' + month;
+	    if (day.length < 2) 
+	        day = '0' + day;
+
+	    if (hour.length < 2) 
+	    	hour = '0' + hour;
+	    if (minute.length < 2) 
+	    	minute = '0' + minute;
+	    if (second.length < 2) 
+	    	second = '0' + second;
+	    
+	    return [year, month, day,hour,minute,second].join('');
+	}
+	
+	
+	
+	
+	
