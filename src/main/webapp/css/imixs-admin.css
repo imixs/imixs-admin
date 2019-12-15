@@ -131,6 +131,10 @@ body, html {
 	margin-right: 10px;
 }
 
+.imixs-date {
+	width:7em !important;
+}
+
 .nav-sidebar a {
 	color: inherit;
 }

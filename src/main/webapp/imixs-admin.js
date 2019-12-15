@@ -9,7 +9,6 @@
 // INIT vue
 $(document).ready(function() {	
 	
-
 	
 	var app = new Vue({
 	  el: '#app',
@@ -25,13 +24,14 @@ $(document).ready(function() {
 		index_fields_analyze: '',
 		index_fields_noanalyze: '',
 		index_fields_store: '',
-		query:'(type:*)',
+		query:'(type:workitem)',
 		query_short:'',
 		page_size:25, 
 		page_index:0,
 		sort_by:'$modified',
 		sort_order:"DESC",
 		search_result: [],
+		adminp_jobs: [],
 	    document: new imixs.ImixsDocument(),
 	    update_fieldname:'',
 	    update_fieldtype:'',
@@ -39,6 +39,15 @@ $(document).ready(function() {
 	    update_values:'',
 	    update_event:'',
 	    filepath: 'backup_'+formatDate(),
+	    adminp_job: '',
+	    adminp_interval: '',
+	    adminp_blocksize: '',
+	    adminp_from: '',
+	    adminp_to: '',
+	    adminp_filter: '',
+	    adminp_userfrom: '',
+	    adminp_userto:'',
+	    adminp_userreplace: '',
 	    message: '',
 	    error: '',
 	    },
@@ -218,8 +227,8 @@ $(document).ready(function() {
                     	app.connection_status=200;		           
                     	workitem=imixsXML.xml2document(response);		                    	
                     	app.message=workitem.getItem('message');
-                    	
                     	$("#imixs-content").removeClass("loading");
+                    	app.search();
                     },
                     error : function (xhr, ajaxOptions, thrownError){
                     	$("#imixs-content").removeClass("loading");
@@ -266,9 +275,9 @@ $(document).ready(function() {
 	                    success: function (response) {
 	                    	app.connection_status=200;		           
 	                    	workitem=imixsXML.xml2document(response);		                    	
-	                    	app.message=workitem.getItem('message');
-	                    	app.search_result=new Array();
+	                    	app.message=workitem.getItem('message');	           
 	                    	$("#imixs-content").removeClass("loading");
+	                    	app.search();
 	                    },
 	                    error : function (xhr, ajaxOptions, thrownError){
 	                    	$("#imixs-content").removeClass("loading");
@@ -279,8 +288,105 @@ $(document).ready(function() {
 	                    }
 	                });
 	            },
-		    		            
+		    		   
+	            
+	            
+        
+	     // adminP
+   		 adminP: function () {
+   			if (app.token=='') {
+   				return;
+   			}
+   			if (!confirm('Staring AdminP Job ' + app.adminp_job + ' now?\n\nOperation can not be undone!')) {
+   				return false;
+   			}
+   	    	app.message='';
+   	    	app.error='';
+   			
+   			var requestURL='/api/adminp';
+   	    	var requestData=new imixs.ImixsDocument();
+   	    	requestData.setItem('api',app.adminp_job);
+   	    	requestData.setItem('numinterval',app.adminp_interval);
+   	    	requestData.setItem('blocksize',app.adminp_blocksize);
+  	    	requestData.setItem('datfrom',app.adminp_from);
+ 	   	    requestData.setItem('datto',app.adminp_to);
+   	    	requestData.setItem('typelist',app.adminp_filter);
+   	    	
+   	    	requestData.setItem('namfrom',app.adminp_userfrom);
+   	    	requestData.setItem('namto',app.adminp_userto);
+   	    	requestData.setItem('keyreplace',app.adminp_userreplace);
+    	    	
+   	    	requestData.setItem('job',app.adminp_job);
+   	   	    	// convert to xml
+   	    	var xmlData = imixsXML.json2xml(requestData);
+   	    	$("#imixs-content").addClass("loading");
+               	$.ajax({		            		
+                       url: requestURL,
+                       type: 'POST',
+                       beforeSend: function (xhr) {
+                           xhr.setRequestHeader('Authorization', app.token);
+                       },
+                       data: xmlData,
+                       dataType: 'xml',
+                       contentType: 'application/xml',
+                       
+                       success: function (response) {
+                         app.connection_status=200;		           
+                         $("#imixs-content").removeClass("loading");
+                         app.loadAdminpJobs();
+                       },
+                       error : function (xhr, ajaxOptions, thrownError){
+                       	 $("#imixs-content").removeClass("loading");
+                       	 app.connection_status=xhr.status;
+                       	 app.output=xhr.statusText;
+                         console.log(xhr.status);          
+                         console.log(thrownError);
+                       }
+                   });
+               },	            
 
+               
+               
+               
+               
+          	 // search query
+       		loadAdminpJobs: function () {
+       			if (app.token=='') {
+       				return;
+       			}
+       	    	app.message='';
+       	    	app.error='';
+       			var requestURL='/api/jobs';
+       	    	var requestData=new imixs.ImixsDocument();
+       	    	requestData.setItem('api',app.api);
+       	    	// convert to xml
+       	    	var xmlData = imixsXML.json2xml(requestData);
+       	    	$("#imixs-content").addClass("loading");
+       	        	$.ajax({		            		
+       	                url: requestURL,
+       	                type: 'POST',
+       	                beforeSend: function (xhr) {
+       	                    xhr.setRequestHeader('Authorization', app.token);
+       	                },
+       	                data: xmlData,
+       	                dataType: 'xml',
+       	                contentType: 'application/xml',
+       	                success: function (response) {
+       	                	app.connection_status=200;
+       	                	// convert rest response to a document instance
+       	                	//var liste=imixsXML.xml2collection(response);
+       	                	app.adminp_jobs=imixsXML.xml2collection(response);
+       	                	$("#imixs-content").removeClass("loading");
+       	                },
+       	                error : function (xhr, ajaxOptions, thrownError){
+       	                	$("#imixs-content").removeClass("loading");
+       	                	app.connection_status=xhr.status;
+       	                    app.error=xhr.status+ " " + thrownError;
+       	                }
+       	            });
+       	        },
+       	    
+       	    
             
 			 // Import 
 			dataImport: function (e) {
@@ -429,6 +535,40 @@ $(document).ready(function() {
 		                    }
 		                });
 		     },
+		     
+		     
+		     // Delete a single document
+		     deleteAdminPJob: function ( event, doc) {
+		    	 if (!confirm('Are you sure?\n\nDelete Document: \n\n' + doc.getItem('$uniqueid'))) {
+						return false;
+					}
+			    	app.message='';
+			    	app.error='';
+
+					// delete...
+		    	    var requestURL='/api/documents/'+doc.getItem('$uniqueid');
+			    	$("#imixs-content").addClass("loading");
+		            	$.ajax({		            		
+		                    url: requestURL,
+		                    type: 'DELETE',
+		                    beforeSend: function (xhr) {
+		                        xhr.setRequestHeader('Authorization', app.token);
+		                    },
+		                    contentType: 'application/xml',
+		                    success: function (response) {
+		                    	app.connection_status=200;
+		                    	app.loadAdminpJobs();
+		                    	
+		                    },
+		                    error : function (xhr, ajaxOptions, thrownError){
+		                    	$("#imixs-content").removeClass("loading");
+		                    	app.connection_status=xhr.status;
+		                    	app.output=xhr.statusText;
+		                        console.log(xhr.status);          
+		                        console.log(thrownError);
+		                    }
+		                });
+		     },
 		    
 		    // invalidate token
 		    logout: function (event) {
@@ -455,7 +595,12 @@ $(document).ready(function() {
 		    	app.error='';
 				$('.form-section').hide();
 				$('#'+section).show();
-				$('textarea, input','#'+section).first().focus();
+				$('textarea, input, select','#'+section).first().focus();
+				
+				// load jobs in case of adminp
+				if (section=='adminp') {
+					app.loadAdminpJobs();
+				}
 			
 			}
 		    
@@ -472,6 +617,9 @@ $(document).ready(function() {
 	// show connect
 	app.showSection('connect');
 	
+	
+	
+
 	
 });
 

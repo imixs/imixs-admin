@@ -309,6 +309,86 @@ public class AdminRestService {
 	}
 
 	/**
+	 * The update resource starts a bulk update
+	 * 
+	 * @param workitem
+	 * @return
+	 */
+	@POST
+	@Path("/adminp")
+	public Response putAdminP(XMLDocument xmlBusinessEvent) {
+		boolean debug = logger.isLoggable(Level.FINE);
+		if (debug) {
+			logger.fine("putXMLWorkitem @PUT /adminp  delegate to POST....");
+		}
+
+		String token = servletRequest.getHeader("Authorization");
+		if (token.toLowerCase().startsWith("bearer")) {
+			token = token.substring(7);
+		}
+		ItemCollection job = null;
+
+		try {
+			job = XMLDocumentAdapter.putDocument(xmlBusinessEvent);
+
+			if (job.getItemValueInteger("numinterval") == 0) {
+				job.replaceItemValue("numinterval", 1);
+			}
+
+			// convert date values
+			convertDate(job, "datfrom");
+			convertDate(job, "datto");
+			WorkflowClient client = createWorkflowClient(token);
+			client.createAdminPJob(job);
+			
+			return Response.status(Response.Status.OK).build();
+		} catch (RestAPIException e) {
+			logger.severe("Rest API Error: " + e.getMessage());
+			return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+		}
+
+	}
+	
+	
+	
+	
+	/**
+	 * The update resource starts a bulk update
+	 * 
+	 * @param workitem
+	 * @return
+	 */
+	@POST
+	@Path("/jobs")
+	public Response getAdminPJobs(XMLDocument xmlBusinessEvent) {
+		boolean debug = logger.isLoggable(Level.FINE);
+		if (debug) {
+			logger.fine("putXMLWorkitem @PUT /adminp  delegate to POST....");
+		}
+
+		String token = servletRequest.getHeader("Authorization");
+		if (token.toLowerCase().startsWith("bearer")) {
+			token = token.substring(7);
+		}
+		try {
+			
+			WorkflowClient client = createWorkflowClient(token);
+			XMLDataCollection result = client.getCustomResourceXML("/adminp/jobs");
+			
+			return Response
+					// Set the status and Put your entity here.
+					.ok(result)
+					// Add the Content-Type header to tell Jersey which format it should marshall
+					// the entity into.
+					.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML).build();
+		} catch (RestAPIException e) {
+			logger.severe("Rest API Error: " + e.getMessage());
+			return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+		}
+
+	}
+
+	/**
 	 * The resource starts a bulk delete
 	 * 
 	 * @param workitem
@@ -413,9 +493,7 @@ public class AdminRestService {
 		// no result
 		return Response.status(Response.Status.NO_CONTENT).build();
 	}
-	
-	
-	
+
 	/**
 	 * The resource starts a bulk delete
 	 * 
@@ -455,8 +533,6 @@ public class AdminRestService {
 		// no result
 		return Response.status(Response.Status.NO_CONTENT).build();
 	}
-	
-	
 
 	/**
 	 * The connect resource generates an access-token for the given api endpoint and
@@ -631,7 +707,7 @@ public class AdminRestService {
 	 * 
 	 * @return
 	 */
-	public String encode(String _data) {
+	private String encode(String _data) {
 		String encodedData = _data;
 		try {
 			encodedData = URLEncoder.encode(encodedData, "UTF-8");
@@ -639,6 +715,28 @@ public class AdminRestService {
 			logger.warning("encoding of query string failed!");
 		}
 		return encodedData;
+	}
+
+	/**
+	 * converts a date string into a date object.
+	 * 
+	 * @param job
+	 * @param itemName
+	 */
+	private void convertDate(ItemCollection job, String itemName) {
+		// convert date values
+		String sDate = job.getItemValueString(itemName);
+
+		if (!sDate.isEmpty()) {
+			// convert... 2018-12-24  
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+			try {
+				Date dat = formatter.parse(sDate);
+				job.replaceItemValue(itemName, dat);
+			} catch (ParseException e) {
+				// failed to convert
+			}
+		}
 	}
 
 }

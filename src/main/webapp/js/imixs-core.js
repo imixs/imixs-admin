@@ -81,8 +81,7 @@ IMIXS.org.imixs.core = (function() {
 		    }
 		 
 			// returns the first text value of an item
-			this.getItem = function(fieldName) {
-				
+			this.getItem = function(fieldName) {				
 				var item=this[fieldName];
 				if (item && item[0]) {
 					return item[0].text;
@@ -95,29 +94,28 @@ IMIXS.org.imixs.core = (function() {
 				var itemNameList = new Array();
 				var self=this;
 				for(var k in self) {
-					var item=self[k];
-					if ($.isArray(item)) {
-					   itemNameList.push(k);
+					if (k && k!='') {
+						var item=self[k];
+						if ($.isArray(item)) {
+						   itemNameList.push(k);
+						}
 					}
-				}
-				
+				}				
 				return itemNameList;
 			}
 			
 			
 			/**
 			 * This method is used to return the value array of a name item inside
-			 * the current ItemCollection. If no item with this name exists the
+			 * the current Document. If no item with this name exists the
 			 * method adds a new element with this name.
 			 */
 			this.getItemList = function(fieldName) {
 				var valueList = new Array();
 				var items=this[fieldName];
 				if (items && items[0]) {
-					
 					$.each(items, function(index, _item) {
 						valueList.push( _item['text']);
-						
 					});
 				}
 				return valueList;

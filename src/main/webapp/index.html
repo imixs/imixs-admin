@@ -18,13 +18,8 @@
 
 <!-- jquery 
     ================================================== -->
-<link rel="stylesheet" href="js/jquery-ui/jquery-ui.min.css" />
-
-
-
 
 <script type="text/javascript" src="js/jquery/jquery-2.1.4.min.js"></script>
-<script type="text/javascript" src="js/jquery-ui/jquery-ui.min.js"></script>
 
 
 
@@ -81,13 +76,13 @@
 				<ul>
 
 					<li class="nav-item" v-on:click="showSection('bulkupdate')"><span
-							class="typcn typcn-edit"></span><label>Update</label></li>
+						class="typcn typcn-edit"></span><label>Update</label></li>
 
 					<li class="nav-item" v-on:click="showSection('bulkdelete')"><span
-							class="typcn typcn-trash"></span><label>Delete</label></li>
+						class="typcn typcn-trash"></span><label>Delete</label></li>
 
-					<li class="nav-item"><span
-							class="typcn typcn-spanner"></span><label>Admin-P</label></li>
+					<li class="nav-item" v-on:click="showSection('adminp')"><span
+						class="typcn typcn-spanner"></span><label>Admin-P</label></li>
 
 					<li class="nav-item" v-on:click="showSection('index')"><span
 						class="typcn typcn-map"></span><label>Index</label></li>
@@ -96,10 +91,10 @@
 				<ul>
 
 					<li class="nav-item" v-on:click="showSection('export')"><span
-							class="typcn typcn-upload-outline"></span><label>Export</label></li>
+						class="typcn typcn-upload-outline"></span><label>Export</label></li>
 
 					<li class="nav-item" v-on:click="showSection('import')"><span
-							class="typcn typcn-download-outline"></span><label>Import</label></li>
+						class="typcn typcn-download-outline"></span><label>Import</label></li>
 
 				</ul>
 
@@ -326,7 +321,7 @@
 								<tr>
 									<td>{{ item }}</td>
 									<td>{{ document[item][0]['xsi:type'] }}</td>
-									<td>{{ document[item][0].text }}</td>
+									<td>{{ document.getItemList(item) }}</td>
 
 								</tr>
 							</tbody>
@@ -481,7 +476,7 @@
 						<h2>
 							<span class="typcn typcn-trash"></span> Bulk Delete
 						</h2>
-						
+
 						<button v-on:click="bulkDelete();">Delete</button>
 					</div>
 				</div>
@@ -510,8 +505,8 @@
 								</dd>
 							</dl>
 						</div>
-					
-						
+
+
 						<button v-on:click="dataExport();">Export</button>
 					</div>
 				</div>
@@ -532,8 +527,8 @@
 								</dd>
 							</dl>
 						</div>
-					
-						
+
+
 						<button v-on:click="dataImport();">Import</button>
 					</div>
 				</div>
@@ -543,77 +538,255 @@
 
 
 
-				<!-- Index -->
-				<div id="index" class="form-section">
+
+
+				<!-- AdminP -->
+				<div id="adminp" class="form-section">
 					<div class="card">
 						<h2>
-							<span class="typcn typcn-map"></span> Index Schema
+							<span class="typcn typcn-spanner"></span> Admin-P
 						</h2>
-						<table style="width: 100%; margin-top: 10px;">
-							<thead>
-								<tr>
-									<th style="width: 170px;">Index Field Group</th>
-									<th>Items</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>index.fields</td>
-									<td>{{index_fields}}</td>
-								</tr>
-								<tr>
-									<td>index.fields.analyze</td>
-									<td>{{index_fields_analyze}}</td>
-								</tr>
-								<tr>
-									<td>index.fields.noanalyze</td>
-									<td>{{index_fields_noanalyze}}</td>
-								</tr>
-								<tr>
-									<td>index.fields.store</td>
-									<td>{{index_fields_store}}</td>
-								</tr>
-							</tbody>
-						</table>
+
+
+						<div class="imixs-form-section-3">
+							<dl>
+								<dt>Job:</dt>
+								<dd>
+									<select name="adminpjob" v-model="adminp_job">
+										<option value="JOB_REBUILD_INDEX">Rebuild Index</option>
+										<option value="RENAME_USER">Rename User</option>
+										<option value="UPGRADE">Upgrade</option>
+									</select>
+								</dd>
+							</dl>
+
+						</div>
+						<div class="imixs-form-section-3">
+							<dl>
+								<dt>Filter by document type:</dt>
+								<dd>
+									<textarea placeholder="comma separated list of document types"
+										name="typelist" v-model="adminp_filter"></textarea>
+								</dd>
+							</dl>
+
+							<dl>
+								<dt>Filter by creation date:</dt>
+								<dd>
+									<input type="text" class="imixs-date" placeholder="yyyy-mm-dd"
+										id="adminp_from" v-model="adminp_from"> - <input type="text"
+										class="imixs-date" placeholder="yyyy-mm-dd" id="adminp_to" v-model="adminp_to">
+								</dd>
+							</dl>
+
+
+							<dl>
+								<dt>Blocksize / Interval in minutes:</dt>
+								<dd>
+									<input type="text" placeholder="500" name="numblocksize"
+										style="width: 5em;" v-model="adminp_blocksize"> / <input
+										type="text" placeholder="1" name="numinterval"
+										style="width: 5em;" v-model="adminp_interval">
+								</dd>
+							</dl>
+						</div>
+
+
 
 
 					</div>
+
+
+					<div class="card" v-show="adminp_job == 'JOB_REBUILD_INDEX'">
+						<h2>
+							<span class="typcn typcn-arrow-repeat-outline"></span> Rebuild
+							Index
+						</h2>
+						<p>This job rebuilds the Lucene fulltext-index. Rebuilding the
+							index may be necessary after a database restore, or in cases
+							where the index has been deleted or corrupted. Rebuilding the
+							index does not change any data. You can set optional filter
+							criteria to limit the selection of the affected data.</p>
+						<button v-on:click="adminP();">Start Job</button>
+					</div>
+
+					<div class="card" v-show="adminp_job == 'RENAME_USER'">
+						<h2>
+							<span class="typcn typcn-group-outline"></span> Rename User
+						</h2>
+						<p>This job updates the access control list (ACL) and
+							permissions data of existing workitems. Data will only be changed
+							in cases the id "From User-ID" is part of an workitem. You can
+							set optional filter criteria to limit the selection of the
+							affected data.</p>
+						<div class="imixs-form-section-3">
+							<dl>
+								<dt>From User-ID:</dt>
+								<dd>
+									<input type="text" placeholder="enter userid"
+										v-model="adminp_userfrom">
+								</dd>
+							</dl>
+							<dl>
+								<dt>To User-ID:</dt>
+								<dd>
+									<input type="text" placeholder="enter userid"
+										v-model="adminp_userto">
+								</dd>
+							</dl>
+
+							<dl>
+								<dt>Full Replace:</dt>
+								<dd>
+									<input type="checkbox" id="renamefullreplace"
+										v-model="adminp_userreplace" value="true">YES
+								</dd>
+							</dl>
+						</div>
+						<button v-on:click="adminP();">Start Job</button>
+					</div>
+
+					<div class="card" v-show="adminp_job == 'UPGRADE'">
+						<h2>
+							<span class="typcn typcn-arrow-up-outline"></span> Upgrade
+						</h2>
+						<p>This job upgrades the workflow data of existing workitems.
+							Data will only be changed in cases a workitem was not processed
+							by the current version of the Imixs-Workfow engine used in this
+							instance. You can set optional filter criteria to limit the
+							selection of the affected data.</p>
+						<button v-on:click="adminP();">Start Job</button>
+					</div>
+
+
+
+					<!-- Running Jobs -->
+					<div class="card">
+						<h2>
+							<span class="typcn typcn-world-outline"></span> Jobs
+							<span
+								class="pull-right"> <a><span
+									class="typcn typcn-arrow-sync" v-on:click="loadAdminpJobs()"></span></a>
+								 
+							</span>
+						</h2>
+						<table id="imixsdatatable" class="imixsdatatable"
+							style="width: 100%;">
+							<thead>
+								<tr>
+									<th>UUID</th>
+									<th>Job</th>
+									<th>Created</th>
+									<th>Modified</th>
+									<th>Status</th>
+									<th>Processed</th>
+									<th>Updates</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody v-for="document in adminp_jobs">
+								<tr>
+									<td><a href="#"
+										v-on:click="openDocument($event, document)">{{
+											document.$uniqueid[0].text }}</a></td>
+									<td>{{ document.getItem('job')}}</td>
+									<td>{{ document.getItem('$created')}}</td>
+									<td>{{ document.$modified[0].text}}</td>
+									<td>{{ document.getItem('$workflowstatus')}}</td>
+									<td>{{ document.getItem('numprocessed') }}</td>
+									<td>{{ document.getItem('numupdates') }}</td>
+									<td><a><span
+											class="typcn typcn-trash pull-right error"
+											v-on:click="deleteAdminPJob($event,document)"></span></a></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+
 				</div>
+			</div>
 
 
 
-				<!-- Message -->
-				<div class="card message" v-show="message != ''">
 
-					<p><span class="typcn typcn-info-large"></span> {{ message }}</p>
+
+
+			<!-- Index -->
+			<div id="index" class="form-section">
+				<div class="card">
+					<h2>
+						<span class="typcn typcn-map"></span> Index Schema
+					</h2>
+					<table style="width: 100%; margin-top: 10px;">
+						<thead>
+							<tr>
+								<th style="width: 170px;">Index Field Group</th>
+								<th>Items</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>index.fields</td>
+								<td>{{index_fields}}</td>
+							</tr>
+							<tr>
+								<td>index.fields.analyze</td>
+								<td>{{index_fields_analyze}}</td>
+							</tr>
+							<tr>
+								<td>index.fields.noanalyze</td>
+								<td>{{index_fields_noanalyze}}</td>
+							</tr>
+							<tr>
+								<td>index.fields.store</td>
+								<td>{{index_fields_store}}</td>
+							</tr>
+						</tbody>
+					</table>
+
 
 				</div>
+			</div>
 
 
-				<!-- failure -->
-				<div class="card error" v-show="error != ''">
 
-					<p><span class="typcn typcn-info"></span> {{ error}}</p>
+			<!-- Message -->
+			<div class="card message" v-show="message != ''">
 
-				</div>
-
-
-				
-				<div class="imixs-wait">
-					<!-- empty -->
-				</div>
-
+				<p>
+					<span class="typcn typcn-info-large"></span> {{ message }}
+				</p>
 
 			</div>
 
-			<!-- FOOTER -->
-			<div id="imixs-footer">www.imixs.org</div>
 
+			<!-- failure -->
+			<div class="card error" v-show="error != ''">
+
+				<p>
+					<span class="typcn typcn-info"></span> {{ error}}
+				</p>
+
+			</div>
+
+
+
+			<div class="imixs-wait">
+				<!-- empty -->
+			</div>
 
 
 		</div>
+
+		<!-- FOOTER -->
+		<div id="imixs-footer">www.imixs.org</div>
+
+
+
 	</div>
-	
+	</div>
+
 </body>
 
 </html>
