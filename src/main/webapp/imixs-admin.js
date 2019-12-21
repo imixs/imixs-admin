@@ -614,6 +614,13 @@ $(document).ready(function() {
 	    }
 	});
 	
+	
+	$("#token-input, #password-input").on('keyup', function (e) {
+	    if (e.keyCode === 13) {
+	        app.apiConnect();
+	    }
+	});
+	
 	// show connect
 	app.showSection('connect');
 	

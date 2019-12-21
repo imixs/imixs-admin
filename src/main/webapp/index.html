@@ -166,21 +166,21 @@
 								<dt>Authentication Method:</dt>
 								<dd>
 									<select name="authentication" v-model="auth_method">
-										<option value="token">Token</option>
-										<option value="basic" selected="selected">Basic</option>
-										<option value="form">Form</option>
+										<option value="JWT">Token</option>
+										<option value="BASIC" selected="selected">Basic</option>
+										<option value="FORM">Form</option>
 									</select>
 								</dd>
 							</dl>
-							<dl v-show="auth_method == 'token'">
+							<dl v-show="auth_method == 'JWT'">
 								<dt>Token:</dt>
 								<dd>
-									<input type="password" autocomplete="token"
+									<input type="password" id="token-input"
 										placeholder="Bearer Token" v-model="auth_secret" name="token">
 								</dd>
 							</dl>
 						</div>
-						<div class="imixs-form-section-2" v-show="auth_method != 'token'">
+						<div class="imixs-form-section-2" v-show="auth_method != 'JWT'">
 							<dl>
 								<dt>UserID:</dt>
 								<dd>
@@ -191,7 +191,7 @@
 							<dl>
 								<dt>Password:</dt>
 								<dd>
-									<input type="password" autocomplete="password"
+									<input type="password" id="password-input"
 										placeholder="enter password" v-model="auth_secret"
 										name="password">
 								</dd>
@@ -574,8 +574,9 @@
 								<dt>Filter by creation date:</dt>
 								<dd>
 									<input type="text" class="imixs-date" placeholder="yyyy-mm-dd"
-										id="adminp_from" v-model="adminp_from"> - <input type="text"
-										class="imixs-date" placeholder="yyyy-mm-dd" id="adminp_to" v-model="adminp_to">
+										id="adminp_from" v-model="adminp_from"> - <input
+										type="text" class="imixs-date" placeholder="yyyy-mm-dd"
+										id="adminp_to" v-model="adminp_to">
 								</dd>
 							</dl>
 
@@ -663,11 +664,10 @@
 					<!-- Running Jobs -->
 					<div class="card">
 						<h2>
-							<span class="typcn typcn-world-outline"></span> Jobs
-							<span
+							<span class="typcn typcn-world-outline"></span> Jobs <span
 								class="pull-right"> <a><span
 									class="typcn typcn-arrow-sync" v-on:click="loadAdminpJobs()"></span></a>
-								 
+
 							</span>
 						</h2>
 						<table id="imixsdatatable" class="imixsdatatable"
@@ -702,89 +702,82 @@
 							</tbody>
 						</table>
 					</div>
+				</div>
 
+
+				<!-- Index -->
+				<div id="index" class="form-section">
+					<div class="card">
+						<h2>
+							<span class="typcn typcn-map"></span> Index Schema
+						</h2>
+						<table style="width: 100%; margin-top: 10px;">
+							<thead>
+								<tr>
+									<th style="width: 170px;">Index Field Group</th>
+									<th>Items</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>index.fields</td>
+									<td>{{index_fields}}</td>
+								</tr>
+								<tr>
+									<td>index.fields.analyze</td>
+									<td>{{index_fields_analyze}}</td>
+								</tr>
+								<tr>
+									<td>index.fields.noanalyze</td>
+									<td>{{index_fields_noanalyze}}</td>
+								</tr>
+								<tr>
+									<td>index.fields.store</td>
+									<td>{{index_fields_store}}</td>
+								</tr>
+							</tbody>
+						</table>
+
+
+					</div>
+				</div>
+
+
+
+				<!-- Message -->
+				<div class="card message" v-show="message != ''">
+
+					<p>
+						<span class="typcn typcn-info-large"></span> {{ message }}
+					</p>
 
 				</div>
-			</div>
 
 
+				<!-- failure -->
+				<div class="card error" v-show="error != ''">
 
-
-
-
-			<!-- Index -->
-			<div id="index" class="form-section">
-				<div class="card">
-					<h2>
-						<span class="typcn typcn-map"></span> Index Schema
-					</h2>
-					<table style="width: 100%; margin-top: 10px;">
-						<thead>
-							<tr>
-								<th style="width: 170px;">Index Field Group</th>
-								<th>Items</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>index.fields</td>
-								<td>{{index_fields}}</td>
-							</tr>
-							<tr>
-								<td>index.fields.analyze</td>
-								<td>{{index_fields_analyze}}</td>
-							</tr>
-							<tr>
-								<td>index.fields.noanalyze</td>
-								<td>{{index_fields_noanalyze}}</td>
-							</tr>
-							<tr>
-								<td>index.fields.store</td>
-								<td>{{index_fields_store}}</td>
-							</tr>
-						</tbody>
-					</table>
-
+					<p>
+						<span class="typcn typcn-info"></span> {{ error}}
+					</p>
 
 				</div>
+			
 			</div>
-
-
-
-			<!-- Message -->
-			<div class="card message" v-show="message != ''">
-
-				<p>
-					<span class="typcn typcn-info-large"></span> {{ message }}
-				</p>
-
-			</div>
-
-
-			<!-- failure -->
-			<div class="card error" v-show="error != ''">
-
-				<p>
-					<span class="typcn typcn-info"></span> {{ error}}
-				</p>
-
-			</div>
-
-
 
 			<div class="imixs-wait">
 				<!-- empty -->
 			</div>
 
 
+
+
+			<!-- FOOTER -->
+			<div id="imixs-footer">www.imixs.org</div>
+
+
+
 		</div>
-
-		<!-- FOOTER -->
-		<div id="imixs-footer">www.imixs.org</div>
-
-
-
-	</div>
 	</div>
 
 </body>
