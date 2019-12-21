@@ -228,7 +228,8 @@ $(document).ready(function() {
                     	workitem=imixsXML.xml2document(response);		                    	
                     	app.message=workitem.getItem('message');
                     	$("#imixs-content").removeClass("loading");
-                    	app.search();
+                    	//app.search();
+                    	app.search_result=new Array();
                     },
                     error : function (xhr, ajaxOptions, thrownError){
                     	$("#imixs-content").removeClass("loading");
@@ -277,7 +278,8 @@ $(document).ready(function() {
 	                    	workitem=imixsXML.xml2document(response);		                    	
 	                    	app.message=workitem.getItem('message');	           
 	                    	$("#imixs-content").removeClass("loading");
-	                    	app.search();
+	                    	//app.search();
+	                    	app.search_result=new Array();
 	                    },
 	                    error : function (xhr, ajaxOptions, thrownError){
 	                    	$("#imixs-content").removeClass("loading");
