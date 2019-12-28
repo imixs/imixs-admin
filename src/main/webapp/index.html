@@ -84,6 +84,9 @@
 					<li class="nav-item" v-on:click="showSection('adminp')"><span
 						class="typcn typcn-spanner"></span><label>Admin-P</label></li>
 
+					<li class="nav-item" v-on:click="loadModels()"><span
+						class="typcn typcn-flow-merge"></span><label>Models</label></li>
+						
 					<li class="nav-item" v-on:click="showSection('index')"><span
 						class="typcn typcn-map"></span><label>Index</label></li>
 				</ul>
@@ -107,6 +110,7 @@
 		<div class="content">
 
 			<div class="header">
+				<from>
 
 
 				<div class="row">
@@ -138,17 +142,20 @@
 						</div>
 					</div>
 				</div>
+				
+				</from>
 
 			</div>
 
 
 			<div id="imixs-content" class="main-container">
+				<form>
 
 
 				<!--  CONNECT Part -->
 				<div id="connect" class="form-section">
 					<div class="card">
-						<h2>
+						<h2> 
 							<span class="typcn typcn-link-outline"></span> Connection
 						</h2>
 						<p>Connect to an Imixs-Workflow API endpoint.</p>
@@ -197,7 +204,7 @@
 								</dd>
 							</dl>
 						</div>
-						<button v-on:click="apiConnect();">Connect</button>
+						<button type="button" v-on:click="apiConnect();">Connect</button>
 					</div>
 
 
@@ -250,7 +257,7 @@
 
 						</div>
 
-						<button v-on:click="search();">Search</button>
+						<button type="button" v-on:click="search();">Search</button>
 					</div>
 
 					<!-- Search Result -->
@@ -424,7 +431,7 @@
 								</dd>
 							</dl>
 						</div>
-						<button v-on:click="bulkUpdate();">Start Update</button>
+						<button type="button" v-on:click="bulkUpdate();">Start Update</button>
 					</div>
 				</div>
 
@@ -477,7 +484,7 @@
 							<span class="typcn typcn-trash"></span> Bulk Delete
 						</h2>
 
-						<button v-on:click="bulkDelete();">Delete</button>
+						<button type="button" v-on:click="bulkDelete();">Delete</button>
 					</div>
 				</div>
 
@@ -507,7 +514,7 @@
 						</div>
 
 
-						<button v-on:click="dataExport();">Export</button>
+						<button type="button" v-on:click="dataExport();">Export</button>
 					</div>
 				</div>
 
@@ -529,7 +536,7 @@
 						</div>
 
 
-						<button v-on:click="dataImport();">Import</button>
+						<button type="button" v-on:click="dataImport();">Import</button>
 					</div>
 				</div>
 
@@ -608,7 +615,7 @@
 							where the index has been deleted or corrupted. Rebuilding the
 							index does not change any data. You can set optional filter
 							criteria to limit the selection of the affected data.</p>
-						<button v-on:click="adminP();">Start Job</button>
+						<button type="button" v-on:click="adminP();">Start Job</button>
 					</div>
 
 					<div class="card" v-show="adminp_job == 'RENAME_USER'">
@@ -644,7 +651,7 @@
 								</dd>
 							</dl>
 						</div>
-						<button v-on:click="adminP();">Start Job</button>
+						<button type="button" v-on:click="adminP();">Start Job</button>
 					</div>
 
 					<div class="card" v-show="adminp_job == 'UPGRADE'">
@@ -656,7 +663,7 @@
 							by the current version of the Imixs-Workfow engine used in this
 							instance. You can set optional filter criteria to limit the
 							selection of the affected data.</p>
-						<button v-on:click="adminP();">Start Job</button>
+						<button type="button" v-on:click="adminP();">Start Job</button>
 					</div>
 
 
@@ -741,6 +748,62 @@
 
 					</div>
 				</div>
+				
+				
+				
+				
+				
+				<!-- Models -->
+				<div id="models" class="form-section">
+					<div class="card">
+						<h2>
+							<span class="typcn typcn-flow-merge"></span> Models
+						</h2>
+						<table id="imixsdatatable" class="imixsdatatable"
+							style="width: 100%;">
+							<thead>
+								<tr>
+									<th>Version</th>
+									<th>Created</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody v-for="document in models">
+								<tr>
+									
+									<td>{{ document.getItem('txtname')}}</td>
+									<td>{{ document.getItem('$created')}}</td>
+									<td><a><span
+											class="typcn typcn-trash pull-right error"
+											v-on:click="deleteModel($event,document.getItem('txtname'))"></span></a></td>
+								</tr>
+							</tbody>
+						</table>
+						
+						
+
+					</div>
+					
+					
+					<div class="card">
+						<h2>
+							<span class="typcn typcn-cloud-storage-outline"></span> Upload
+						</h2>
+						<div id="model-upload">
+								
+									
+									
+							<input id="model-input" type="file" name="files[]"  multiple />
+							
+								<div id="model-file-list-display"></div>
+								<button type="button" v-on:click="uploadModel();">Upload</button>
+								<button type="button" v-on:click="cancelUploadModel();">Cancel</button>
+						
+						</div>
+						
+						
+					</div>
+				</div>
 
 
 
@@ -762,7 +825,7 @@
 					</p>
 
 				</div>
-			
+			</form>
 			</div>
 
 			<div class="imixs-wait">

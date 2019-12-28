@@ -32,6 +32,8 @@ $(document).ready(function() {
 		sort_order:"DESC",
 		search_result: [],
 		adminp_jobs: [],
+		models: [],
+		models_upload: [],
 	    document: new imixs.ImixsDocument(),
 	    update_fieldname:'',
 	    update_fieldtype:'',
@@ -571,7 +573,113 @@ $(document).ready(function() {
 		                    }
 		                });
 		     },
-		    
+		     
+		     
+		     // Delete a single document
+		     deleteModel: function ( event, version) {
+		    	 if (!confirm('Are you sure?\n\nDelete Model Version: \n\n' + version)) {
+						return false;
+					}
+			    	app.message='';
+			    	app.error='';
+
+					// delete...
+		    	    var requestURL='/api/model/'+version;
+			    	$("#imixs-content").addClass("loading");
+		            	$.ajax({		            		
+		                    url: requestURL,
+		                    type: 'DELETE',
+		                    beforeSend: function (xhr) {
+		                        xhr.setRequestHeader('Authorization', app.token);
+		                    },
+		                    contentType: 'application/xml',
+		                    success: function (response) {
+		                    	app.connection_status=200;
+		                    	app.loadModels();
+		                    	
+		                    },
+		                    error : function (xhr, ajaxOptions, thrownError){
+		                    	$("#imixs-content").removeClass("loading");
+		                    	app.connection_status=xhr.status;
+		                    	app.output=xhr.statusText;
+		                        console.log(xhr.status);          
+		                        console.log(thrownError);
+		                    }
+		                });
+		     },
+		     
+		     
+		     
+		     // upload one or many model files 
+	   		 uploadModel: function () {
+	   			if (app.token=='') {
+	   				return;
+	   			}
+	   			
+	   	    	app.message='';
+	   	    	app.error='';
+	   			
+	   			//var requestURL='/api/model/bpmn';
+	   			var requestURL='/fileupload';
+	   	    	
+	   	    	$("#imixs-content").addClass("loading");
+	   	    	var uploaderForm = new FormData(); // Create new FormData
+	   	    	
+	   	    	$.each(app.models_upload, function (index, file) {		
+	   	    		uploaderForm.append("file", file);
+	   	    	});
+	   	    	
+	   	    //	var file=app.models_upload[0];
+	   	    //	uploaderForm.append("file", file); // append the next file for upload
+		          //  uploaderForm.append('description', 'foo bar');
+		            //ajax.send(uploaderForm);
+		            
+	   	    	
+	               	$.ajax({		            		
+	                       url: requestURL,
+	                       type: 'POST',
+	                       beforeSend: function (xhr) {
+	                           xhr.setRequestHeader('Authorization', app.token);
+	                       },
+	                       data: uploaderForm,
+	                       dataType: 'xml',
+	                       mimeType: 'multipart/form-data', // this too
+	                       //contentType: 'multipart/form-data',
+	                       contentType: false,
+	                       cache: false,
+	                       processData: false,
+	                       
+//	                       data: file,
+//	                       dataType: 'xml',
+//	                       contentType: 'application/xml',
+	                       
+	                       success: function (response) {
+	                         app.connection_status=200;		           
+	                         
+	                       
+	                       },
+	                       error : function (xhr, ajaxOptions, thrownError){
+	                       	
+	                       	 app.connection_status=xhr.status;
+	                       	 app.output=xhr.statusText;
+	                         console.log(xhr.status);          
+	                         console.log(thrownError);
+	                       }
+	                   });
+	   	    	
+	   	    	 $("#imixs-content").removeClass("loading");
+	   	    	 app.loadModels();
+	            },	
+	               
+	               
+	               // upload model
+	  	   		 cancelUploadModel: function () {
+	  	   			 app.models_upload=[];
+	  	   			 $('#model-file-list-display').empty();
+	  	   			 $("#model-input").val('');
+	  	   		 },
+	               
+	               
 		    // invalidate token
 		    logout: function (event) {
 		    	app.workitem=null;
@@ -584,9 +692,44 @@ $(document).ready(function() {
 		    },
 		    
 		    
-		    // method to simulate click on cacel ($event=90)
-		    submitCancel: function (event) {
-		    	alert('cancel');
+		    // method to simulate click on cancel ($event=90)
+		    loadModels: function () {
+		    	
+		    	app.showSection('models');
+		    	
+		    	app.message='';
+		    	app.error='';
+		    	var requestData=new imixs.ImixsDocument();
+       	    	requestData.setItem('api',app.api);
+       	    	// convert to xml
+       	    	var xmlData = imixsXML.json2xml(requestData);
+				// delete...
+	    	    var requestURL='/api/model';
+		    	$("#imixs-content").addClass("loading");
+			    	$.ajax({		            		
+	   	                url: requestURL,
+	   	                type: 'POST',
+	   	                beforeSend: function (xhr) {
+	   	                    xhr.setRequestHeader('Authorization', app.token);
+	   	                },
+	   	                data: xmlData,
+	   	                dataType: 'xml',
+	   	                contentType: 'application/xml',
+	   	                success: function (response) {
+	   	                	app.connection_status=200;
+	   	                	// convert rest response to a document instance
+	   	                	//var liste=imixsXML.xml2collection(response);
+	   	                	app.models=imixsXML.xml2collection(response);
+	   	                	$("#imixs-content").removeClass("loading");
+	   	                },
+	   	                error : function (xhr, ajaxOptions, thrownError){
+	   	                	$("#imixs-content").removeClass("loading");
+	   	                	app.connection_status=xhr.status;
+	   	                    app.error=xhr.status+ " " + thrownError;
+	   	                }
+	   	            });
+		    	
+		    	
 		    },
 		    
 		    
@@ -622,6 +765,24 @@ $(document).ready(function() {
 	        app.apiConnect();
 	    }
 	});
+	
+	
+	$("#model-input").on('change',function (e) {
+		app.models_upload=[];
+		var fileListDisplay = $('#model-file-list-display');
+		fileListDisplay.empty();
+		$.each(this.files, function (index, file) {			
+			if (file.name.endsWith('.bpmn')) {
+				app.models_upload.push(file);
+				$(fileListDisplay).append( "<p>" + (index+1) + ". " + file.name +"</p>");
+			} else {
+				$(fileListDisplay).append( "<p style='color:red;'>" + (index+1) + ". " + file.name + " - invalid file type!</p>" );
+			}
+			
+		});
+	});
+	
+
 	
 	// show connect
 	app.showSection('connect');

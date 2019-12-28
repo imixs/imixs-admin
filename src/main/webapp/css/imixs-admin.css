@@ -236,7 +236,7 @@ input[type="button"]:active, input[type="submit"]:active, a.button:active,
 }
 
 .card {
-	min-height: 200px;
+	min-height: 160px;
 	padding: 20px;
 	background-color: #ffffff;
 	border-radius: 5px;

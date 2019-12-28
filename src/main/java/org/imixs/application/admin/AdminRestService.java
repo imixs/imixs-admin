@@ -27,7 +27,6 @@
 
 package org.imixs.application.admin;
 
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.ParseException;
@@ -39,9 +38,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -60,9 +56,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.imixs.jwt.JWTException;
-import org.imixs.melman.BasicAuthenticator;
-import org.imixs.melman.FormAuthenticator;
-import org.imixs.melman.JWTAuthenticator;
+import org.imixs.melman.ModelClient;
 import org.imixs.melman.RestAPIException;
 import org.imixs.melman.WorkflowClient;
 import org.imixs.workflow.ItemCollection;
@@ -80,10 +74,11 @@ import org.imixs.workflow.xml.XMLDocumentAdapter;
  * 
  */
 @Path("/")
-@Consumes({ MediaType.APPLICATION_XML, MediaType.TEXT_XML })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.MULTIPART_FORM_DATA })
 @Produces({ MediaType.APPLICATION_XML, MediaType.TEXT_XML })
 public class AdminRestService {
 
+	
 	private static Logger logger = Logger.getLogger(AdminRestService.class.getName());
 
 	@Context
@@ -91,6 +86,9 @@ public class AdminRestService {
 
 	@Inject
 	TokenService tokenService;
+	
+	@Inject
+	RestClientHandler restClientHandler;
 
 	/**
 	 * The connect resource generates an access-token for the given api endpoint and
@@ -106,13 +104,8 @@ public class AdminRestService {
 		if (debug) {
 			logger.fine("putXMLWorkitem @PUT /workitem  delegate to POST....");
 		}
-
-		logger.info("connect ok......");
-
 		ItemCollection connectionData = XMLDocumentAdapter.putDocument(xmlBusinessEvent);
-
-		logger.info("api=" + connectionData.getItemValueString("api"));
-
+		
 		String token;
 		try {
 			token = tokenService.generateAccessToken(connectionData.getItemValueString("api"),
@@ -132,9 +125,10 @@ public class AdminRestService {
 			return Response.status(Response.Status.NOT_ACCEPTABLE).build();
 		}
 		workitem.setItemValue("token", token);
-
-		logger.info("Token=" + token);
-
+		if (debug) {
+			logger.finest("......token=" + token);
+		}
+		logger.info("conntected api endpoint: " + connectionData.getItemValueString("api"));
 		return Response.ok(XMLDocumentAdapter.getDocument(workitem)).build();
 
 	}
@@ -168,7 +162,7 @@ public class AdminRestService {
 			token = token.substring(7);
 		}
 
-		WorkflowClient client = createWorkflowClient(token);
+		WorkflowClient client = restClientHandler.createWorkflowClient(servletRequest);
 		if (client != null) {
 			XMLDataCollection result;
 			try {
@@ -226,7 +220,7 @@ public class AdminRestService {
 			token = token.substring(7);
 		}
 
-		WorkflowClient client = createWorkflowClient(token);
+		WorkflowClient client = restClientHandler.createWorkflowClient(servletRequest);
 		if (client != null) {
 			List<ItemCollection> documents = null;
 			try {
@@ -338,7 +332,7 @@ public class AdminRestService {
 			// convert date values
 			convertDate(job, "datfrom");
 			convertDate(job, "datto");
-			WorkflowClient client = createWorkflowClient(token);
+			WorkflowClient client = restClientHandler.createWorkflowClient(servletRequest);
 			client.createAdminPJob(job);
 			
 			return Response.status(Response.Status.OK).build();
@@ -353,7 +347,7 @@ public class AdminRestService {
 	
 	
 	/**
-	 * The update resource starts a bulk update
+	 * The method loads all adminP jobs
 	 * 
 	 * @param workitem
 	 * @return
@@ -372,7 +366,7 @@ public class AdminRestService {
 		}
 		try {
 			
-			WorkflowClient client = createWorkflowClient(token);
+			WorkflowClient client = restClientHandler.createWorkflowClient(servletRequest);
 			XMLDataCollection result = client.getCustomResourceXML("/adminp/jobs");
 			
 			return Response
@@ -388,6 +382,8 @@ public class AdminRestService {
 
 	}
 
+	
+	
 	/**
 	 * The resource starts a bulk delete
 	 * 
@@ -415,7 +411,7 @@ public class AdminRestService {
 			token = token.substring(7);
 		}
 
-		WorkflowClient client = createWorkflowClient(token);
+		WorkflowClient client = restClientHandler.createWorkflowClient(servletRequest);
 		if (client != null) {
 			List<ItemCollection> documents = null;
 			try {
@@ -475,7 +471,7 @@ public class AdminRestService {
 			token = token.substring(7);
 		}
 
-		WorkflowClient client = createWorkflowClient(token);
+		WorkflowClient client = restClientHandler.createWorkflowClient(servletRequest);
 		if (client != null) {
 			logger.info("Export=" + query + " path=" + filepath);
 			try {
@@ -515,7 +511,7 @@ public class AdminRestService {
 			token = token.substring(7);
 		}
 
-		WorkflowClient client = createWorkflowClient(token);
+		WorkflowClient client = restClientHandler.createWorkflowClient(servletRequest);
 		if (client != null) {
 			logger.info("Import path=" + filepath);
 			try {
@@ -555,7 +551,7 @@ public class AdminRestService {
 			token = token.substring(7);
 		}
 
-		WorkflowClient client = createWorkflowClient(token);
+		WorkflowClient client = restClientHandler.createWorkflowClient(servletRequest);
 		if (client != null) {
 
 			try {
@@ -591,7 +587,7 @@ public class AdminRestService {
 			token = token.substring(7);
 		}
 
-		WorkflowClient client = createWorkflowClient(token);
+		WorkflowClient client = restClientHandler.createWorkflowClient(servletRequest);
 		if (client != null) {
 
 			try {
@@ -606,6 +602,91 @@ public class AdminRestService {
 		return Response.status(Response.Status.NO_CONTENT).build();
 	}
 
+	
+	
+
+	/**
+	 * The method loads all models
+	 * 
+	 * @param workitem
+	 * @return
+	 */
+	@POST
+	@Path("/model")
+	public Response getModels(XMLDocument xmlBusinessEvent) {
+		boolean debug = logger.isLoggable(Level.FINE);
+		if (debug) {
+			logger.fine("putXMLWorkitem @PUT /model  delegate to POST....");
+		}
+	
+		String token = servletRequest.getHeader("Authorization");
+		if (token.toLowerCase().startsWith("bearer")) {
+			token = token.substring(7);
+		}
+		try {
+			
+			WorkflowClient client = restClientHandler.createWorkflowClient(servletRequest);
+			
+			String query="SELECT document FROM Document AS document WHERE document.type='model'";
+			try {
+				query=URLEncoder.encode(query, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			XMLDataCollection result = client.getCustomResourceXML("documents/jpql/" +query);
+			
+			return Response
+					// Set the status and Put your entity here.
+					.ok(result)
+					// Add the Content-Type header to tell Jersey which format it should marshall
+					// the entity into.
+					.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML).build();
+		} catch (RestAPIException e) {
+			logger.severe("Rest API Error: " + e.getMessage());
+			return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+		}
+	
+	}
+
+	/**
+	 * The method deltes a model by its version
+	 * 
+	 * @param workitem
+	 * @return
+	 */
+	@DELETE
+	@Path("/model/{version}")
+	public Response deleteModel(@PathParam("version") String version) {
+
+		boolean debug = logger.isLoggable(Level.FINE);
+		if (debug) {
+			logger.fine("getDocument @DELETE /model/version delegate to DELETE....");
+		}
+
+		String token = servletRequest.getHeader("Authorization");
+		if (token.toLowerCase().startsWith("bearer")) {
+			token = token.substring(7);
+		}
+
+		ModelClient client = restClientHandler.createModelClient(servletRequest);
+		if (client != null) {
+
+			try {
+				client.deleteModel(version);
+				return Response.status(Response.Status.OK).build();
+			} catch (RestAPIException e) {
+				logger.severe("Rest API Error: " + e.getMessage());
+				return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+			}
+		}
+		// no result
+		return Response.status(Response.Status.NO_CONTENT).build();
+	}
+	
+	
+	
+	
+	
 	/**
 	 * Delegater - read schema configuration from DocumentService
 	 * 
@@ -620,8 +701,7 @@ public class AdminRestService {
 			logger.fine("putXMLWorkitem @PUT /workitem  delegate to POST....");
 		}
 
-		logger.info("ok......");
-		WorkflowClient client = createWorkflowClient(token);
+		WorkflowClient client = restClientHandler.createWorkflowClient(token);
 
 		List<ItemCollection> result = client.getCustomResource("documents/configuration");
 		if (result != null && result.size() > 0) {
@@ -630,78 +710,11 @@ public class AdminRestService {
 		return null;
 	}
 
-	/**
-	 * creates a new Instance of an Imixs DocumentClient.
-	 * <p>
-	 * The authentication method is build from the access token
-	 * 
-	 * @see DefaultAuthenicator
-	 * @return
-	 */
-	private WorkflowClient createWorkflowClient(String _token) {
-		String authMethod = null;
-		String serviceAPI = null;
-		String userid = null;
-		String password = null;
+	
 
-		// 1st try bearer token...
-		String token = _token;
-		if (token == null) {
-			token = servletRequest.getHeader("Authorization");
-			if (token != null && token.startsWith("Bearer ")) {
-				token = token.substring("Bearer ".length());
-			}
-		}
-		try {
-			// extract the token....
-			String payload = tokenService.getPayload(token);
-			// extract payload.....
-			JsonObject payloadObject = null;
-			JsonReader reader = null;
 
-			reader = Json.createReader(new StringReader(payload));
-			payloadObject = reader.readObject();
-
-			authMethod = payloadObject.getString("autmethod");
-			serviceAPI = payloadObject.getString("api");
-			userid = payloadObject.getString("sub");
-			password = payloadObject.getString("secret");
-			String iat = payloadObject.getString("iat");
-
-			// validate iat
-			long lIat = Long.parseLong(iat);
-			long lexpireTime = 3600; // 1h
-			long lNow = new Date().getTime();
-			if ((lIat * 1000) + (lexpireTime * 1000) < lNow) {
-				logger.warning("JWT expired!");
-				return null;
-			}
-
-		} catch (javax.json.stream.JsonParsingException | JWTException j1) {
-			logger.severe("invalid token: " + j1.getMessage());
-			return null;
-		}
-
-		WorkflowClient client = new WorkflowClient(serviceAPI);
-
-		if ("JWT".equalsIgnoreCase(authMethod)) {
-			JWTAuthenticator jwtAuht = new JWTAuthenticator(password);
-			client.registerClientRequestFilter(jwtAuht);
-		}
-
-		if ("FORM".equalsIgnoreCase(authMethod)) {
-			FormAuthenticator formAuth = new FormAuthenticator(serviceAPI, userid, password);
-			client.registerClientRequestFilter(formAuth);
-		}
-
-		if ("BASIC".equalsIgnoreCase(authMethod)) {
-			BasicAuthenticator basicAuth = new BasicAuthenticator(userid, password);
-			client.registerClientRequestFilter(basicAuth);
-		}
-
-		return client;
-	}
-
+	
+	
 	/**
 	 * This method URL-encodes a data string so it can be used by the rest api
 	 * 
@@ -738,5 +751,7 @@ public class AdminRestService {
 			}
 		}
 	}
+	
+	
 
 }
