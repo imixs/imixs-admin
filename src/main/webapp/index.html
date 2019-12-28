@@ -764,14 +764,17 @@
 							<thead>
 								<tr>
 									<th>Version</th>
-									<th>Created</th>
+									<th>Model File</th>
+									<th>Updated</th>
 									<th></th>
 								</tr>
 							</thead>
 							<tbody v-for="document in models">
 								<tr>
-									
-									<td>{{ document.getItem('txtname')}}</td>
+									<td>{{ document.getItem('txtname')}} <a><span
+										class="typcn typcn-link"
+										v-on:click="linkModel($event, document)"></span></a></td>
+									<td>{{ getFileName(document)   }}</td>
 									<td>{{ document.getItem('$created')}}</td>
 									<td><a><span
 											class="typcn typcn-trash pull-right error"
@@ -779,9 +782,6 @@
 								</tr>
 							</tbody>
 						</table>
-						
-						
-
 					</div>
 					
 					
@@ -790,18 +790,11 @@
 							<span class="typcn typcn-cloud-storage-outline"></span> Upload
 						</h2>
 						<div id="model-upload">
-								
-									
-									
 							<input id="model-input" type="file" name="files[]"  multiple />
-							
-								<div id="model-file-list-display"></div>
-								<button type="button" v-on:click="uploadModel();">Upload</button>
-								<button type="button" v-on:click="cancelUploadModel();">Cancel</button>
-						
+							<div id="model-file-list-display"></div>
+							<button type="button" v-on:click="uploadModel();">Upload</button>
+							<button type="button" v-on:click="cancelUploadModel();">Cancel</button>
 						</div>
-						
-						
 					</div>
 				</div>
 
@@ -809,11 +802,9 @@
 
 				<!-- Message -->
 				<div class="card message" v-show="message != ''">
-
 					<p>
 						<span class="typcn typcn-info-large"></span> {{ message }}
 					</p>
-
 				</div>
 
 

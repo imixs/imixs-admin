@@ -22,7 +22,7 @@
 /**
  * This library provides the core module functionality
  * 
- * Version 3.0.0
+ * Version 3.0.1
  */
 
 var IMIXS = IMIXS || {};
@@ -143,13 +143,36 @@ IMIXS.org.imixs.core = (function() {
 				this[fieldName].push(valueObj);
 			}
 		  }
-		};
+		},
+		
+		
+		// helper method to sort document collections by an item name
+		// usage: 
+		//         mycollection.sort(compareDocuments('txtname'));
+		compareDocuments = function (itemName, order = 'asc') {
+			  return function innerSort(a, b) {
+				  
+				const varA = a.getItem(itemName).toUpperCase();
+				const varB = b.getItem(itemName).toUpperCase();
+				  
+			    let comparison = 0;
+			    if (varA > varB) {
+			      comparison = 1;
+			    } else if (varA < varB) {
+			      comparison = -1;
+			    }
+			    return (
+			      (order === 'desc') ? (comparison * -1) : comparison
+			    );
+			  };
+			};
 
 
 	// public API
 	return {
 		hasLocalStorage : hasLocalStorage,
-		ImixsDocument : ImixsDocument
+		ImixsDocument : ImixsDocument,
+		compareDocuments : compareDocuments
 	};
 
 }());

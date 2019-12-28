@@ -52,16 +52,17 @@ $(document).ready(function() {
 	    adminp_userreplace: '',
 	    message: '',
 	    error: '',
-	    },
+	  },
 	    
 	  created () {
 		    console.log("...imixs-admin started");
 	  },
 	 
 	  methods: {
-	    // connect api endpoint
-		apiConnect: function (event) { 
-			
+		  
+		  
+		  // connect api endpoint
+		  apiConnect: function (event) { 			
 			var requestURL='/api/connect';
 			var connectionData=new imixs.ImixsDocument();
 	    	connectionData.setItem('api',app.api);
@@ -88,7 +89,7 @@ $(document).ready(function() {
                     	// convert rest response to a document instance
                     	workitem=imixsXML.xml2document(response);
                     	app.token=workitem.getItem('token');
-                    	console.log("token="+app.token);
+                    	//console.log("token="+app.token);
                     	app.index_fields=workitem.getItemList('lucence.fulltextfieldlist');
                     	app.index_fields_analyze=workitem.getItemList('lucence.indexfieldlistanalyze');
                     	app.index_fields_noanalyze=workitem.getItemList('lucence.indexfieldlistnoanalyze');
@@ -106,13 +107,13 @@ $(document).ready(function() {
                         app.error='Failed to connect: ' + thrownError;
                     }
                 });
-		    },
+		  },
 		    
 		    
 		    
 		    
-		 // search query
-		search: function (event) {
+		  // search query
+		  search: function (event) {
 			if (app.token=='') {
 				return;
 			}
@@ -151,11 +152,11 @@ $(document).ready(function() {
 	                    app.error=xhr.status+ " " + thrownError;
 	                }
 	            });
-	        },
+		  },
 	    
 	    
-         // open a document by its id
-		 openDocument: function (event, doc) {
+		  // open a document by its id
+		  openDocument: function (event, doc) {
 	    	app.message='';
 	    	app.error='';
 		    var requestURL='/api/documents/'+doc.getItem('$uniqueid');
@@ -182,13 +183,13 @@ $(document).ready(function() {
                         console.log(thrownError);
                     }
                 });
-			 },
+		  },
 			    
 			 
 			 
 	    
-	 // Bulk Update
-		bulkUpdate: function (event) {
+		  // Bulk Update
+		  bulkUpdate: function (event) {
 			if (app.token=='') {
 				return;
 			}
@@ -241,10 +242,10 @@ $(document).ready(function() {
                         console.log(thrownError);
                     }
                 });
-            },
+		  },
 	    
-			 // Bulk Delete
-			bulkDelete: function (event) {
+		  // Bulk Delete
+		  bulkDelete: function (event) {
 				if (app.token=='') {
 					return;
 				}
@@ -266,38 +267,38 @@ $(document).ready(function() {
 		    	// convert to xml
 		    	var xmlData = imixsXML.json2xml(requestData);
 		    	$("#imixs-content").addClass("loading");
-	            	$.ajax({		            		
-	                    url: requestURL,
-	                    type: 'POST',
-	                    beforeSend: function (xhr) {
-	                        xhr.setRequestHeader('Authorization', app.token);
-	                    },
-	                    data: xmlData,
-	                    dataType: 'xml',
-	                    contentType: 'application/xml',
-	                    success: function (response) {
-	                    	app.connection_status=200;		           
-	                    	workitem=imixsXML.xml2document(response);		                    	
-	                    	app.message=workitem.getItem('message');	           
-	                    	$("#imixs-content").removeClass("loading");
-	                    	//app.search();
-	                    	app.search_result=new Array();
-	                    },
-	                    error : function (xhr, ajaxOptions, thrownError){
-	                    	$("#imixs-content").removeClass("loading");
-	                    	app.connection_status=xhr.status;
-	                    	app.output=xhr.statusText;
-	                        console.log(xhr.status);          
-	                        console.log(thrownError);
-	                    }
-	                });
-	            },
+            	$.ajax({		            		
+                    url: requestURL,
+                    type: 'POST',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('Authorization', app.token);
+                    },
+                    data: xmlData,
+                    dataType: 'xml',
+                    contentType: 'application/xml',
+                    success: function (response) {
+                    	app.connection_status=200;		           
+                    	workitem=imixsXML.xml2document(response);		                    	
+                    	app.message=workitem.getItem('message');	           
+                    	$("#imixs-content").removeClass("loading");
+                    	//app.search();
+                    	app.search_result=new Array();
+                    },
+                    error : function (xhr, ajaxOptions, thrownError){
+                    	$("#imixs-content").removeClass("loading");
+                    	app.connection_status=xhr.status;
+                    	app.output=xhr.statusText;
+                        console.log(xhr.status);          
+                        console.log(thrownError);
+                    }
+                });
+		  },
 		    		   
 	            
 	            
         
-	     // adminP
-   		 adminP: function () {
+		  // adminP
+		  adminP: function () {
    			if (app.token=='') {
    				return;
    			}
@@ -346,15 +347,15 @@ $(document).ready(function() {
                          console.log(xhr.status);          
                          console.log(thrownError);
                        }
-                   });
-               },	            
+               	});
+		  },	            
 
                
                
                
                
-          	 // search query
-       		loadAdminpJobs: function () {
+		  // search query
+		  loadAdminpJobs: function () {
        			if (app.token=='') {
        				return;
        			}
@@ -388,11 +389,11 @@ $(document).ready(function() {
        	                    app.error=xhr.status+ " " + thrownError;
        	                }
        	            });
-       	        },
+		  	},
        	    
        	    
             
-			 // Import 
+		  	// Import 
 			dataImport: function (e) {
 				if (app.token=='') {
 					return;
@@ -435,7 +436,7 @@ $(document).ready(function() {
 	            },
             
 			            
-	       	   //  Export
+	            //  Export
 				dataExport: function () {
 					if (app.token=='') {
 						return;
@@ -504,6 +505,21 @@ $(document).ready(function() {
 		     // open document via rest api
 		     linkDocument: function ( event, doc) {
 		    	 window.open(app.api + '/documents/'+doc.getItem('$uniqueid'))
+		     },
+		     
+		     // open a bpmn model via rest api
+		     linkModel: function ( event, doc) {
+		    	 window.open(app.api + '/model/' + doc.getItem('txtname') + '/bpmn/')
+		     },
+		     
+		     
+		     // extracts the first filename of an attachment 
+		     getFileName: function (  doc) {
+		    	 var file=doc['$file'];
+		    	 if (file && file[0]) {
+		    		return file[0].item.name;
+		    	 }
+		    	 return '-- undefined --';
 		     },
 		     
 		     
@@ -577,126 +593,94 @@ $(document).ready(function() {
 		     
 		     // Delete a single document
 		     deleteModel: function ( event, version) {
-		    	 if (!confirm('Are you sure?\n\nDelete Model Version: \n\n' + version)) {
+		    	if (!confirm('Are you sure?\n\nDelete Model Version: \n\n' + version)) {
 						return false;
-					}
-			    	app.message='';
-			    	app.error='';
+				}
+		    	app.message='';
+		    	app.error='';
 
-					// delete...
-		    	    var requestURL='/api/model/'+version;
-			    	$("#imixs-content").addClass("loading");
-		            	$.ajax({		            		
-		                    url: requestURL,
-		                    type: 'DELETE',
-		                    beforeSend: function (xhr) {
-		                        xhr.setRequestHeader('Authorization', app.token);
-		                    },
-		                    contentType: 'application/xml',
-		                    success: function (response) {
-		                    	app.connection_status=200;
-		                    	app.loadModels();
-		                    	
-		                    },
-		                    error : function (xhr, ajaxOptions, thrownError){
-		                    	$("#imixs-content").removeClass("loading");
-		                    	app.connection_status=xhr.status;
-		                    	app.output=xhr.statusText;
-		                        console.log(xhr.status);          
-		                        console.log(thrownError);
-		                    }
-		                });
+				// delete...
+	    	    var requestURL='/api/model/'+version;
+		    	$("#imixs-content").addClass("loading");
+	            	$.ajax({		            		
+	                    url: requestURL,
+	                    type: 'DELETE',
+	                    beforeSend: function (xhr) {
+	                        xhr.setRequestHeader('Authorization', app.token);
+	                    },
+	                    contentType: 'application/xml',
+	                    success: function (response) {
+	                    	app.connection_status=200;
+	                    	app.loadModels();
+	                    	
+	                    },
+	                    error : function (xhr, ajaxOptions, thrownError){
+	                    	$("#imixs-content").removeClass("loading");
+	                    	app.connection_status=xhr.status;
+	                    	app.output=xhr.statusText;
+	                        console.log(xhr.status);          
+	                        console.log(thrownError);
+	                    }
+	                });
 		     },
 		     
 		     
 		     
 		     // upload one or many model files 
 	   		 uploadModel: function () {
-	   			if (app.token=='') {
+	   			if (app.token=='' || app.models_upload.length==0) {
 	   				return;
 	   			}
-	   			
 	   	    	app.message='';
 	   	    	app.error='';
-	   			
-	   			//var requestURL='/api/model/bpmn';
-	   			var requestURL='/fileupload';
-	   	    	
+	   			var requestURL='/modelupload';
 	   	    	$("#imixs-content").addClass("loading");
 	   	    	var uploaderForm = new FormData(); // Create new FormData
-	   	    	
 	   	    	$.each(app.models_upload, function (index, file) {		
 	   	    		uploaderForm.append("file", file);
 	   	    	});
-	   	    	
-	   	    //	var file=app.models_upload[0];
-	   	    //	uploaderForm.append("file", file); // append the next file for upload
-		          //  uploaderForm.append('description', 'foo bar');
-		            //ajax.send(uploaderForm);
-		            
-	   	    	
-	               	$.ajax({		            		
-	                       url: requestURL,
-	                       type: 'POST',
-	                       beforeSend: function (xhr) {
-	                           xhr.setRequestHeader('Authorization', app.token);
-	                       },
-	                       data: uploaderForm,
-	                       dataType: 'xml',
-	                       mimeType: 'multipart/form-data', // this too
-	                       //contentType: 'multipart/form-data',
-	                       contentType: false,
-	                       cache: false,
-	                       processData: false,
-	                       
-//	                       data: file,
-//	                       dataType: 'xml',
-//	                       contentType: 'application/xml',
-	                       
-	                       success: function (response) {
-	                         app.connection_status=200;		           
-	                         
-	                       
-	                       },
-	                       error : function (xhr, ajaxOptions, thrownError){
-	                       	
-	                       	 app.connection_status=xhr.status;
-	                       	 app.output=xhr.statusText;
-	                         console.log(xhr.status);          
-	                         console.log(thrownError);
-	                       }
-	                   });
-	   	    	
+               	$.ajax({		            		
+                       url: requestURL,
+                       type: 'POST',
+                       beforeSend: function (xhr) {
+                           xhr.setRequestHeader('Authorization', app.token);
+                       },
+                       data: uploaderForm,
+                       dataType: 'xml',
+                       mimeType: 'multipart/form-data', // this too
+                       contentType: false,
+                       cache: false,
+                       processData: false,
+                       success: function (response) {
+                         app.connection_status=200;		           
+                       	 app.models_upload=[]; 
+                       	 $("#model-input").val('');
+                       	 $('#model-file-list-display').empty();
+        	   	    	 app.loadModels();
+                       },
+                       error : function (xhr, ajaxOptions, thrownError){
+                       	 app.connection_status=xhr.status;
+                       	 app.output=xhr.statusText;
+                         console.log(xhr.status);          
+                         console.log(thrownError);
+                       }
+                 });
 	   	    	 $("#imixs-content").removeClass("loading");
-	   	    	 app.loadModels();
-	            },	
+	   		 },	
 	               
 	               
-	               // upload model
-	  	   		 cancelUploadModel: function () {
+	   		 // cancel upload model
+	   		 cancelUploadModel: function () {
 	  	   			 app.models_upload=[];
 	  	   			 $('#model-file-list-display').empty();
 	  	   			 $("#model-input").val('');
-	  	   		 },
+	   		 },
 	               
-	               
-		    // invalidate token
-		    logout: function (event) {
-		    	app.workitem=null;
-		    	app.token=null;
-		    	app.connection_status=0;
-		    	app.api='';
-		    	app.auth_secret= '';
-		    	app.auth_userid= '';
-		    	app.showSection('connect');
-		    },
 		    
 		    
-		    // method to simulate click on cancel ($event=90)
-		    loadModels: function () {
-		    	
+	   		 // method to simulate click on cancel ($event=90)
+	   		 loadModels: function () {	    	
 		    	app.showSection('models');
-		    	
 		    	app.message='';
 		    	app.error='';
 		    	var requestData=new imixs.ImixsDocument();
@@ -718,8 +702,9 @@ $(document).ready(function() {
 	   	                success: function (response) {
 	   	                	app.connection_status=200;
 	   	                	// convert rest response to a document instance
-	   	                	//var liste=imixsXML.xml2collection(response);
 	   	                	app.models=imixsXML.xml2collection(response);
+	   	                	// sort result by model version
+	   	                	app.models.sort(imixs.compareDocuments('txtname'));
 	   	                	$("#imixs-content").removeClass("loading");
 	   	                },
 	   	                error : function (xhr, ajaxOptions, thrownError){
@@ -728,14 +713,23 @@ $(document).ready(function() {
 	   	                    app.error=xhr.status+ " " + thrownError;
 	   	                }
 	   	            });
-		    	
-		    	
-		    },
-		    
-		    
-
-			// hides all panels and shows only the given form-panel
-			showSection : function (section) {
+	   		 },
+	   		 
+             
+	   		 // log out and invalidate token
+	   		 logout: function (event) {
+		    	app.workitem=null;
+		    	app.token=null;
+		    	app.connection_status=0;
+		    	app.api='';
+		    	app.auth_secret= '';
+		    	app.auth_userid= '';
+		    	app.showSection('connect');
+	   		 },
+	   		 
+	   		 
+	   		 // hides all panels and shows only the given form-panel
+	   		 showSection : function (section) {
 				app.message='';
 		    	app.error='';
 				$('.form-section').hide();
@@ -746,9 +740,7 @@ $(document).ready(function() {
 				if (section=='adminp') {
 					app.loadAdminpJobs();
 				}
-			
 			}
-		    
 	    }
 	  
 	});
@@ -788,8 +780,6 @@ $(document).ready(function() {
 	app.showSection('connect');
 	
 	
-	
-
 	
 });
 
@@ -842,6 +832,7 @@ $(document).ready(function() {
 	}
 	
 	
+
 	
-	
+
 	

@@ -37,7 +37,7 @@ import org.imixs.workflow.FileData;
  * @see org.imixs.application.admin.AdminRestService
  * @author rsoika
  */
-@WebServlet(urlPatterns = { "/fileupload/*" })
+@WebServlet(urlPatterns = { "/modelupload/*" })
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 10, maxRequestSize = 1024 * 1024 * 50)
 public class ModelUploadServlet extends HttpServlet {
 
