@@ -497,6 +497,7 @@ $(document).ready(function() {
 		     
 		     // search from top nav
 		     quickSearch: function () {
+		    	 app.showSection('search');
 		    	 app.query="(" + app.query_short.toLowerCase() + ")";
 		    	 app.search();
 		     },
