@@ -65,7 +65,6 @@ public class ModelUploadServlet extends HttpServlet {
 
 			WebTarget target;
 			try {
-				target = workflowClient.getWebTarget("model/bpmn");
 
 				ModelClient modelClient = restClientHandler.createModelClient(httpRequest);
 				if (modelClient != null) {
@@ -77,9 +76,23 @@ public class ModelUploadServlet extends HttpServlet {
 
 						for (FileData file : fileDataList) {
 							byte[] data = file.getContent();
+							String fileName = file.getName();
+							target = workflowClient.getWebTarget("model/bpmn/" + fileName);
 							InputStream inputStream = new ByteArrayInputStream(data);
 							Response modelapiResponse = target.request(MediaType.APPLICATION_XML)
 									.post(Entity.xml(inputStream));
+
+							// workflow versions before 5.1.6 do not allow to define a model file name.
+							// in this case we receive a 404. As an alternative we post the model without
+							// the filename which was the default behavior before 5.1.6
+							int status = modelapiResponse.getStatus();
+							if (status == Response.Status.NOT_FOUND.getStatusCode()) {
+								logger.info("...redirecting model upload /model/bpmn ");
+								target = workflowClient.getWebTarget("model/bpmn");
+								inputStream = new ByteArrayInputStream(data);
+								modelapiResponse = target.request(MediaType.APPLICATION_XML)
+										.post(Entity.xml(inputStream));
+							}
 						}
 
 					}
