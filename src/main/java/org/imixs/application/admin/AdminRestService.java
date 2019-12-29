@@ -61,6 +61,7 @@ import org.imixs.melman.RestAPIException;
 import org.imixs.melman.WorkflowClient;
 import org.imixs.workflow.ItemCollection;
 import org.imixs.workflow.xml.XMLDataCollection;
+import org.imixs.workflow.xml.XMLDataCollectionAdapter;
 import org.imixs.workflow.xml.XMLDocument;
 import org.imixs.workflow.xml.XMLDocumentAdapter;
 
@@ -78,7 +79,6 @@ import org.imixs.workflow.xml.XMLDocumentAdapter;
 @Produces({ MediaType.APPLICATION_XML, MediaType.TEXT_XML })
 public class AdminRestService {
 
-	
 	private static Logger logger = Logger.getLogger(AdminRestService.class.getName());
 
 	@Context
@@ -86,7 +86,7 @@ public class AdminRestService {
 
 	@Inject
 	TokenService tokenService;
-	
+
 	@Inject
 	RestClientHandler restClientHandler;
 
@@ -105,7 +105,7 @@ public class AdminRestService {
 			logger.fine("putXMLWorkitem @PUT /workitem  delegate to POST....");
 		}
 		ItemCollection connectionData = XMLDocumentAdapter.putDocument(xmlBusinessEvent);
-		
+
 		String token;
 		try {
 			token = tokenService.generateAccessToken(connectionData.getItemValueString("api"),
@@ -166,10 +166,7 @@ public class AdminRestService {
 		if (client != null) {
 			XMLDataCollection result;
 			try {
-				result = client.getCustomResourceXML(
-						"documents/search/" + query + "?pageIndex=" + pageIndex + "&pageSize=" + pageSize + "&sortBy="
-								+ sortBy + "&sortReverse=" + (sortOrder.equalsIgnoreCase("desc")) + "&items=" + items);
-
+				result=queryDocuments(client,query,pageIndex,pageSize, sortBy, sortOrder,items);
 				return Response
 						// Set the status and Put your entity here.
 						.ok(result)
@@ -224,9 +221,8 @@ public class AdminRestService {
 		if (client != null) {
 			List<ItemCollection> documents = null;
 			try {
-				documents = client.getCustomResource(
-						"documents/search/" + query + "?pageIndex=" + pageIndex + "&pageSize=" + pageSize + "&sortBy="
-								+ sortBy + "&sortReverse=" + (sortOrder.equalsIgnoreCase("desc")) + "&items=" + items);
+				XMLDataCollection xmlDocuments = queryDocuments(client,query,pageIndex,pageSize, sortBy, sortOrder,items);
+				documents=XMLDataCollectionAdapter.putDataCollection(xmlDocuments);
 
 				logger.info("..." + documents.size() + " documents selected for bulk update...");
 
@@ -334,7 +330,7 @@ public class AdminRestService {
 			convertDate(job, "datto");
 			WorkflowClient client = restClientHandler.createWorkflowClient(servletRequest);
 			client.createAdminPJob(job);
-			
+
 			return Response.status(Response.Status.OK).build();
 		} catch (RestAPIException e) {
 			logger.severe("Rest API Error: " + e.getMessage());
@@ -342,10 +338,7 @@ public class AdminRestService {
 		}
 
 	}
-	
-	
-	
-	
+
 	/**
 	 * The method loads all adminP jobs
 	 * 
@@ -365,10 +358,10 @@ public class AdminRestService {
 			token = token.substring(7);
 		}
 		try {
-			
+
 			WorkflowClient client = restClientHandler.createWorkflowClient(servletRequest);
 			XMLDataCollection result = client.getCustomResourceXML("/adminp/jobs");
-			
+
 			return Response
 					// Set the status and Put your entity here.
 					.ok(result)
@@ -382,8 +375,6 @@ public class AdminRestService {
 
 	}
 
-	
-	
 	/**
 	 * The resource starts a bulk delete
 	 * 
@@ -410,16 +401,14 @@ public class AdminRestService {
 		if (token.toLowerCase().startsWith("bearer")) {
 			token = token.substring(7);
 		}
-
+		String items = "$uniqueid,$taskid,$modelversion";
 		WorkflowClient client = restClientHandler.createWorkflowClient(servletRequest);
 		if (client != null) {
 			List<ItemCollection> documents = null;
 			try {
-				documents = client.getCustomResource(
-						"documents/search/" + query + "?pageIndex=" + pageIndex + "&pageSize=" + pageSize + "&sortBy="
-								+ sortBy + "&sortReverse=" + (sortOrder.equalsIgnoreCase("desc")));
-
-				logger.info("..." + documents.size() + " documents selected for bulk update...");
+				XMLDataCollection xmlDocuments = queryDocuments(client,query,pageIndex,pageSize, sortBy, sortOrder,items);
+				documents=XMLDataCollectionAdapter.putDataCollection(xmlDocuments);
+				logger.info("..." + documents.size() + " documents selected for bulk delete...");
 				// iterate over all documents....
 				for (ItemCollection document : documents) {
 					client.deleteDocument(document.getUniqueID());
@@ -602,9 +591,6 @@ public class AdminRestService {
 		return Response.status(Response.Status.NO_CONTENT).build();
 	}
 
-	
-	
-
 	/**
 	 * The method loads all models
 	 * 
@@ -618,23 +604,23 @@ public class AdminRestService {
 		if (debug) {
 			logger.fine("putXMLWorkitem @PUT /model  delegate to POST....");
 		}
-	
+
 		String token = servletRequest.getHeader("Authorization");
 		if (token.toLowerCase().startsWith("bearer")) {
 			token = token.substring(7);
 		}
 		try {
-			
+
 			WorkflowClient client = restClientHandler.createWorkflowClient(servletRequest);
-			
-			String query="SELECT document FROM Document AS document WHERE document.type='model'";
+
+			String query = "SELECT document FROM Document AS document WHERE document.type='model'";
 			try {
-				query=URLEncoder.encode(query, "UTF-8");
+				query = URLEncoder.encode(query, "UTF-8");
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
-			XMLDataCollection result = client.getCustomResourceXML("documents/jpql/" +query);
-			
+			XMLDataCollection result = client.getCustomResourceXML("documents/jpql/" + query);
+
 			return Response
 					// Set the status and Put your entity here.
 					.ok(result)
@@ -645,7 +631,7 @@ public class AdminRestService {
 			logger.severe("Rest API Error: " + e.getMessage());
 			return Response.status(Response.Status.NOT_ACCEPTABLE).build();
 		}
-	
+
 	}
 
 	/**
@@ -682,11 +668,40 @@ public class AdminRestService {
 		// no result
 		return Response.status(Response.Status.NO_CONTENT).build();
 	}
+
+	/**
+	 * Helper method to query documents by lucene query language or JPQL.
+	 * 
+	 * @param client
+	 * @param query
+	 * @param pageIndex
+	 * @param pageSize
+	 * @param sortBy
+	 * @param sortOrder
+	 * @param items
+	 * @return
+	 * @throws RestAPIException
+	 */
+	private XMLDataCollection queryDocuments(WorkflowClient client, String query, int pageIndex, int pageSize,
+			String sortBy, String sortOrder, String items) throws RestAPIException {
+		XMLDataCollection result;
 	
+		// in case the search query starts with SELECT than we do a JPQL search
+		if (query.trim().toUpperCase().startsWith("SELECT ")) {
+			// JQPL search
+			result = client.getCustomResourceXML(
+					"documents/jpql/" + query + "?pageIndex=" + pageIndex + "&pageSize=" + pageSize + "&sortBy="
+							+ sortBy + "&sortReverse=" + (sortOrder.equalsIgnoreCase("desc")) + "&items=" + items);
+		} else {
+			// lucene search
+			result = client.getCustomResourceXML(
+					"documents/search/" + query + "?pageIndex=" + pageIndex + "&pageSize=" + pageSize + "&sortBy="
+							+ sortBy + "&sortReverse=" + (sortOrder.equalsIgnoreCase("desc")) + "&items=" + items);
+		}
 	
-	
-	
-	
+		return result;
+	}
+
 	/**
 	 * Delegater - read schema configuration from DocumentService
 	 * 
@@ -710,11 +725,6 @@ public class AdminRestService {
 		return null;
 	}
 
-	
-
-
-	
-	
 	/**
 	 * This method URL-encodes a data string so it can be used by the rest api
 	 * 
@@ -741,7 +751,7 @@ public class AdminRestService {
 		String sDate = job.getItemValueString(itemName);
 
 		if (!sDate.isEmpty()) {
-			// convert... 2018-12-24  
+			// convert... 2018-12-24
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 			try {
 				Date dat = formatter.parse(sDate);
@@ -751,7 +761,5 @@ public class AdminRestService {
 			}
 		}
 	}
-	
-	
 
 }

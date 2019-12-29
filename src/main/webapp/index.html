@@ -216,8 +216,13 @@
 				<!-- Search -->
 				<div id="search" class="form-section">
 					<div class="card">
-						<h2>
+						<h2 style="position: relative;">
 							<span class="typcn typcn-zoom-outline"></span> Search Query
+							
+							<span class="tooltip " style="font-size:1.1rem;position: absolute;bottom: 0;right: 0;">
+							<span class="typcn typcn-lightbulb"></span>
+							<span class="tip">To search for documents you can either use the <i>Lucene Search Query</i> syntax or you can use the <i>Java Persistence Query Language</i>. Find more on www.imixs.org</span>
+							 </span>
 						</h2>
 						<textarea class="search-query" v-model="query" spellcheck="false"></textarea>
 
@@ -412,7 +417,13 @@
 						</div>
 						<div class="imixs-form-section-3">
 							<dl>
-								<dt>New Values:</dt>
+								<dt>New Values: <span class="tooltip pull-right " style="font-size:1.1rem;">
+							<span class="typcn typcn-lightbulb"></span>
+							<span class="tip">Multi-Values can be
+											separated by new lines. If you want to add a single value
+											with multiple lines, than add '\n' at the end of a line. <br />
+											Date values have to be formated as <br />'yyyy-mm-dd'.</span>
+							 </span></dt>
 								<dd>
 									<textarea name="fieldValues" v-model="update_values"></textarea>
 								</dd>
@@ -422,12 +433,6 @@
 								<dd>
 									<input type="checkbox" name="appendValues" value="true"
 										v-model="update_append" /> Append Values <br />
-									<p>
-										<small><strong>Note:</strong> Multi-Values can be
-											separated by new lines. If you want to add a single value
-											with multiple lines, than add '\n' at the end of a line. <br />
-											Date values have to be formated as 'yyyy-mm-dd'. </small>
-									</p>
 								</dd>
 							</dl>
 						</div>
@@ -439,7 +444,7 @@
 
 
 
-				<!-- Bulk Update -->
+				<!-- Bulk Delete -->
 				<div id="bulkdelete" class="form-section">
 					<div class="card">
 						<h2>

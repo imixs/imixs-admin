@@ -735,7 +735,7 @@ $(document).ready(function() {
 		    	app.error='';
 				$('.form-section').hide();
 				$('#'+section).show();
-				$('textarea, input, select','#'+section).first().focus();
+				$('textarea, input[type=text], select','#'+section).first().focus();
 				
 				// load jobs in case of adminp
 				if (section=='adminp') {

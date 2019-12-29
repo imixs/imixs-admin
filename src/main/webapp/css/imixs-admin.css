@@ -235,6 +235,38 @@ input[type="button"]:active, input[type="submit"]:active, a.button:active,
 	color: inherit;
 }
 
+/* tootip */
+span.tooltip:hover {
+    cursor: help;
+    position: relative
+}
+span.tooltip span.tip {
+    display: none
+}
+span.tooltip:hover span.tip {
+    display: block;
+    z-index: 100;
+    left: -285px;
+    width: 300px;
+    position: absolute;
+    top: 16px;
+    padding: 10px;
+    margin: 10px;
+    text-decoration: none;
+	font-size:0.85rem;    
+    background-color: #ffffff;
+	border-radius: 5px;
+	-webkit-box-shadow: 0 0 5px 0 rgba(43, 43, 43, .1), 0 11px 6px -7px
+		rgba(43, 43, 43, .1);
+	box-shadow: 0 0 5px 0 rgba(43, 43, 43, .1), 0 11px 6px -7px
+		rgba(43, 43, 43, .1);
+	border: 1px solid #CCC;
+	margin-bottom: 30px;
+	-webkit-transition: all .3s ease-in-out;
+	transition: all .3s ease-in-out;
+}
+
+
 .card {
 	min-height: 160px;
 	padding: 20px;
