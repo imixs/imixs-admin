@@ -1,5 +1,5 @@
 // Imixs-Admin Core API
-// V 1.0
+// V 1.1
 
 	var imixs = IMIXS.org.imixs.core, 
 				imixsXML = IMIXS.org.imixs.xml;
@@ -59,11 +59,10 @@ $(document).ready(function() {
 	  },
 	 
 	  methods: {
-		  
-		  
+		   
 		  // connect api endpoint
 		  apiConnect: function (event) { 			
-			var requestURL='/api/connect';
+			var requestURL=location.origin + '/api/connect';
 			var connectionData=new imixs.ImixsDocument();
 	    	connectionData.setItem('api',app.api);
 	    	connectionData.setItem('authmethod',app.auth_method);
@@ -119,7 +118,7 @@ $(document).ready(function() {
 			}
 	    	app.message='';
 	    	app.error='';
-			var requestURL='/api/search';
+			var requestURL=location.origin + '/api/search';
 	    	var requestData=new imixs.ImixsDocument();
 	    	requestData.setItem('api',app.api);
 	    	requestData.setItem('query',app.query);
@@ -159,7 +158,7 @@ $(document).ready(function() {
 		  openDocument: function (event, doc) {
 	    	app.message='';
 	    	app.error='';
-		    var requestURL='/api/documents/'+doc.getItem('$uniqueid');
+		    var requestURL=location.origin + '/api/documents/'+doc.getItem('$uniqueid');
 	    	$("#imixs-content").addClass("loading");
             	$.ajax({		            		
                     url: requestURL,
@@ -199,7 +198,7 @@ $(document).ready(function() {
 	    	app.message='';
 	    	app.error='';
 			
-			var requestURL='/api/update';
+			var requestURL=location.origin + '/api/update';
 	    	var requestData=new imixs.ImixsDocument();
 	    	requestData.setItem('api',app.api);
 	    	requestData.setItem('query',app.query);
@@ -255,7 +254,7 @@ $(document).ready(function() {
 		    	app.message='';
 		    	app.error='';
 				
-				var requestURL='/api/delete';
+				var requestURL=location.origin + '/api/delete';
 		    	var requestData=new imixs.ImixsDocument();
 		    	requestData.setItem('api',app.api);
 		    	requestData.setItem('query',app.query);
@@ -308,7 +307,7 @@ $(document).ready(function() {
    	    	app.message='';
    	    	app.error='';
    			
-   			var requestURL='/api/adminp';
+   			var requestURL=location.origin + '/api/adminp';
    	    	var requestData=new imixs.ImixsDocument();
    	    	requestData.setItem('api',app.adminp_job);
    	    	requestData.setItem('numinterval',app.adminp_interval);
@@ -361,7 +360,7 @@ $(document).ready(function() {
        			}
        	    	app.message='';
        	    	app.error='';
-       			var requestURL='/api/jobs';
+       			var requestURL=location.origin + '/api/jobs';
        	    	var requestData=new imixs.ImixsDocument();
        	    	requestData.setItem('api',app.api);
        	    	// convert to xml
@@ -404,7 +403,7 @@ $(document).ready(function() {
 		    	app.message='';
 		    	app.error='';
 				
-				var requestURL='/api/import';
+				var requestURL=location.origin + '/api/import';
 		    	var requestData=new imixs.ImixsDocument();
 		    	requestData.setItem('api',app.api);
 		    	requestData.setItem('filepath',app.filepath);
@@ -447,7 +446,7 @@ $(document).ready(function() {
 			    	app.message='';
 			    	app.error='';
 					
-					var requestURL='/api/export';
+					var requestURL=location.origin + '/api/export';
 					
 			    	var requestData=new imixs.ImixsDocument();
 			    	requestData.setItem('api',app.api);
@@ -533,7 +532,7 @@ $(document).ready(function() {
 			    	app.error='';
 
 					// delete...
-		    	    var requestURL='/api/documents/'+doc.getItem('$uniqueid');
+		    	    var requestURL=location.origin + '/api/documents/'+doc.getItem('$uniqueid');
 			    	$("#imixs-content").addClass("loading");
 		            	$.ajax({		            		
 		                    url: requestURL,
@@ -567,7 +566,7 @@ $(document).ready(function() {
 			    	app.error='';
 
 					// delete...
-		    	    var requestURL='/api/documents/'+doc.getItem('$uniqueid');
+		    	    var requestURL=location.origin + '/api/documents/'+doc.getItem('$uniqueid');
 			    	$("#imixs-content").addClass("loading");
 		            	$.ajax({		            		
 		                    url: requestURL,
@@ -601,7 +600,7 @@ $(document).ready(function() {
 		    	app.error='';
 
 				// delete...
-	    	    var requestURL='/api/model/'+version;
+	    	    var requestURL=location.origin + '/api/model/'+version;
 		    	$("#imixs-content").addClass("loading");
 	            	$.ajax({		            		
 	                    url: requestURL,
@@ -634,7 +633,7 @@ $(document).ready(function() {
 	   			}
 	   	    	app.message='';
 	   	    	app.error='';
-	   			var requestURL='/modelupload';
+	   			var requestURL=location.origin + '/modelupload';
 	   	    	$("#imixs-content").addClass("loading");
 	   	    	var uploaderForm = new FormData(); // Create new FormData
 	   	    	$.each(app.models_upload, function (index, file) {		
@@ -689,7 +688,7 @@ $(document).ready(function() {
        	    	// convert to xml
        	    	var xmlData = imixsXML.json2xml(requestData);
 				// delete...
-	    	    var requestURL='/api/model';
+	    	    var requestURL=location.origin + '/api/model';
 		    	$("#imixs-content").addClass("loading");
 			    	$.ajax({		            		
 	   	                url: requestURL,
