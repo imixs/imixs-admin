@@ -105,6 +105,7 @@ public class AdminRestService {
             logger.fine("putXMLWorkitem @PUT /workitem  delegate to POST....");
         }
         ItemCollection connectionData = XMLDocumentAdapter.putDocument(xmlBusinessEvent);
+        logger.info("...connecting: '" + connectionData.getItemValueString("api") + "'");
 
         String token;
         try {
@@ -117,9 +118,20 @@ public class AdminRestService {
             return Response.status(Response.Status.NOT_ACCEPTABLE).build();
         }
 
+        // try to load configuration
         ItemCollection workitem;
         try {
             workitem = getConfiguration(token);
+
+            // if null...
+            if (workitem == null) {
+                logger.warning("Unable to load lucene configuration - because of deprecated workflow version!");
+                workitem = new ItemCollection();
+                workitem.replaceItemValue("lucence.fulltextFieldList", " no data ");
+                workitem.replaceItemValue("lucence.indexFieldListAnalyze", " no data ");
+                workitem.replaceItemValue("lucence.indexFieldListNoAnalyze", " no data ");
+                workitem.replaceItemValue("lucence.indexFieldListStore", " no data ");
+            }
         } catch (RestAPIException e) {
             logger.severe("Rest API Error: " + e.getMessage());
             return Response.status(Response.Status.NOT_ACCEPTABLE).build();
