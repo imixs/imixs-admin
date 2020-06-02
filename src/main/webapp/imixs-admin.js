@@ -56,6 +56,7 @@ $(document).ready(function() {
 	    
 	  created () {
 		    console.log("...imixs-admin started");
+		 
 	  },
 	 
 	  methods: {
@@ -111,6 +112,9 @@ $(document).ready(function() {
                     	
                     	app.showSection('search');
                     	$("#imixs-content").removeClass("loading");
+                    	
+                    	// store api endpoint
+                    	localStorage.setItem("adminclient.api",app.api);
                     },
                     error : function (xhr, ajaxOptions, thrownError){
                     	$("#imixs-content").removeClass("loading");
@@ -789,11 +793,11 @@ $(document).ready(function() {
 		});
 	});
 	
-
-	
+	// load last api endpoint from local storage
+    app.api=localStorage.getItem("adminclient.api");
+    console.log("...last api endpoint="+app.api);
 	// show connect
 	app.showSection('connect');
-	
 	
 	
 });
