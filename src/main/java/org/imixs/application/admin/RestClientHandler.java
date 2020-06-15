@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.imixs.jwt.JWTException;
 import org.imixs.melman.BasicAuthenticator;
+import org.imixs.melman.EventLogClient;
 import org.imixs.melman.FormAuthenticator;
 import org.imixs.melman.JWTAuthenticator;
 import org.imixs.melman.ModelClient;
@@ -58,155 +59,226 @@ import org.imixs.melman.WorkflowClient;
 @RequestScoped
 public class RestClientHandler {
 
-	private static Logger logger = Logger.getLogger(RestClientHandler.class.getName());
+    private static Logger logger = Logger.getLogger(RestClientHandler.class.getName());
 
-	@Inject
-	private TokenService tokenService;
+    @Inject
+    private TokenService tokenService;
 
-	public WorkflowClient createWorkflowClient(HttpServletRequest servletRequest) {
-		// 1st try bearer token...
-		String token = servletRequest.getHeader("Authorization");
-				if (token != null && token.startsWith("Bearer ")) {
-					token = token.substring("Bearer ".length());
-				}
-		return createWorkflowClient(token);
-	}
-	
-	/**
-	 * creates a new Instance of an Imixs DocumentClient.
-	 * <p>
-	 * The authentication method is build from the access token
-	 * 
-	 * @see DefaultAuthenicator
-	 * @return
-	 */
-	public WorkflowClient createWorkflowClient(String token) {
-		String authMethod = null;
-		String serviceAPI = null;
-		String userid = null;
-		String password = null;
-		
-		try {
-			// extract the token....
-			String payload = tokenService.getPayload(token);
-			// extract payload.....
-			JsonObject payloadObject = null;
-			JsonReader reader = null;
+    public WorkflowClient createWorkflowClient(HttpServletRequest servletRequest) {
+        // 1st try bearer token...
+        String token = servletRequest.getHeader("Authorization");
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring("Bearer ".length());
+        }
+        return createWorkflowClient(token);
+    }
 
-			reader = Json.createReader(new StringReader(payload));
-			payloadObject = reader.readObject();
+    public EventLogClient createEventLogClient(HttpServletRequest servletRequest) {
+        // 1st try bearer token...
+        String token = servletRequest.getHeader("Authorization");
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring("Bearer ".length());
+        }
+        return createEventLogClient(token);
+    }
 
-			authMethod = payloadObject.getString("autmethod");
-			serviceAPI = payloadObject.getString("api");
-			userid = payloadObject.getString("sub");
-			password = payloadObject.getString("secret");
-			String iat = payloadObject.getString("iat");
+    /**
+     * creates a new Instance of an Imixs DocumentClient.
+     * <p>
+     * The authentication method is build from the access token
+     * 
+     * @see DefaultAuthenicator
+     * @return
+     */
+    public WorkflowClient createWorkflowClient(String token) {
+        String authMethod = null;
+        String serviceAPI = null;
+        String userid = null;
+        String password = null;
 
-			// validate iat
-			long lIat = Long.parseLong(iat);
-			long lexpireTime = 3600; // 1h
-			long lNow = new Date().getTime();
-			if ((lIat * 1000) + (lexpireTime * 1000) < lNow) {
-				logger.warning("JWT expired!");
-				return null;
-			}
+        try {
+            // extract the token....
+            String payload = tokenService.getPayload(token);
+            // extract payload.....
+            JsonObject payloadObject = null;
+            JsonReader reader = null;
 
-		} catch (javax.json.stream.JsonParsingException | JWTException j1) {
-			logger.severe("invalid token: " + j1.getMessage());
-			return null;
-		}
+            reader = Json.createReader(new StringReader(payload));
+            payloadObject = reader.readObject();
 
-		WorkflowClient client = new WorkflowClient(serviceAPI);
+            authMethod = payloadObject.getString("autmethod");
+            serviceAPI = payloadObject.getString("api");
+            userid = payloadObject.getString("sub");
+            password = payloadObject.getString("secret");
+            String iat = payloadObject.getString("iat");
 
-		if ("JWT".equalsIgnoreCase(authMethod)) {
-			JWTAuthenticator jwtAuht = new JWTAuthenticator(password);
-			client.registerClientRequestFilter(jwtAuht);
-		}
+            // validate iat
+            long lIat = Long.parseLong(iat);
+            long lexpireTime = 3600; // 1h
+            long lNow = new Date().getTime();
+            if ((lIat * 1000) + (lexpireTime * 1000) < lNow) {
+                logger.warning("JWT expired!");
+                return null;
+            }
 
-		if ("FORM".equalsIgnoreCase(authMethod)) {
-			FormAuthenticator formAuth = new FormAuthenticator(serviceAPI, userid, password);
-			client.registerClientRequestFilter(formAuth);
-		}
+        } catch (javax.json.stream.JsonParsingException | JWTException j1) {
+            logger.severe("invalid token: " + j1.getMessage());
+            return null;
+        }
 
-		if ("BASIC".equalsIgnoreCase(authMethod)) {
-			BasicAuthenticator basicAuth = new BasicAuthenticator(userid, password);
-			client.registerClientRequestFilter(basicAuth);
-		}
+        WorkflowClient client = new WorkflowClient(serviceAPI);
 
-		return client;
-	}
+        if ("JWT".equalsIgnoreCase(authMethod)) {
+            JWTAuthenticator jwtAuht = new JWTAuthenticator(password);
+            client.registerClientRequestFilter(jwtAuht);
+        }
 
-	/**
-	 * creates a new Instance of an Imixs ModelClient.
-	 * <p>
-	 * The authentication method is build from the access token
-	 * 
-	 * @see DefaultAuthenicator
-	 * @return
-	 */
-	public ModelClient createModelClient(HttpServletRequest servletRequest) {
-		String authMethod = null;
-		String serviceAPI = null;
-		String userid = null;
-		String password = null;
-		String token = null;
+        if ("FORM".equalsIgnoreCase(authMethod)) {
+            FormAuthenticator formAuth = new FormAuthenticator(serviceAPI, userid, password);
+            client.registerClientRequestFilter(formAuth);
+        }
 
-		// 1st try bearer token...
-		token = servletRequest.getHeader("Authorization");
-		if (token != null && token.startsWith("Bearer ")) {
-			token = token.substring("Bearer ".length());
-		}
+        if ("BASIC".equalsIgnoreCase(authMethod)) {
+            BasicAuthenticator basicAuth = new BasicAuthenticator(userid, password);
+            client.registerClientRequestFilter(basicAuth);
+        }
 
-		
-		try {
-			// extract the token....
-			String payload = tokenService.getPayload(token);
-			// extract payload.....
-			JsonObject payloadObject = null;
-			JsonReader reader = null;
+        return client;
+    }
 
-			reader = Json.createReader(new StringReader(payload));
-			payloadObject = reader.readObject();
+    /**
+     * creates a new Instance of an Imixs EventLogClient.
+     * <p>
+     * The authentication method is build from the access token
+     * 
+     * @see DefaultAuthenicator
+     * @return
+     */
+    public EventLogClient createEventLogClient(String token) {
+        String authMethod = null;
+        String serviceAPI = null;
+        String userid = null;
+        String password = null;
 
-			authMethod = payloadObject.getString("autmethod");
-			serviceAPI = payloadObject.getString("api");
-			userid = payloadObject.getString("sub");
-			password = payloadObject.getString("secret");
-			String iat = payloadObject.getString("iat");
+        try {
+            // extract the token....
+            String payload = tokenService.getPayload(token);
+            // extract payload.....
+            JsonObject payloadObject = null;
+            JsonReader reader = null;
 
-			// validate iat
-			long lIat = Long.parseLong(iat);
-			long lexpireTime = 3600; // 1h
-			long lNow = new Date().getTime();
-			if ((lIat * 1000) + (lexpireTime * 1000) < lNow) {
-				logger.warning("JWT expired!");
-				return null;
-			}
+            reader = Json.createReader(new StringReader(payload));
+            payloadObject = reader.readObject();
 
-		} catch (javax.json.stream.JsonParsingException | JWTException j1) {
-			logger.severe("invalid token: " + j1.getMessage());
-			return null;
-		}
+            authMethod = payloadObject.getString("autmethod");
+            serviceAPI = payloadObject.getString("api");
+            userid = payloadObject.getString("sub");
+            password = payloadObject.getString("secret");
+            String iat = payloadObject.getString("iat");
 
-		ModelClient client = new ModelClient(serviceAPI);
+            // validate iat
+            long lIat = Long.parseLong(iat);
+            long lexpireTime = 3600; // 1h
+            long lNow = new Date().getTime();
+            if ((lIat * 1000) + (lexpireTime * 1000) < lNow) {
+                logger.warning("JWT expired!");
+                return null;
+            }
 
-		if ("JWT".equalsIgnoreCase(authMethod)) {
-			JWTAuthenticator jwtAuht = new JWTAuthenticator(password);
-			client.registerClientRequestFilter(jwtAuht);
-		}
+        } catch (javax.json.stream.JsonParsingException | JWTException j1) {
+            logger.severe("invalid token: " + j1.getMessage());
+            return null;
+        }
 
-		if ("FORM".equalsIgnoreCase(authMethod)) {
-			FormAuthenticator formAuth = new FormAuthenticator(serviceAPI, userid, password);
-			client.registerClientRequestFilter(formAuth);
-		}
+        EventLogClient client = new EventLogClient(serviceAPI);
 
-		if ("BASIC".equalsIgnoreCase(authMethod)) {
-			BasicAuthenticator basicAuth = new BasicAuthenticator(userid, password);
-			client.registerClientRequestFilter(basicAuth);
-		}
+        if ("JWT".equalsIgnoreCase(authMethod)) {
+            JWTAuthenticator jwtAuht = new JWTAuthenticator(password);
+            client.registerClientRequestFilter(jwtAuht);
+        }
 
-		return client;
-	}
+        if ("FORM".equalsIgnoreCase(authMethod)) {
+            FormAuthenticator formAuth = new FormAuthenticator(serviceAPI, userid, password);
+            client.registerClientRequestFilter(formAuth);
+        }
 
+        if ("BASIC".equalsIgnoreCase(authMethod)) {
+            BasicAuthenticator basicAuth = new BasicAuthenticator(userid, password);
+            client.registerClientRequestFilter(basicAuth);
+        }
+
+        return client;
+    }
+
+    /**
+     * creates a new Instance of an Imixs ModelClient.
+     * <p>
+     * The authentication method is build from the access token
+     * 
+     * @see DefaultAuthenicator
+     * @return
+     */
+    public ModelClient createModelClient(HttpServletRequest servletRequest) {
+        String authMethod = null;
+        String serviceAPI = null;
+        String userid = null;
+        String password = null;
+        String token = null;
+
+        // 1st try bearer token...
+        token = servletRequest.getHeader("Authorization");
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring("Bearer ".length());
+        }
+
+        try {
+            // extract the token....
+            String payload = tokenService.getPayload(token);
+            // extract payload.....
+            JsonObject payloadObject = null;
+            JsonReader reader = null;
+
+            reader = Json.createReader(new StringReader(payload));
+            payloadObject = reader.readObject();
+
+            authMethod = payloadObject.getString("autmethod");
+            serviceAPI = payloadObject.getString("api");
+            userid = payloadObject.getString("sub");
+            password = payloadObject.getString("secret");
+            String iat = payloadObject.getString("iat");
+
+            // validate iat
+            long lIat = Long.parseLong(iat);
+            long lexpireTime = 3600; // 1h
+            long lNow = new Date().getTime();
+            if ((lIat * 1000) + (lexpireTime * 1000) < lNow) {
+                logger.warning("JWT expired!");
+                return null;
+            }
+
+        } catch (javax.json.stream.JsonParsingException | JWTException j1) {
+            logger.severe("invalid token: " + j1.getMessage());
+            return null;
+        }
+
+        ModelClient client = new ModelClient(serviceAPI);
+
+        if ("JWT".equalsIgnoreCase(authMethod)) {
+            JWTAuthenticator jwtAuht = new JWTAuthenticator(password);
+            client.registerClientRequestFilter(jwtAuht);
+        }
+
+        if ("FORM".equalsIgnoreCase(authMethod)) {
+            FormAuthenticator formAuth = new FormAuthenticator(serviceAPI, userid, password);
+            client.registerClientRequestFilter(formAuth);
+        }
+
+        if ("BASIC".equalsIgnoreCase(authMethod)) {
+            BasicAuthenticator basicAuth = new BasicAuthenticator(userid, password);
+            client.registerClientRequestFilter(basicAuth);
+        }
+
+        return client;
+    }
 
 }

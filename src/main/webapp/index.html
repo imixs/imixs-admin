@@ -89,6 +89,9 @@
 						
 					<li class="nav-item" v-on:click="showSection('index')"><span
 						class="typcn typcn-map"></span><label>Index</label></li>
+						
+					<li class="nav-item" v-on:click="showSection('eventlog')"><span
+						class="typcn typcn-th-list"></span><label>Event Log</label></li>
 				</ul>
 				<hr />
 				<ul>
@@ -757,7 +760,44 @@
 				
 				
 				
-				
+				<!-- Event Log -->
+				<div id="eventlog" class="form-section">
+					<div class="card">
+						<h2>
+							<span class="typcn typcn-th-list"></span> Event Log
+						</h2>
+						
+						
+						<table id="imixsdatatable" class="imixsdatatable"
+							style="width: 100%;">
+							<thead>
+								<tr>
+									<th>Topic</th>
+									<th>Created</th>
+									<th>Id</th>
+									<th>Ref</th>
+									<th></th>
+								</tr>
+								
+							</thead>
+							<tbody v-for="document in event_logs">
+								<tr>
+									<td>{{ document.getItem('topic')}}</td>
+									<td>{{ document.getItem('created')}}</td>
+									<td>{{ document.getItem('id')}}</td>
+									<td><a href="#"
+										v-on:click="openDocument($event, document.ref[0].text)">{{ document.getItem('ref')}}</a></td>
+									<td><a><span
+											class="typcn typcn-trash pull-right error"
+											v-on:click="deleteEventLog($event,document)"></span></a></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					
+					
+					
+				</div>
 				
 				<!-- Models -->
 				<div id="models" class="form-section">

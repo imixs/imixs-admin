@@ -56,6 +56,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.imixs.jwt.JWTException;
+import org.imixs.melman.EventLogClient;
 import org.imixs.melman.ModelClient;
 import org.imixs.melman.RestAPIException;
 import org.imixs.melman.WorkflowClient;
@@ -98,7 +99,7 @@ public class AdminRestService {
      * @return
      */
     @POST
-    @Path("/connect")
+    @Path("connect")
     public Response putConnectionData(XMLDocument xmlBusinessEvent) {
         boolean debug = logger.isLoggable(Level.FINE);
         if (debug) {
@@ -153,7 +154,7 @@ public class AdminRestService {
      * @return
      */
     @POST
-    @Path("/search")
+    @Path("search")
     public Response putSearchRequest(XMLDocument xmlBusinessEvent) {
         boolean debug = logger.isLoggable(Level.FINE);
         if (debug) {
@@ -201,7 +202,7 @@ public class AdminRestService {
      * @return
      */
     @POST
-    @Path("/update")
+    @Path("update")
     public Response putBulkUpdate(XMLDocument xmlBusinessEvent) {
         boolean debug = logger.isLoggable(Level.FINE);
         int updates = 0;
@@ -324,11 +325,11 @@ public class AdminRestService {
      * @return
      */
     @POST
-    @Path("/adminp")
+    @Path("adminp")
     public Response putAdminP(XMLDocument xmlBusinessEvent) {
         boolean debug = logger.isLoggable(Level.FINE);
         if (debug) {
-            logger.fine("putXMLWorkitem @PUT /adminp  delegate to POST....");
+            logger.fine("putXMLWorkitem @POST /adminp  delegate to POST....");
         }
 
         String token = servletRequest.getHeader("Authorization");
@@ -365,11 +366,11 @@ public class AdminRestService {
      * @return
      */
     @POST
-    @Path("/jobs")
+    @Path("jobs")
     public Response getAdminPJobs(XMLDocument xmlBusinessEvent) {
         boolean debug = logger.isLoggable(Level.FINE);
         if (debug) {
-            logger.fine("putXMLWorkitem @PUT /adminp  delegate to POST....");
+            logger.fine("putXMLWorkitem @POST /adminp  delegate to GET....");
         }
 
         String token = servletRequest.getHeader("Authorization");
@@ -393,6 +394,43 @@ public class AdminRestService {
         }
 
     }
+    
+    /**
+     * The method loads all event logs
+     * @param workitem
+     * @return
+     */
+    @POST
+    @Path("eventlog")
+    public Response getEventLogs(XMLDocument xmlBusinessEvent) {
+        boolean debug = logger.isLoggable(Level.FINE);
+        
+        debug=true;
+        if (debug) {
+            logger.fine("putXMLWorkitem @POST /eventlog  delegate to GET....");
+        }
+
+        String token = servletRequest.getHeader("Authorization");
+        if (token.toLowerCase().startsWith("bearer")) {
+            token = token.substring(7);
+        }
+        try {
+
+            WorkflowClient client = restClientHandler.createWorkflowClient(servletRequest);
+            XMLDataCollection result = client.getCustomResourceXML("/eventlog");
+
+            return Response
+                    // Set the status and Put your entity here.
+                    .ok(result)
+                    // Add the Content-Type header to tell Jersey which format it should marshall
+                    // the entity into.
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML).build();
+        } catch (RestAPIException e) {
+            logger.severe("Rest API Error: " + e.getMessage());
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
+
+    }
 
     /**
      * The resource starts a bulk delete
@@ -401,7 +439,7 @@ public class AdminRestService {
      * @return
      */
     @POST
-    @Path("/delete")
+    @Path("delete")
     public Response putBulkDelete(XMLDocument xmlBusinessEvent) {
         boolean debug = logger.isLoggable(Level.FINE);
         int updates = 0;
@@ -464,7 +502,7 @@ public class AdminRestService {
      * @return
      */
     @PUT
-    @Path("/export")
+    @Path("export")
     public Response putExport(XMLDocument xmlBusinessEvent) {
         boolean debug = logger.isLoggable(Level.FINE);
         if (debug) {
@@ -506,7 +544,7 @@ public class AdminRestService {
      * @return
      */
     @PUT
-    @Path("/import")
+    @Path("import")
     public Response getImport(XMLDocument xmlBusinessEvent) {
         boolean debug = logger.isLoggable(Level.FINE);
         if (debug) {
@@ -547,7 +585,7 @@ public class AdminRestService {
      * @return
      */
     @GET
-    @Path("/documents/{uniqueid : ([0-9a-f]{8}-.*|[0-9a-f]{11}-.*)}")
+    @Path("documents/{uniqueid : ([0-9a-f]{8}-.*|[0-9a-f]{11}-.*)}")
     public Response getDocument(@PathParam("uniqueid") String uniqueid, @QueryParam("items") String items) {
 
         boolean debug = logger.isLoggable(Level.FINE);
@@ -583,7 +621,7 @@ public class AdminRestService {
      * @return
      */
     @DELETE
-    @Path("/documents/{uniqueid : ([0-9a-f]{8}-.*|[0-9a-f]{11}-.*)}")
+    @Path("documents/{uniqueid : ([0-9a-f]{8}-.*|[0-9a-f]{11}-.*)}")
     public Response deleteDocument(@PathParam("uniqueid") String uniqueid) {
 
         boolean debug = logger.isLoggable(Level.FINE);
@@ -610,6 +648,43 @@ public class AdminRestService {
         // no result
         return Response.status(Response.Status.NO_CONTENT).build();
     }
+    
+    
+
+    /**
+     * Delete a eventlog entry by its id
+     * 
+     * @param id
+     * @return
+     */
+    @DELETE
+    @Path("eventlog/{uniqueid : ([0-9a-f]{8}-.*|[0-9a-f]{11}-.*)}")
+    public Response deleteEventlog(@PathParam("uniqueid") String uniqueid) {
+
+        boolean debug = logger.isLoggable(Level.FINE);
+        if (debug) {
+            logger.fine("deleteEventlog @DELETE /eventlog/id delegate to DELETE....");
+        }
+
+        String token = servletRequest.getHeader("Authorization");
+        if (token.toLowerCase().startsWith("bearer")) {
+            token = token.substring(7);
+        }
+
+        EventLogClient client = restClientHandler.createEventLogClient(servletRequest);
+        if (client != null) {
+
+            try {
+                client.deleteEventLogEntry(uniqueid);
+                return Response.status(Response.Status.OK).build();
+            } catch (RestAPIException e) {
+                logger.severe("Rest API Error: " + e.getMessage());
+                return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+            }
+        }
+        // no result
+        return Response.status(Response.Status.NO_CONTENT).build();
+    }
 
     /**
      * The method loads all models
@@ -618,7 +693,7 @@ public class AdminRestService {
      * @return
      */
     @POST
-    @Path("/model")
+    @Path("model")
     public Response getModels(XMLDocument xmlBusinessEvent) {
         boolean debug = logger.isLoggable(Level.FINE);
         if (debug) {
@@ -661,7 +736,7 @@ public class AdminRestService {
      * @return
      */
     @DELETE
-    @Path("/model/{version}")
+    @Path("model/{version}")
     public Response deleteModel(@PathParam("version") String version) {
 
         boolean debug = logger.isLoggable(Level.FINE);

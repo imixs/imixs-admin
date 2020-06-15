@@ -32,6 +32,7 @@ $(document).ready(function() {
 		sort_order:"DESC",
 		search_result: [],
 		adminp_jobs: [],
+		event_logs: [],
 		models: [],
 		models_upload: [],
 	    document: new imixs.ImixsDocument(),
@@ -174,10 +175,10 @@ $(document).ready(function() {
 	    
 	    
 		  // open a document by its id
-		  openDocument: function (event, doc) {
+		  openDocument: function (event, docid) {
 	    	app.message='';
 	    	app.error='';
-		    var requestURL=app.getEndpoint() + '/api/documents/'+doc.getItem('$uniqueid');
+		    var requestURL=app.getEndpoint() + '/api/documents/'+docid;
 	    	$("#imixs-content").addClass("loading");
             	$.ajax({		            		
                     url: requestURL,
@@ -372,7 +373,7 @@ $(document).ready(function() {
                
                
                
-		  // search query
+		  // get adminP jobs
 		  loadAdminpJobs: function () {
        			if (app.token=='') {
        				return;
@@ -399,6 +400,45 @@ $(document).ready(function() {
        	                	// convert rest response to a document instance
        	                	//var liste=imixsXML.xml2collection(response);
        	                	app.adminp_jobs=imixsXML.xml2collection(response);
+       	                	$("#imixs-content").removeClass("loading");
+       	                },
+       	                error : function (xhr, ajaxOptions, thrownError){
+       	                	$("#imixs-content").removeClass("loading");
+       	                	app.connection_status=xhr.status;
+       	                    app.error=xhr.status+ " " + thrownError;
+       	                }
+       	            });
+		  	},
+       	    
+
+
+		  // get event logs
+		  loadEventLog: function () {
+       			if (app.token=='') {
+       				return;
+       			}
+       	    	app.message='';
+       	    	app.error='';
+       			var requestURL=app.getEndpoint() + '/api/eventlog';
+       	    	var requestData=new imixs.ImixsDocument();
+       	    	requestData.setItem('api',app.api);
+       	    	// convert to xml
+       	    	var xmlData = imixsXML.json2xml(requestData);
+       	    	$("#imixs-content").addClass("loading");
+       	        	$.ajax({		            		
+       	                url: requestURL,
+       	                type: 'POST',
+       	                beforeSend: function (xhr) {
+       	                    xhr.setRequestHeader('Authorization', app.token);
+       	                },
+       	                data: xmlData,
+       	                dataType: 'xml',
+       	                contentType: 'application/xml',
+       	                success: function (response) {
+       	                	app.connection_status=200;
+       	                	// convert rest response to a document instance
+       	                	//var liste=imixsXML.xml2collection(response);
+       	                	app.event_logs=imixsXML.xml2collection(response);
        	                	$("#imixs-content").removeClass("loading");
        	                },
        	                error : function (xhr, ajaxOptions, thrownError){
@@ -576,7 +616,7 @@ $(document).ready(function() {
 		     },
 		     
 		     
-		     // Delete a single document
+		     // Delete a AdminP job
 		     deleteAdminPJob: function ( event, doc) {
 		    	 if (!confirm('Are you sure?\n\nDelete Document: \n\n' + doc.getItem('$uniqueid'))) {
 						return false;
@@ -597,6 +637,39 @@ $(document).ready(function() {
 		                    success: function (response) {
 		                    	app.connection_status=200;
 		                    	app.loadAdminpJobs();
+		                    	
+		                    },
+		                    error : function (xhr, ajaxOptions, thrownError){
+		                    	$("#imixs-content").removeClass("loading");
+		                    	app.connection_status=xhr.status;
+		                    	app.output=xhr.statusText;
+		                        console.log(xhr.status);          
+		                        console.log(thrownError);
+		                    }
+		                });
+		     },
+		     
+  			 // Delete a eventLog entry
+		     deleteEventLog: function ( event, doc) {
+		    	 if (!confirm('Are you sure?\n\nDelete EventLog: \n\n' + doc.getItem('id'))) {
+						return false;
+					}
+			    	app.message='';
+			    	app.error='';
+
+					// delete...
+		    	    var requestURL=app.getEndpoint() + '/api/eventlog/'+doc.getItem('id');
+			    	$("#imixs-content").addClass("loading");
+		            	$.ajax({		            		
+		                    url: requestURL,
+		                    type: 'DELETE',
+		                    beforeSend: function (xhr) {
+		                        xhr.setRequestHeader('Authorization', app.token);
+		                    },
+		                    contentType: 'application/xml',
+		                    success: function (response) {
+		                    	app.connection_status=200;
+		                    	app.loadEventLog();
 		                    	
 		                    },
 		                    error : function (xhr, ajaxOptions, thrownError){
@@ -758,6 +831,10 @@ $(document).ready(function() {
 				// load jobs in case of adminp
 				if (section=='adminp') {
 					app.loadAdminpJobs();
+				}
+				// load eventlogs in case of eventlog
+				if (section=='eventlog') {
+					app.loadEventLog();
 				}
 			}
 	    }
