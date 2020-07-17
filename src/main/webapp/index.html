@@ -293,12 +293,11 @@
 							<tbody v-for="document in search_result">
 								<tr>
 									<td><a href="#"
-										v-on:click="openDocument($event, document)">{{
-											document.$uniqueid[0].text }}</a></td>
-									<td>{{ document.getItem('$created')}}</td>
-									<td>{{ document.$modified[0].text}}</td>
-									<td>{{ document.$workflowstatus[0].text }}</td>
-									<td>{{ document.$workflowsummary[0].text }}</td>
+										v-on:click="openDocument($event, document.$uniqueid[0].text)">{{document.$uniqueid[0].text}} test</a></td>
+									<td>{{document.getItem('$created')}}</td>
+									<td>{{document.$modified[0].text}}</td>
+									<td>{{document.$workflowstatus[0].text}}</td>
+									<td>{{document.$workflowsummary[0].text}}</td>
 									<td><a><span
 											class="typcn typcn-trash pull-right error"
 											v-on:click="deleteDocument($event,document)"></span></a></td>
@@ -314,8 +313,7 @@
 					<div class="card">
 
 						<h2>
-							<span class="typcn typcn-folder-open"></span> Document: {{
-							document.getItem('$uniqueid') }} <a><span
+							<span class="typcn typcn-folder-open"></span> Document: {{document.getItem('$uniqueid')}} <a><span
 								class="typcn typcn-link"
 								v-on:click="linkDocument($event, document)"></span></a> <a><span
 								class="typcn typcn-arrow-forward pull-right"
@@ -332,9 +330,9 @@
 							<tbody v-for="item in document.getItemNames()">
 
 								<tr>
-									<td>{{ item }}</td>
-									<td>{{ document[item][0]['xsi:type'] }}</td>
-									<td>{{ document.getItemList(item) }}</td>
+									<td>{{item}}</td>
+									<td>{{document[item][0]['xsi:type']}}</td>
+									<td>{{document.getItemList(item)}}</td>
 
 								</tr>
 							</tbody>
@@ -703,14 +701,13 @@
 							<tbody v-for="document in adminp_jobs">
 								<tr>
 									<td><a href="#"
-										v-on:click="openDocument($event, document)">{{
-											document.$uniqueid[0].text }}</a></td>
-									<td>{{ document.getItem('job')}}</td>
-									<td>{{ document.getItem('$created')}}</td>
-									<td>{{ document.$modified[0].text}}</td>
-									<td>{{ document.getItem('$workflowstatus')}}</td>
-									<td>{{ document.getItem('numprocessed') }}</td>
-									<td>{{ document.getItem('numupdates') }}</td>
+										v-on:click="openDocument($event, document)">{{document.$uniqueid[0].text}}</a></td>
+									<td>{{document.getItem('job')}}</td>
+									<td>{{document.getItem('$created')}}</td>
+									<td>{{document.$modified[0].text}}</td>
+									<td>{{document.getItem('$workflowstatus')}}</td>
+									<td>{{document.getItem('numprocessed')}}</td>
+									<td>{{document.getItem('numupdates')}}</td>
 									<td><a><span
 											class="typcn typcn-trash pull-right error"
 											v-on:click="deleteAdminPJob($event,document)"></span></a></td>
@@ -782,11 +779,11 @@
 							</thead>
 							<tbody v-for="document in event_logs">
 								<tr>
-									<td>{{ document.getItem('topic')}}</td>
-									<td>{{ document.getItem('created')}}</td>
-									<td>{{ document.getItem('id')}}</td>
+									<td>{{document.getItem('topic')}}</td>
+									<td>{{document.getItem('created')}}</td>
+									<td>{{document.getItem('id')}}</td>
 									<td><a href="#"
-										v-on:click="openDocument($event, document.ref[0].text)">{{ document.getItem('ref')}}</a></td>
+										v-on:click="openDocument($event, document.ref[0].text)">{{document.getItem('ref')}}</a></td>
 									<td><a><span
 											class="typcn typcn-trash pull-right error"
 											v-on:click="deleteEventLog($event,document)"></span></a></td>
@@ -817,11 +814,11 @@
 							</thead>
 							<tbody v-for="document in models">
 								<tr>
-									<td>{{ document.getItem('txtname')}} <a><span
+									<td>{{document.getItem('txtname')}} <a><span
 										class="typcn typcn-link"
 										v-on:click="linkModel($event, document)"></span></a></td>
-									<td>{{ getFileName(document)   }}</td>
-									<td>{{ document.getItem('$created')}}</td>
+									<td>{{getFileName(document)  }}</td>
+									<td>{{document.getItem('$created')}}</td>
 									<td><a><span
 											class="typcn typcn-trash pull-right error"
 											v-on:click="deleteModel($event,document.getItem('txtname'))"></span></a></td>
@@ -849,7 +846,7 @@
 				<!-- Message -->
 				<div class="card message" v-show="message != ''">
 					<p>
-						<span class="typcn typcn-info-large"></span> {{ message }}
+						<span class="typcn typcn-info-large"></span> {{message}}
 					</p>
 				</div>
 
@@ -858,7 +855,7 @@
 				<div class="card error" v-show="error != ''">
 
 					<p>
-						<span class="typcn typcn-info"></span> {{ error}}
+						<span class="typcn typcn-info"></span> {{error}}
 					</p>
 
 				</div>
