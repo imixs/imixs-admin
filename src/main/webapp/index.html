@@ -293,7 +293,7 @@
 							<tbody v-for="document in search_result">
 								<tr>
 									<td><a href="#"
-										v-on:click="openDocument($event, document.$uniqueid[0].text)">{{document.$uniqueid[0].text}} test</a></td>
+										v-on:click="openDocument($event, document.$uniqueid[0].text)">{{document.$uniqueid[0].text}}</a></td>
 									<td>{{document.getItem('$created')}}</td>
 									<td>{{document.$modified[0].text}}</td>
 									<td>{{document.$workflowstatus[0].text}}</td>
