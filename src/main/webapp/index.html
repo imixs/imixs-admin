@@ -285,9 +285,9 @@
 							style="width: 100%;">
 							<thead>
 								<tr>
-									<th style="min-width: 296px;">UUID</th>
-									<th style="min-width: 196px;">Created</th>
-									<th style="min-width: 196px;">Modified</th>
+									<th>UUID</th>
+									<th>Created</th>
+									<th>Modified</th>
 									<th>Type</th>
 									<th>Workflow Status</th>
 									<th>Workflow Summary</th>
@@ -296,10 +296,10 @@
 							</thead>
 							<tbody v-for="document in search_result">
 								<tr>
-									<td><a href="#"
+									<td style="white-space: nowrap;"><a href="#"
 										v-on:click="openDocument($event, document.$uniqueid[0].text)">{{document.$uniqueid[0].text}}</a></td>
-									<td>{{document.getItem('$created')}}</td>
-									<td>{{document.$modified[0].text}}</td>
+									<td style="white-space: nowrap;">{{document.$created[0].text}}</td>
+									<td style="white-space: nowrap;">{{document.$modified[0].text}}</td>
 									<td>{{document.type[0].text}}</td>
 									<td>{{document.$workflowstatus[0].text}}</td>
 									<td>{{document.$workflowsummary[0].text}}</td>
