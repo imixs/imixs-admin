@@ -86,6 +86,11 @@ $(document).ready(function() {
 	    	connectionData.setItem('userid',app.auth_userid);
 	    	connectionData.setItem('secret',app.auth_secret);
 			
+			// remove last / if part of input...
+			if (app.api.endsWith("/")) {
+				app.api=app.api.substring(0,app.api.length-1);
+			}
+			
 	    	// convert to xml
 	    	var xmlData = imixsXML.json2xml(connectionData);
 	    	
