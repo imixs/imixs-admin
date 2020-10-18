@@ -66,15 +66,18 @@
 
 
 				</div>
+				
+				<ul>
+					<li class="nav-item" v-on:click="showSection('connect')"><span
+						class="typcn typcn-cog"></span><label>Connect</label></li>
+				</ul>
 				<hr />
 				<ul>
 					<li class="nav-item" v-on:click="showSection('search')"><span
 						class="typcn typcn-zoom-outline"></span><label>Search</label></li>
-
 				</ul>
 				<hr />
 				<ul>
-
 					<li class="nav-item" v-on:click="showSection('bulkupdate')"><span
 						class="typcn typcn-edit"></span><label>Update</label></li>
 
@@ -282,11 +285,12 @@
 							style="width: 100%;">
 							<thead>
 								<tr>
-									<th>UUID</th>
-									<th>Created</th>
-									<th>Modified</th>
-									<th>Status</th>
-									<th>Summary</th>
+									<th style="min-width: 296px;">UUID</th>
+									<th style="min-width: 196px;">Created</th>
+									<th style="min-width: 196px;">Modified</th>
+									<th>Type</th>
+									<th>Workflow Status</th>
+									<th>Workflow Summary</th>
 									<th></th>
 								</tr>
 							</thead>
@@ -296,6 +300,7 @@
 										v-on:click="openDocument($event, document.$uniqueid[0].text)">{{document.$uniqueid[0].text}}</a></td>
 									<td>{{document.getItem('$created')}}</td>
 									<td>{{document.$modified[0].text}}</td>
+									<td>{{document.type[0].text}}</td>
 									<td>{{document.$workflowstatus[0].text}}</td>
 									<td>{{document.$workflowsummary[0].text}}</td>
 									<td><a><span

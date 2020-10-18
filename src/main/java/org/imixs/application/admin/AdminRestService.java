@@ -169,7 +169,7 @@ public class AdminRestService {
         int pageSize = connectionData.getItemValueInteger("pagesize");
 
         // set items!
-        String items = "$uniqueid,$workflowstatus,txtname,$workflowsummary,$modified,$created";
+        String items = "$uniqueid,$workflowstatus,txtname,$workflowsummary,$modified,$created,type";
         String token = servletRequest.getHeader("Authorization");
         if (token.toLowerCase().startsWith("bearer")) {
             token = token.substring(7);
