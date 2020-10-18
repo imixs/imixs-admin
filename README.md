@@ -25,7 +25,7 @@ The docker image is available on [DockerHub](https://hub.docker.com/repository/d
 
 You can start the latest version of the Imixs-Admin Tool in a docker container running:
 
-	$ docker run -p 8888:8080 imixs/imixs-admin
+	$ docker run -p 8888:8080 imixs/imixs-admin:latest
 
 You can start the application from your browser
 
