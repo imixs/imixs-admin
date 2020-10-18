@@ -567,8 +567,9 @@ $(document).ready(function() {
 		     
 		     
 		     // open document via rest api
-		     linkDocument: function ( event, doc) {
-		    	 window.open(app.api + '/documents/'+doc.getItem('$uniqueid'))
+		     linkDocument: function ( event, doc, format) {
+			     var _uri=app.api + '/documents/'+doc.getItem('$uniqueid')+'?format='+format;
+		    	 window.open(_uri)
 		     },
 		     
 		     // open a bpmn model via rest api

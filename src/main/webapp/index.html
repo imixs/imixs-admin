@@ -320,7 +320,11 @@
 						<h2>
 							<span class="typcn typcn-folder-open"></span> Document: {{document.getItem('$uniqueid')}} <a><span
 								class="typcn typcn-link"
-								v-on:click="linkDocument($event, document)"></span></a> <a><span
+								v-on:click="linkDocument($event, document)"></span></a><a><span
+								style="font-size: 0.8rem;font-weight:bold;"
+								v-on:click="linkDocument($event, document,'xml')">XML</span></a> <a><span
+								style="font-size: 0.8rem;font-weight:bold;"
+								v-on:click="linkDocument($event, document,'json')">JSON</span></a> <a><span
 								class="typcn typcn-arrow-forward pull-right"
 								v-on:click="showSection('search')"></span></a>
 						</h2>
