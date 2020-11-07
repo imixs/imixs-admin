@@ -153,7 +153,7 @@
 
 
 			<div id="imixs-content" class="main-container">
-				<form>
+				<form autocomplete="on">
 
 
 				<!--  CONNECT Part -->
@@ -186,7 +186,7 @@
 							<dl v-show="auth_method == 'JWT'">
 								<dt>Token:</dt>
 								<dd>
-									<input type="password" id="token-input"
+									<input type="password" id="token-input" autocomplete="off"
 										placeholder="Bearer Token" v-model="auth_secret" name="token">
 								</dd>
 							</dl>
@@ -202,7 +202,7 @@
 							<dl>
 								<dt>Password:</dt>
 								<dd>
-									<input type="password" id="password-input"
+									<input type="password" id="password-input" autocomplete="off"
 										placeholder="enter password" v-model="auth_secret"
 										name="password">
 								</dd>
