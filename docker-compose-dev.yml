@@ -10,8 +10,7 @@ services:
       - "8888:8080"
       - "8788:8787"
     volumes:
-      - ~/git/imixs-admin/src/docker/deployments:/opt/wildfly/standalone/deployments/     
-
+      - ./src/docker/deployments:/opt/jboss/wildfly/standalone/deployments/
     
   imixssample-db:
     image: postgres:9.6.1

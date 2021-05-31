@@ -180,8 +180,9 @@
 										<option value="JWT">Token</option>
 										<option value="BASIC" selected="selected">Basic</option>
 										<option value="FORM">Form</option>
+										<option value="COOKIE">Cookie</option>
 									</select>
-								</dd>
+								</dd> 
 							</dl>
 							<dl v-show="auth_method == 'JWT'">
 								<dt>Token:</dt>
@@ -191,7 +192,7 @@
 								</dd>
 							</dl>
 						</div>
-						<div class="imixs-form-section-2" v-show="auth_method != 'JWT'">
+						<div class="imixs-form-section-2" v-show="auth_method != 'JWT' && auth_method != 'COOKIE'">
 							<dl>
 								<dt>UserID:</dt>
 								<dd>
@@ -208,6 +209,25 @@
 								</dd>
 							</dl>
 						</div>
+						
+						<div class="imixs-form-section-2" v-show="auth_method == 'COOKIE'">
+							<dl>
+								<dt>Name:</dt>
+								<dd>
+									<input type="text" autocomplete="userid" name="userid"
+										placeholder="enter cookie name" v-model="auth_userid">
+								</dd>
+							</dl>
+							<dl>
+								<dt>Value:</dt>
+								<dd>
+									<input type="text" id="password-input" autocomplete="off"
+										placeholder="enter cookie value" v-model="auth_secret"
+										name="password">
+								</dd>
+							</dl>
+						</div>
+						
 						<button type="button" v-on:click="apiConnect();">Connect</button>
 					</div>
 

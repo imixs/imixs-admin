@@ -37,9 +37,11 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Cookie;
 
 import org.imixs.jwt.JWTException;
 import org.imixs.melman.BasicAuthenticator;
+import org.imixs.melman.CookieAuthenticator;
 import org.imixs.melman.EventLogClient;
 import org.imixs.melman.FormAuthenticator;
 import org.imixs.melman.JWTAuthenticator;
@@ -141,6 +143,13 @@ public class RestClientHandler {
         if ("BASIC".equalsIgnoreCase(authMethod)) {
             BasicAuthenticator basicAuth = new BasicAuthenticator(userid, password);
             client.registerClientRequestFilter(basicAuth);
+        }
+
+        if ("COOKIE".equalsIgnoreCase(authMethod)) {
+        	logger.info("..set cookie auth: name=" + userid + " value=" + password);
+        	Cookie cookie = new Cookie(userid, password);
+        	CookieAuthenticator cookieAuth = new CookieAuthenticator(cookie);
+            client.registerClientRequestFilter(cookieAuth);
         }
 
         return client;
