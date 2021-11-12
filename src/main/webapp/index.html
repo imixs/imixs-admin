@@ -625,11 +625,11 @@
 
 
 							<dl>
-								<dt>Blocksize / Interval in minutes:</dt>
+								<dt>Blocksize / Interval in seconds:</dt>
 								<dd>
 									<input type="text" placeholder="500" name="numblocksize"
 										style="width: 5em;" v-model="adminp_blocksize"> / <input
-										type="text" placeholder="1" name="numinterval"
+										type="text" placeholder="120" name="numinterval"
 										style="width: 5em;" v-model="adminp_interval">
 								</dd>
 							</dl>
@@ -729,8 +729,8 @@
 							</thead>
 							<tbody v-for="document in adminp_jobs">
 								<tr>
-									<td><a href="#"
-										v-on:click="openDocument($event, document)">{{document.$uniqueid[0].text}}</a></td>
+									<td style="white-space: nowrap;"><a href="#"
+										v-on:click="openDocument($event, document.$uniqueid[0].text)">{{document.$uniqueid[0].text}}</a></td>
 									<td>{{document.getItem('job')}}</td>
 									<td>{{document.getItem('$created')}}</td>
 									<td>{{document.$modified[0].text}}</td>
