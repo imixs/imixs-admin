@@ -340,11 +340,9 @@ public class AdminRestService {
 
         try {
             job = XMLDocumentAdapter.putDocument(xmlBusinessEvent);
-
             if (job.getItemValueInteger("numinterval") == 0) {
-                job.replaceItemValue("numinterval", 1);
+                job.replaceItemValue("numinterval", 60); // 60 sec
             }
-
             // convert date values
             convertDate(job, "datfrom");
             convertDate(job, "datto");
