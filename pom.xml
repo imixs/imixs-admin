@@ -1,12 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.imixs.workflow</groupId>
 	<artifactId>imixs-admin</artifactId>
 	<packaging>war</packaging>
 	<name>Imixs Workflow Web Admin Tool</name>
-	<version>5.1.6</version>
+	<version>6.0.0</version>
 	<description>Imixs Workflow Web Admin Tool</description>
 	<url>http://www.imixs.org/websites/imixs-org.nsf/chapter/api</url>
 	<organization>
@@ -47,10 +45,22 @@
 
 
 	<properties>
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<org.imixs.workflow.version>5.1.5</org.imixs.workflow.version>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<failOnMissingWebXml>false</failOnMissingWebXml>
+
+		<org.imixs.workflow.version>6.0.1-SNAPSHOT</org.imixs.workflow.version>
 		<org.imixs.melman.version>1.0.21</org.imixs.melman.version>
 		<org.imixs.jwt.version>1.0.3</org.imixs.jwt.version>
+
+		<!-- Wildfly-Plugin Default settings -->
+		<wildfly.username>admin</wildfly.username>
+		<wildfly.password>adminadmin</wildfly.password>
+		<wildfly.hostname>127.0.0.1</wildfly.hostname>
+		<path>deppie</path>
 	</properties>
 
 
@@ -122,7 +132,7 @@
 				</plugins>
 			</build>
 		</profile>
-		
+
 		<profile>
 			<id>docker-hub-latest</id>
 			<build>
@@ -232,26 +242,11 @@
 
 		<plugins>
 
-			<!-- use JDK settings for compiling -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<failOnMissingWebXml>false</failOnMissingWebXml>
-				</configuration>
+				<version>3.3.2</version>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
@@ -261,34 +256,62 @@
 				</configuration>
 			</plugin>
 
-			<!-- copy artifact into docker/apps -->
+			<!-- Wildfly Integration 
+			     See: https://docs.wildfly.org/wildfly-maven-plugin/index.html
+			
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
+				<groupId>org.wildfly.plugins</groupId>
+				<artifactId>wildfly-maven-plugin</artifactId>
+				<version>2.1.0.Final</version>
 				<executions>
 					<execution>
-						<id>copy-installed</id>
 						<phase>install</phase>
 						<goals>
-							<goal>copy</goal>
+							<goal>deploy</goal>
 						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>${project.artifactId}</artifactId>
-									<version>${project.version}</version>
-									<type>${project.packaging}</type>
-								</artifactItem>
-							</artifactItems>
-							<outputDirectory>${project.basedir}/src/docker/apps</outputDirectory>
-							<stripVersion>true</stripVersion>
-						</configuration>
 					</execution>
 				</executions>
+				<configuration>
+					<username>${wildfly.username}</username>
+					<password>${wildfly.password}</password>
+					<hostname>${wildfly.hostname}</hostname>
+				</configuration>
 			</plugin>
+-->
 
+			<!-- Just a test plugin -->
+			<plugin>
+				<groupId>org.imixs.maven</groupId>
+				<artifactId>manik-hotdeploy-maven-plugin</artifactId>
+				<version>2.0.0</version>
+				<executions>
+                	<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>deploy</goal>
+						</goals>
+                	</execution>
+            	</executions>
+				<configuration>
+					<!-- List Source and Target folders for Autodeploy and Hotdeploy -->
+					<autodeployments>
+						<deployment>
+							<!-- wildcard deployment -->
+							<source>target/*.{war,ear,jar}</source>
+							<target>docker/deployments/</target>
+							<unpack>true</unpack>						
+						</deployment>
+					</autodeployments>
+					<hotdeployments>
+						<deployment>
+							<source>src/main/webapp</source>
+							<target>docker/deployments/imixs-admin.war</target>
+						</deployment>						
+					</hotdeployments>
+
+				</configuration>
+
+			</plugin>
 
 		</plugins>
 
@@ -324,24 +347,14 @@
 		</dependency>
 
 
-
 		<!-- Java EE dependencies -->
 		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>8.0</version>
+			<groupId>jakarta.platform</groupId>
+			<artifactId>jakarta.jakartaee-api</artifactId>
+			<version>9.1.0</version>
 			<scope>provided</scope>
 		</dependency>
 
-
-		<!-- Microprofile -->
-		<dependency>
-			<groupId>org.eclipse.microprofile</groupId>
-			<artifactId>microprofile</artifactId>
-			<version>2.2</version>
-			<type>pom</type>
-			<scope>provided</scope>
-		</dependency>
 
 	</dependencies>
 
@@ -359,7 +372,6 @@
 			<url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
-
 
 
 </project>

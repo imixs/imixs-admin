@@ -2,10 +2,11 @@ version: "3"
 services:
 
   imixsadmin-app:
-    image: imixs/imixs-admin
+    image: imixs/wildfly
     ports:
       - "8080:8080"
-
+    volumes:
+      - ./docker/deployments:/opt/wildfly/standalone/deployments/
  
 
     

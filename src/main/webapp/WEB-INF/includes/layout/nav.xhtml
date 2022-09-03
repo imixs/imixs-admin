@@ -1,0 +1,86 @@
+<ui:composition xmlns:f="jakarta.faces.core"
+	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets">
+
+	<nav>
+		<h:form>
+			<!-- Sidebar -->
+			<div class="nav-sidebar">
+
+
+				<div class="nav-title">
+					<h4>
+						<a href="#{facesContext.externalContext.requestContextPath}/">
+							<label>#{message['application_title']}</label>
+						</a> <span class="pull-right typcn typcn-th-menu-outline"
+							title="#{message['application_title']}"
+							style="margin-right: 10px; cursor: pointer; margin-bottom: 20px;"
+							onclick="togglemenu();"></span>
+					</h4>
+
+					<small><label>v2.0.0</label></small>
+
+
+				</div>
+				<hr />
+				<ul>
+					<li class="nav-item"><a
+						href="#{facesContext.externalContext.requestContextPath}/"><span
+							class="typcn typcn-cog"></span><label>Connect</label></a></li>
+				</ul>
+				<hr />
+				<ul>
+					<li class="nav-item"><a
+						href="#{facesContext.externalContext.requestContextPath}/"><span
+							class="typcn typcn-zoom-outline"></span><label>Search</label></a></li>
+				</ul>
+				<hr />
+				<ul>
+					<li class="nav-item"><a
+						href="#{facesContext.externalContext.requestContextPath}/pages/my_tasklist.xhtml"><span
+							class="typcn typcn-edit"></span><label>Update</label></a></li>
+
+					<li class="nav-item"><a
+						href="#{facesContext.externalContext.requestContextPath}/pages/my_statuslist.xhtml"><span
+							class="typcn typcn-trash"></span><label>Delete</label></a></li>
+
+					<li class="nav-item"><a
+						href="#{facesContext.externalContext.requestContextPath}/pages/all.xhtml"><span
+							class="typcn typcn-spanner"></span><label>Admin-P</label></a></li>
+
+					<li class="nav-item"><a
+						href="#{facesContext.externalContext.requestContextPath}/pages/all.xhtml"><span
+							class="typcn typcn-flow-merge"></span><label>Models</label></a></li>
+
+					<li class="nav-item"><a
+						href="#{facesContext.externalContext.requestContextPath}/pages/all.xhtml"><span
+							class="typcn typcn-map"></span><label>Index</label></a></li>
+
+					<li class="nav-item"><a
+						href="#{facesContext.externalContext.requestContextPath}/pages/all.xhtml"><span
+							class="typcn typcn-th-list"></span><label>Event-Log</label></a></li>
+
+				</ul>
+				<hr />
+				<ul>
+					<li class="nav-item"><h:commandLink
+							action="/pages/config/teamlist?faces-redirect=true">
+							<span class="typcn typcn-upload"></span>
+							<label>Export</label>
+						</h:commandLink></li>
+
+					<li class="nav-item"><h:commandLink
+							action="/pages/admin/modellist?faces-redirect=true">
+							<span class="typcn typcn-download"></span>
+							<label>Import</label>
+						</h:commandLink></li>
+				</ul>
+
+
+
+			</div>
+		</h:form>
+	</nav>
+
+</ui:composition>
+
+

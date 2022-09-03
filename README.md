@@ -74,4 +74,28 @@ you may have to grant the deployment folder first to allow the docker non privil
 
 In this mode the deployment directory for wildfly is mapped to '~/git/imixs-admin/src/docker/deployments'
 
+### Build Docker Image
 
+Imixs-Admin is based on Wildfly Version 27.0.0. 
+
+To build the image from the Dockerfile run:
+
+	docker build --tag=imixs/wildfly .
+
+
+To run Imixs-Admin:
+
+	$ docker-compose up
+
+
+To test the Docker image you can optional run the container in an interactive mode:
+
+	$ docker run --rm --name="wildfly" -it \
+			-p 8080:8080 -p 9990:9990 \
+			-e WILDFLY_PASS="adminadmin" \
+			imixs/wildfly
+
+
+
+
+	

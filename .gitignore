@@ -14,4 +14,5 @@ target/
 .classpath
 
 # ignore docker deployments
-src/docker/deployments/
+docker/deployments/
+

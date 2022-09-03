@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:f="jakarta.faces.core"
+	xmlns:h="jakarta.faces.html">
+
+<h:head>
+	<title>Hello World</title>  
+	<link rel="stylesheet" href="css/custom.css" />
+</h:head>
+<h:body>
+	<h1>Hello Hotdeploy!!!</h1>
+	<h:form>
+		<h:outputLabel for="input" value="Input" />
+		<h:inputText id="input" value="#{helloWorld.message}" />
+		<h:commandButton value="Submit" action="#{helloWorld.submit}">
+			<f:ajax execute="@form" render=":table input" />
+		</h:commandButton>
+	</h:form>
+	<h:dataTable id="table" value="#{helloWorld.messages}" var="message">
+		<h:column>#{message}</h:column>
+	</h:dataTable>
+
+</h:body>
+
+</html>
