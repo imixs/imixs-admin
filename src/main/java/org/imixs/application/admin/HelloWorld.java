@@ -10,26 +10,26 @@ import jakarta.inject.Named;
 @RequestScoped
 public class HelloWorld {
 
-	private String message;
-	
-	@Inject
-	private MessageService messageService;
+    private String message;
 
-	public void submit() {
-		messageService.create(message);
-		// reset current message
-		message=null;
-	}
+    @Inject
+    private MessageService messageService;
 
-	public String getMessage() {
-		return message;
-	}
+    public void submit() {
+        messageService.create(message);
+        // reset current message
+        message = null;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public List<String> getMessages() {
-		return messageService.list();
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public List<String> getMessages() {
+        return messageService.list();
+    }
 }
