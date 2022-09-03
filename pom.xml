@@ -256,28 +256,22 @@
 				</configuration>
 			</plugin>
 
-			<!-- Wildfly Integration 
-			     See: https://docs.wildfly.org/wildfly-maven-plugin/index.html
-			
+			<!-- code style -->
 			<plugin>
-				<groupId>org.wildfly.plugins</groupId>
-				<artifactId>wildfly-maven-plugin</artifactId>
-				<version>2.1.0.Final</version>
+				<groupId>net.revelc.code.formatter</groupId>
+				<artifactId>formatter-maven-plugin</artifactId>
+				<configuration>
+					<configFile>${project.basedir}/imixs-code-style.xml</configFile>
+				</configuration>
 				<executions>
 					<execution>
-						<phase>install</phase>
+						<phase>clean</phase>
 						<goals>
-							<goal>deploy</goal>
+							<goal>format</goal>
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<username>${wildfly.username}</username>
-					<password>${wildfly.password}</password>
-					<hostname>${wildfly.hostname}</hostname>
-				</configuration>
 			</plugin>
--->
 
 			<!-- Just a test plugin -->
 			<plugin>

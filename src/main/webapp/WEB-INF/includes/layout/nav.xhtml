@@ -19,13 +19,17 @@
 
 					<small><label>v2.0.0</label></small>
 
-
+ 
 				</div>
 				<hr />
 				<ul>
-					<li class="nav-item"><a
-						href="#{facesContext.externalContext.requestContextPath}/"><span
-							class="typcn typcn-cog"></span><label>Connect</label></a></li>
+					<li class="nav-item">
+						<h:link outcome="/connect" >
+							<span class="typcn typcn-link"></span><label>Endpoint</label>
+						</h:link>
+						<span class="typcn typcn-media-record-outline" style="#{connectionController.connected?'color:#4dc24f':'color:#dc2929'}"></span>
+					</li>
+
 				</ul>
 				<hr />
 				<ul>

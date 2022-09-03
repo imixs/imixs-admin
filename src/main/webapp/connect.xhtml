@@ -1,0 +1,110 @@
+<ui:composition template="/WEB-INF/templates/layout.xhtml"
+	xmlns:faces="jakarta.faces" xmlns:f="jakarta.faces.core"
+	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets">
+
+	<ui:define name="content">
+
+
+		<f:view>
+
+
+			<h:form id="connect_form_id">
+
+
+				<div id="connect" class="form-section">
+					<div class="card">
+						<h2>
+							<span class="typcn typcn-link-outline"></span> Endpoint
+						</h2>
+						<p>Connect to an Imixs-Workflow API endpoint.</p>
+						<div class="imixs-form-section">
+							<dl>
+								<dt>URL:</dt>
+								<dd>
+									<h:inputText value="#{connectionController.endpoint}"
+										disabled="#{connectionController.connected}" required="true" />
+
+								</dd>
+							</dl>
+						</div>
+						<div class="imixs-form-section-3">
+							<dl>
+								<dt>Authentication Method:</dt>
+								<dd>
+									<h:selectOneMenu id="selectedItem"
+										value="#{connectionController.type}" disabled="#{connectionController.connected}">
+										<f:selectItem itemValue="BASIC" itemLabel="Basic" />
+										<f:selectItem itemValue="FORM" itemLabel="Form Based" />
+										<f:selectItem itemValue="COOKIE" itemLabel="Cookie" />
+										<f:selectItem itemValue="JWT" itemLabel="JWT" />
+										<f:ajax render="key_token_input" />
+									</h:selectOneMenu>
+
+
+								</dd>
+							</dl>
+
+							<h:panelGroup id="key_token_input">
+								<!-- Userid / Cookie -->
+								<h:panelGroup id="key_input"
+									rendered="#{(connectionController.type eq 'BASIC') or (connectionController.type eq 'FORM') or (connectionController.type eq 'COOKIE')}">
+									<dl>
+										<dt>
+
+											<h:outputText value="User-ID:"
+												rendered="#{(connectionController.type eq 'BASIC') or (connectionController.type eq 'FORM')}" />
+											<h:outputText value="Name:"
+												rendered="#{connectionController.type eq 'COOKIE'}" />
+
+										</dt>
+
+
+										<dd>
+											<h:inputText value="#{connectionController.key}"
+												disabled="#{connectionController.connected}" />
+
+										</dd>
+									</dl>
+								</h:panelGroup>
+
+								<!-- Password / Token -->
+								<h:panelGroup id="token_input">
+									
+									<dl>
+										<dt>
+											<h:outputText value="Password:"
+												rendered="#{(connectionController.type eq 'BASIC') or (connectionController.type eq 'FORM')}" />
+											<h:outputText value="Value:"
+												rendered="#{connectionController.type eq 'COOKIE'}" />
+											<h:outputText value="Token"
+												rendered="#{connectionController.type eq 'JWT'}" />
+										</dt>
+										<dd>
+											<h:inputText value="#{connectionController.token}"
+												disabled="#{connectionController.connected}" />
+										</dd>
+									</dl>
+								</h:panelGroup>
+							</h:panelGroup>
+
+						</div>
+
+
+
+						<h:commandButton value="Connect"
+							actionListener="#{connectionController.connect()}"
+							rendered="#{!connectionController.connected}" />
+						<h:commandButton value="Disconnect"
+							rendered="#{connectionController.connected}"
+							actionListener="#{connectionController.disconnect()}" />
+
+					</div>
+
+
+				</div>
+			</h:form>
+		</f:view>
+
+
+	</ui:define>
+</ui:composition>
