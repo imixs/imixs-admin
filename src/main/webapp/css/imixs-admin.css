@@ -246,10 +246,11 @@ span.tooltip span.tip {
 span.tooltip:hover span.tip {
     display: block;
     z-index: 100;
-    left: -285px;
+    left: 15px;
+    top: 0px;
     width: 300px;
     position: absolute;
-    top: 16px;
+   
     padding: 10px;
     margin: 10px;
     text-decoration: none;

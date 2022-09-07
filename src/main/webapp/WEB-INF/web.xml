@@ -6,7 +6,7 @@
 	version="6.0">
 
 	<welcome-file-list>
-		<welcome-file>hello.xhtml</welcome-file>
+		<welcome-file>connect.xhtml</welcome-file>
 	</welcome-file-list>
 
 	<context-param>

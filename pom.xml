@@ -53,7 +53,7 @@
 		<failOnMissingWebXml>false</failOnMissingWebXml>
 
 		<org.imixs.workflow.version>6.0.1-SNAPSHOT</org.imixs.workflow.version>
-		<org.imixs.melman.version>1.0.21</org.imixs.melman.version>
+		<org.imixs.melman.version>2.0.0-SNAPSHOT</org.imixs.melman.version>
 		<org.imixs.jwt.version>1.0.3</org.imixs.jwt.version>
 
 		<!-- Wildfly-Plugin Default settings -->

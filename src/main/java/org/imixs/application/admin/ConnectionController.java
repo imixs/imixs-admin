@@ -3,6 +3,10 @@ package org.imixs.application.admin;
 import java.io.Serializable;
 import java.util.logging.Logger;
 
+import org.imixs.melman.BasicAuthenticator;
+import org.imixs.melman.FormAuthenticator;
+import org.imixs.melman.WorkflowClient;
+
 import jakarta.enterprise.context.Conversation;
 import jakarta.enterprise.context.ConversationScoped;
 import jakarta.faces.context.FacesContext;
@@ -72,7 +76,9 @@ public class ConnectionController implements Serializable {
             logger.finest("......stopping conversation, id=" + conversation.getId());
             conversation.end();
             connected = false;
+
         }
+
     }
 
     public String getEndpoint() {
@@ -105,6 +111,26 @@ public class ConnectionController implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public WorkflowClient getWorkflowClient() {
+        // Init the workflowClient with a basis URL
+        WorkflowClient workflowClient = new WorkflowClient(getEndpoint());
+        if ("BASIC".equals(getType())) {
+            // Create a authenticator
+            BasicAuthenticator basicAuth = new BasicAuthenticator(getKey(), getToken());
+            // register the authenticator
+            workflowClient.registerClientRequestFilter(basicAuth);
+        }
+        if ("FORM".equals(getType())) {
+            // Create a authenticator
+            FormAuthenticator formAuth = new FormAuthenticator(getEndpoint(), getKey(), getToken());
+            // register the authenticator
+            workflowClient.registerClientRequestFilter(formAuth);
+        }
+
+        return workflowClient;
+
     }
 
 }

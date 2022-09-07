@@ -12,22 +12,9 @@
 			<div class="row">
 				<div class="linkbox col-3">
 				
-					<!--  Singed in user -->
-					<h:panelGroup rendered="#{loginController.authenticated}">
-						<span
-							class="typcn typcn-key"></span><h:outputText
-								value="Login: #{loginController.userPrincipal}" />
-					</h:panelGroup>
 					
 				</div>
-				<div class="searchbox col-6">
-
-
-					<h:inputText style="width: 80%;" value="#{searchController.input}"  pt:placeholder="search..." />
-					<h:commandLink actionListener="#{searchController.search()}" styleClass="header-search-button"
-						action="/pages/search" title="#{global.search}" ><span class="typcn typcn-zoom-outline"></span></h:commandLink>
-					
-				</div>
+				
 				<div class="linkbox col-3">
 					<div class="pull-right">
 

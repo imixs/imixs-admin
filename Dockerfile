@@ -35,6 +35,6 @@ RUN chmod +x $WILDFLY_HOME/wildfly_add_admin_user.sh $WILDFLY_HOME/wildfly_start
 
 
 # Expose the ports we're interested in
-EXPOSE 8080 9990
+EXPOSE 8080 8787 9990
 
 CMD ["/opt/wildfly/wildfly_start.sh"]
