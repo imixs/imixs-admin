@@ -103,17 +103,22 @@
 							</tr>
 						</thead>
 						<tbody>
-						
+
 							<ui:repeat var="doc" value="#{searchController.searchResult}">
-							<tr>
-								<td style="white-space: nowrap;"><a href="#">#{doc.uniqueID}</a></td>
-								<td style="white-space: nowrap;">#{doc.item['$created']}</td>
-								<td style="white-space: nowrap;">#{doc.item['$modified']}</td>
-								<td style="white-space: nowrap;">#{doc.item['type']}</td>
-								<td style="white-space: nowrap;">#{doc.item['$workflowstatus']}</td>
-								<td style="white-space: nowrap;">#{doc.item['$workflowsummary']}</td>
-								<td><a><span class="typcn typcn-trash pull-right error"></span></a></td>
-							</tr>
+								<tr>
+									<td style="white-space: nowrap;"><h:link
+											outcome="/document.xhtml?cid=#{jakarta.enterprise.context.conversation.id}">
+											<label>#{doc.uniqueID}</label>
+											<f:param name="id" value="#{doc.uniqueID}" />
+										</h:link></td>
+									<td style="white-space: nowrap;">#{doc.item['$created']}</td>
+									<td style="white-space: nowrap;">#{doc.item['$modified']}</td>
+									<td style="white-space: nowrap;">#{doc.item['type']}</td>
+									<td style="white-space: nowrap;">#{doc.item['$workflowstatus']}</td>
+									<td style="white-space: nowrap;">#{doc.item['$workflowsummary']}</td>
+									<td><a><span
+											class="typcn typcn-trash pull-right error"></span></a></td>
+								</tr>
 							</ui:repeat>
 						</tbody>
 					</table>

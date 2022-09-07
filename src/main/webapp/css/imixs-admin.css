@@ -214,7 +214,8 @@ input[type="button"]:active, input[type="submit"]:active, a.button:active,
 }
 
 #imixs-content {
-	padding-bottom: 80px;
+	padding-bottom: 10px;
+	padding-top: 10px;
 }
 
 #imixs-content a.imixs-button {
@@ -230,9 +231,18 @@ input[type="button"]:active, input[type="submit"]:active, a.button:active,
 	padding: 10px 30px 10px 210px;
 	text-align: right;
 }
-
+#imixs-footer ul li {
+	display:inline list-item;
+	list-style: none;
+	margin-left: 30px;
+	font-size: 0.9em;
+}
 #imixs-footer a {
 	color: inherit;
+	
+}
+#imixs-footer ul li .typcn {
+	font-size: 1.4em;
 }
 
 /* tootip */

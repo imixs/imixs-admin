@@ -43,10 +43,11 @@ public class ConnectionController implements Serializable {
     private String endpoint;
     private String key;
     private String token;
-    private String type = "BASIC";
+    private String type = "FORM";
     private String errorMessage = "";
     private boolean connected;
     private ItemCollection luceneConfiguration = null;
+    private WorkflowClient workflowClient = null;
 
     public boolean isConnected() {
         return connected;
@@ -64,6 +65,10 @@ public class ConnectionController implements Serializable {
      */
     public void connect() {
         logger.info("...connting: " + endpoint);
+
+        // get JSESSIONID
+        workflowClient = getWorkflowClient();
+
         luceneConfiguration = loadLuceneConfiguration();
         // test if the configuration was loaded successful
         connected = (luceneConfiguration != null);
@@ -89,9 +94,10 @@ public class ConnectionController implements Serializable {
             conversation.end();
             connected = false;
             luceneConfiguration = null;
-            endpoint=null;
-            key=null;
-            token=null;
+            endpoint = null;
+            key = null;
+            token = null;
+            workflowClient = null;
         }
 
     }
@@ -145,20 +151,28 @@ public class ConnectionController implements Serializable {
         return luceneConfiguration;
     }
 
+    /**
+     * This method creates a WorkflowRest Client and caches the instance
+     *
+     * @return
+     */
     public WorkflowClient getWorkflowClient() {
-        // Init the workflowClient with a basis URL
-        WorkflowClient workflowClient = new WorkflowClient(getEndpoint());
-        if ("BASIC".equals(getType())) {
-            // Create a authenticator
-            BasicAuthenticator basicAuth = new BasicAuthenticator(getKey(), getToken());
-            // register the authenticator
-            workflowClient.registerClientRequestFilter(basicAuth);
-        }
-        if ("FORM".equals(getType())) {
-            // Create a authenticator
-            FormAuthenticator formAuth = new FormAuthenticator(getEndpoint(), getKey(), getToken());
-            // register the authenticator
-            workflowClient.registerClientRequestFilter(formAuth);
+        if (workflowClient == null) {
+            // Init the workflowClient with a basis URL
+            workflowClient = new WorkflowClient(getEndpoint());
+            if ("BASIC".equals(getType())) {
+                // Create a authenticator
+                BasicAuthenticator basicAuth = new BasicAuthenticator(getKey(), getToken());
+                // register the authenticator
+                workflowClient.registerClientRequestFilter(basicAuth);
+            }
+            if ("FORM".equals(getType())) {
+                // Create a authenticator
+                FormAuthenticator formAuth = new FormAuthenticator(getEndpoint(), getKey(), getToken());
+                // register the authenticator
+                workflowClient.registerClientRequestFilter(formAuth);
+
+            }
         }
 
         return workflowClient;

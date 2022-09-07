@@ -37,8 +37,8 @@
 								<h:selectOneMenu id="selectedItem"
 									value="#{connectionController.type}"
 									disabled="#{connectionController.connected}">
-									<f:selectItem itemValue="BASIC" itemLabel="Basic" />
 									<f:selectItem itemValue="FORM" itemLabel="Form Based" />
+									<f:selectItem itemValue="BASIC" itemLabel="Basic" />
 									<f:selectItem itemValue="COOKIE" itemLabel="Cookie" />
 									<f:selectItem itemValue="JWT" itemLabel="JWT" />
 									<f:ajax render="key_token_input" />

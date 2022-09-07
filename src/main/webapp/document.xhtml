@@ -1,0 +1,45 @@
+<ui:composition template="/WEB-INF/templates/layout.xhtml"
+	xmlns:faces="jakarta.faces" xmlns:f="jakarta.faces.core"
+	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets">
+
+	<ui:define name="content">
+
+
+
+		<f:view id="document_form_id">
+			<div class="card">
+				<h2>
+					<span class="typcn typcn-folder-open"></span> Document:
+					#{documentController.document.uniqueID} <a><span
+						class="typcn typcn-link"></span></a><a><span
+						style="font-size: 0.8rem; font-weight: bold;">XML</span></a> <a><span
+						style="font-size: 0.8rem; font-weight: bold;">JSON</span></a> <h:link outcome="/search.xhtml?cid=#{jakarta.enterprise.context.conversation.id}" ><span
+						class="typcn typcn-arrow-forward pull-right"></span></h:link>
+				</h2>
+				<table style="width: 100%; margin-top: 10px;">
+					<thead>
+						<tr>
+							<th style="width: 170px;">Item</th>
+							<th>Type</th>
+							<th>Value</th>
+						</tr>
+					</thead>
+					<tbody>
+						<ui:repeat var="itemName"
+							value="#{documentController.document.itemNames}">
+							<tr>
+								<td>#{itemName}</td>
+								<td>#{documentController.getItemType(itemName)}</td>
+								<td><ui:repeat var="itemValue"
+										value="#{documentController.getItemValues(itemName)}">
+										#{itemValue}<br />
+									</ui:repeat></td>
+							</tr>
+						</ui:repeat>
+					</tbody>
+				</table>
+			</div>
+		</f:view>
+
+	</ui:define>
+</ui:composition>

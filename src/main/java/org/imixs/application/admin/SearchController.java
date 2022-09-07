@@ -88,65 +88,16 @@ public class SearchController implements Serializable {
      */
     public List<ItemCollection> getSearchResult() {
         List<ItemCollection> result = new ArrayList<ItemCollection>();
-
-        logger.info("...compute searchResult...");
-
-        // FormBasedAuthenticationHelper helper = new
-        // FormBasedAuthenticationHelper(connectionController.getEndpoint());
-
         WorkflowClient workflowClient = connectionController.getWorkflowClient();
-
-//        // Init the workflowClient with a basis URL
-//        WorkflowClient workflowClient = new WorkflowClient(connectionController.getEndpoint());
-//        if ("BASIC".equals(connectionController.getType())) {
-//            // Create a authenticator
-//            BasicAuthenticator basicAuth = new BasicAuthenticator(connectionController.getKey(),
-//                    connectionController.getToken());
-//            // register the authenticator
-//            workflowClient.registerClientRequestFilter(basicAuth);
-//        }
-//        if ("FORM".equals(connectionController.getType())) {
-//            // Create a authenticator
-//
-//            logger.info("..form connect:" + connectionController.getEndpoint() + " - " + connectionController.getKey()
-//                    + " - " + connectionController.getToken());
-//            // connectionController.getEndpoint() "https://demo.internal.office-workflow.de"
-//
-//            // === Dieser Code funktioniert
-////            try {
-////                logger.info("wir testen mal den imixs-workflow rest client");
-////                RestClient restClient = new RestClient(connectionController.getEndpoint());
-////                org.imixs.workflow.services.rest.FormAuthenticator fa = new org.imixs.workflow.services.rest.FormAuthenticator(
-////                        "https://demo.internal.office-workflow.de", connectionController.getKey(),
-////                        connectionController.getToken());
-////                restClient.registerRequestFilter(fa);
-////
-////                String rResult = restClient.get("/api/model");
-////                logger.info(" rResult Staus=" + restClient.getLastHTTPResult());
-////                logger.info(" page result=" + rResult);
-////            } catch (org.imixs.workflow.services.rest.RestAPIException e) {
-////                // TODO Auto-generated catch block
-////                e.printStackTrace();
-////            }
-//            // ===============
-//
-//            FormAuthenticator formAuth = new FormAuthenticator(connectionController.getEndpoint(),
-//                    connectionController.getKey(), connectionController.getToken());
-//            // register the authenticator
-//            workflowClient.registerClientRequestFilter(formAuth);
-//        }
-
         try {
             workflowClient.setPageIndex(getPageIndex());
             workflowClient.setPageSize(getPageSize());
             workflowClient.setSortBy(getSortBy());
             workflowClient.setSortOrder(getSortBy(), false);
-
             // result = workflowClient.getCustomResource("/documents/search/" + getQuery());
             result = workflowClient.searchDocuments(getQuery());
-            logger.info("...found " + result.size() + " results");
+            logger.finest("...found " + result.size() + " results");
         } catch (RestAPIException | UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
