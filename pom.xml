@@ -44,6 +44,15 @@
 	</licenses>
 
 
+	<repositories>
+		<!-- Sonatype Snapshot repository -->
+		<repository>
+			<id>sonatype-snaptshots</id>
+			<name>Sonatype Snapshot repository</name>
+			<url>http://oss.sonatype.org/content/repositories/snapshots</url>
+		</repository>
+	</repositories>
+	
 	<properties>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
