@@ -24,7 +24,7 @@
 				<hr />
 				<ul>
 					<li class="nav-item">
-						<h:link outcome="/connect" >
+						<h:link outcome="/connect.xhtml?cid=#{jakarta.enterprise.context.conversation.id}" >
 							<span class="typcn typcn-link"></span><label>Endpoint</label>
 						</h:link>
 						<span class="typcn typcn-media-record-outline" style="#{connectionController.connected?'color:#4dc24f':'color:#dc2929'}"></span>
@@ -35,7 +35,7 @@
 				<ul>
 					<li class="nav-item">
 						<h:link outcome="/search.xhtml?cid=#{jakarta.enterprise.context.conversation.id}" >
-							<span class="typcn typcn-link"></span><label>Search</label>
+							<span class="typcn typcn-zoom-outline"></span><label>Search</label>
 						</h:link>
 					</li>
 				</ul>
