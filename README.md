@@ -1,3 +1,4 @@
+[![CodeQL](https://github.com/imixs/imixs-admin/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/imixs/imixs-admin/actions/workflows/codeql-analysis.yml)
 # Imixs-Admin
 
 The Imixs-Admin project provides a web based tool to administrate an Imixs-Workflow instance.  
