@@ -135,6 +135,7 @@ body, html {
 	width:7em !important;
 }
 
+
 .nav-sidebar a {
 	color: inherit;
 }
@@ -147,18 +148,9 @@ body, html {
 	width: 90%;
 }
 
-.main-container {
-	padding: 16px 20px;
-}
-
-.content {
-	margin-left: 200px;
-	background-color: #F2F7FB;
-}
 
 
-
-.nav-item {
+.nav-sidebar .nav-item {
 	font-weight: 200;
 	padding: 8px 16px;
 	overflow: hidden;
@@ -174,14 +166,43 @@ body, html {
 	float: none;
 	outline: 0;
 }
-.nav-item a label {
-	cursor: pointer;
+
+.nav-sidebar .nav-item  label {
+	color: #999;
 }
 
-.nav-item:hover {
-	background-color: #1d2531 !important;
+.nav-sidebar .nav-item a label {
+	cursor: pointer;
 	color: #fff;
 }
+
+
+.nav-sidebar .nav-item:hover a label {
+	xbackground-color: #1d2531 !important;
+	color: #fff;
+	font-weight: bold;
+}
+
+
+
+
+
+
+
+
+
+
+
+.main-container {
+	padding: 16px 20px;
+}
+
+.content {
+	margin-left: 200px;
+	background-color: #F2F7FB;
+}
+
+
 
 .imixs-form h3 {
 	border-bottom: 1px solid #ddd;

@@ -21,7 +21,7 @@
 						<dl style="grid-column-start: span 12;">
 							<dt>URL:</dt>
 							<dd>
-								<h:inputText value="#{connectionController.endpoint}"
+								<h:inputText value="#{connectionController.endpoint}" id="endpoint_input"
 									disabled="#{connectionController.connected}" required="true" />
 
 							</dd>
@@ -65,7 +65,7 @@
 
 
 									<dd>
-										<h:inputText value="#{connectionController.key}"
+										<h:inputText value="#{connectionController.key}" id="userid_input"
 											disabled="#{connectionController.connected}" />
 
 									</dd>

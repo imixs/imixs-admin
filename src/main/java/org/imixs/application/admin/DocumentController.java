@@ -106,19 +106,15 @@ public class DocumentController implements Serializable {
      */
     public void load(String id) {
 
-        logger.info("...load document: " + id);
-
+        logger.finest("...load document: " + id);
         WorkflowClient workflowClient = connectionController.getWorkflowClient();
-
         try {
+            // load all items
+            workflowClient.setItems(null);
             document = workflowClient.getDocument(id);
-
         } catch (RestAPIException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
-
         }
-
     }
 
 }

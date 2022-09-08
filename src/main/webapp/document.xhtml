@@ -10,10 +10,14 @@
 			<div class="card">
 				<h2>
 					<span class="typcn typcn-folder-open"></span> Document:
-					#{documentController.document.uniqueID} <a><span
-						class="typcn typcn-link"></span></a><a><span
-						style="font-size: 0.8rem; font-weight: bold;">XML</span></a> <a><span
-						style="font-size: 0.8rem; font-weight: bold;">JSON</span></a> <h:link outcome="/search.xhtml?cid=#{jakarta.enterprise.context.conversation.id}" ><span
+					#{documentController.document.uniqueID} 
+					<a href="#{connectionController.endpoint}/documents/#{documentController.document.uniqueID}" target="_doclink"><span
+						class="typcn typcn-link"></span></a>
+					<a href="#{connectionController.endpoint}/documents/#{documentController.document.uniqueID}?format=xml" target="_xml"><span
+						style="font-size: 0.8rem; font-weight: bold;">XML</span></a>
+					<a href="#{connectionController.endpoint}/documents/#{documentController.document.uniqueID}?format=json" target="_json"><span
+						style="font-size: 0.8rem; font-weight: bold;">JSON</span></a> 
+					<h:link outcome="/search.xhtml?cid=#{jakarta.enterprise.context.conversation.id}" ><span
 						class="typcn typcn-arrow-forward pull-right"></span></h:link>
 				</h2>
 				<table style="width: 100%; margin-top: 10px;">

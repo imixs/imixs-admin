@@ -61,26 +61,35 @@ public class ConnectionController implements Serializable {
     private Conversation conversation;
 
     /**
-     * Starts a new conversation
+     * Starts a new conversation. The method creates a new worklowClient instance
+     * and loads the luceneConfiguration to test if a connection the the Rest API
+     * endpoint can be established.
      */
     public void connect() {
-        logger.info("...connting: " + endpoint);
+        if (endpoint == null) {
+            return;
+        }
+
+        logger.info("...conecting: " + endpoint);
 
         // get JSESSIONID
         workflowClient = getWorkflowClient();
 
-        luceneConfiguration = loadLuceneConfiguration();
-        // test if the configuration was loaded successful
-        connected = (luceneConfiguration != null);
+        if (workflowClient != null) {
+            luceneConfiguration = loadLuceneConfiguration();
+            // test if the configuration was loaded successful
+            connected = (luceneConfiguration != null);
 
-        if (conversation.isTransient()) {
-            conversation.setTimeout(
-                    ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest())
-                            .getSession().getMaxInactiveInterval() * 1000);
-            conversation.begin();
-            logger.finest("......start new conversation, id=" + conversation.getId());
+            if (connected && conversation.isTransient()) {
+                conversation.setTimeout(
+                        ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest())
+                                .getSession().getMaxInactiveInterval() * 1000);
+                conversation.begin();
+                logger.finest("......start new conversation, id=" + conversation.getId());
+            }
+        } else {
+            connected = false;
         }
-
     }
 
     /**
@@ -157,7 +166,7 @@ public class ConnectionController implements Serializable {
      * @return
      */
     public WorkflowClient getWorkflowClient() {
-        if (workflowClient == null) {
+        if (workflowClient == null && getEndpoint() != null) {
             // Init the workflowClient with a basis URL
             workflowClient = new WorkflowClient(getEndpoint());
             if ("BASIC".equals(getType())) {
@@ -187,30 +196,30 @@ public class ConnectionController implements Serializable {
      * @return true if api call was successful
      */
     private ItemCollection loadLuceneConfiguration() {
-        logger.info("...compute test result...");
         List<ItemCollection> result;
-        try {
-            WorkflowClient workflowClient = getWorkflowClient();
-            // we do not expect a result
-            workflowClient.setPageSize(1);
-
-            // documents/configuration
-            result = workflowClient.getCustomResource("documents/configuration");
-            // a valid result object contains the item lucence.fulltextFieldList'
-            if (result != null && result.size() > 0) {
-                errorMessage = "";
-                return result.get(0);
-            } else {
-                luceneConfiguration = null;
+        WorkflowClient workflowClient = getWorkflowClient();
+        if (workflowClient != null) {
+            try {
+                // we do not expect a result
+                workflowClient.setPageSize(1);
+                // documents/configuration
+                result = workflowClient.getCustomResource("documents/configuration");
+                // a valid result object contains the item lucence.fulltextFieldList'
+                if (result != null && result.size() > 0) {
+                    errorMessage = "";
+                    return result.get(0);
+                } else {
+                    luceneConfiguration = null;
+                    errorMessage = "Unable to connect to endpoint!";
+                    logger.severe(errorMessage);
+                    return null;
+                }
+            } catch (RestAPIException e) {
                 errorMessage = "Unable to connect to endpoint!";
-                logger.severe(errorMessage);
-                return null;
+                logger.severe("Unable to connect to endpoint: " + e.getMessage());
             }
-        } catch (RestAPIException e) {
-            errorMessage = "Unable to connect to endpoint!";
-            logger.severe("Unable to connect to endpoint: " + e.getMessage());
-            return null;
         }
+        return null;
     }
 
 }

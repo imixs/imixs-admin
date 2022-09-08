@@ -6,12 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.imixs.melman.BasicAuthenticator;
-import org.imixs.melman.FormAuthenticator;
 import org.imixs.melman.RestAPIException;
 import org.imixs.melman.WorkflowClient;
 import org.imixs.workflow.ItemCollection;
-import org.imixs.workflow.services.rest.RestClient;
 
 import jakarta.enterprise.context.ConversationScoped;
 import jakarta.inject.Inject;
@@ -32,22 +29,21 @@ import jakarta.inject.Named;
 @ConversationScoped
 public class SearchController implements Serializable {
 
+    public static final String ITEM_LIST = "$uniqueid,$created,$modified,$workflowstatus,$worklfowsummary,type,name";
+
     private static final long serialVersionUID = 1L;
 
     private static Logger logger = Logger.getLogger(SearchController.class.getName());
 
     private String query = "(type:workitem)";// default query
-
-    private int pageSize;
+    private int pageSize = 10;
     private int pageIndex;
-    private String sortBy;
+    private String sortBy = "$modified";
+    private boolean sortOrder;
+    private List<ItemCollection> searchResult = null;
 
     @Inject
     ConnectionController connectionController;
-
-    public void search() {
-        logger.info("...search: " + query);
-    }
 
     public String getQuery() {
         return query;
@@ -55,6 +51,7 @@ public class SearchController implements Serializable {
 
     public void setQuery(String query) {
         this.query = query;
+        searchResult = null;
     }
 
     public int getPageSize() {
@@ -81,27 +78,58 @@ public class SearchController implements Serializable {
         this.sortBy = sortBy;
     }
 
+    public boolean isSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(boolean sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    public void nextPage() {
+        pageIndex++;
+        searchResult = null;
+    }
+
+    public void prevPage() {
+        if (pageIndex > 0) {
+            pageIndex--;
+            searchResult = null;
+        }
+    }
+
     /**
-     * Computes the search result based on the current query data
+     * Computes the search result based on the current query data from the REST
+     * endpoint:
+     * <p>
+     * /documents/search/QUERY
+     * <p>
+     * The search result is cached during the conversation state.
      *
      * @return
      */
     public List<ItemCollection> getSearchResult() {
-        List<ItemCollection> result = new ArrayList<ItemCollection>();
-        WorkflowClient workflowClient = connectionController.getWorkflowClient();
-        try {
-            workflowClient.setPageIndex(getPageIndex());
-            workflowClient.setPageSize(getPageSize());
-            workflowClient.setSortBy(getSortBy());
-            workflowClient.setSortOrder(getSortBy(), false);
-            // result = workflowClient.getCustomResource("/documents/search/" + getQuery());
-            result = workflowClient.searchDocuments(getQuery());
-            logger.finest("...found " + result.size() + " results");
-        } catch (RestAPIException | UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
 
-        return result;
+        if (searchResult == null) {
+            WorkflowClient workflowClient = connectionController.getWorkflowClient();
+            if (workflowClient != null) {
+                try {
+                    long l = System.currentTimeMillis();
+                    workflowClient.setPageIndex(getPageIndex());
+                    workflowClient.setPageSize(getPageSize());
+                    workflowClient.setSortBy(getSortBy());
+                    workflowClient.setSortOrder(getSortBy(), isSortOrder());
+                    workflowClient.setItems(ITEM_LIST);
+                    // result = workflowClient.getCustomResource("/documents/search/" + getQuery());
+                    searchResult = workflowClient.searchDocuments(getQuery());
+                    logger.info("...found " + searchResult.size() + " results in " + (System.currentTimeMillis() - l)
+                            + "ms");
+                } catch (RestAPIException | UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return searchResult;
     }
 
 }
