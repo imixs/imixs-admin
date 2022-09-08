@@ -50,8 +50,16 @@
 			<id>sonatype-snaptshots</id>
 			<name>Sonatype Snapshot repository</name>
 			<url>http://oss.sonatype.org/content/repositories/snapshots</url>
+			<releases>
+	            <enabled>false</enabled>
+	            <updatePolicy>always</updatePolicy>
+	            <checksumPolicy>warn</checksumPolicy>
+	        </releases>			
 		</repository>
 	</repositories>
+	
+
+	
 	
 	<properties>
 
@@ -269,6 +277,7 @@
 			<plugin>
 				<groupId>net.revelc.code.formatter</groupId>
 				<artifactId>formatter-maven-plugin</artifactId>
+				<version>2.19.0</version>
 				<configuration>
 					<configFile>${project.basedir}/imixs-code-style.xml</configFile>
 				</configuration>
