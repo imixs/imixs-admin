@@ -50,11 +50,13 @@
 			<id>sonatype-snaptshots</id>
 			<name>Sonatype Snapshot repository</name>
 			<url>http://oss.sonatype.org/content/repositories/snapshots</url>
+			<!--
 			<releases>
 	            <enabled>false</enabled>
 	            <updatePolicy>always</updatePolicy>
 	            <checksumPolicy>warn</checksumPolicy>
-	        </releases>			
+	        </releases>	
+	        -->		
 		</repository>
 	</repositories>
 	
