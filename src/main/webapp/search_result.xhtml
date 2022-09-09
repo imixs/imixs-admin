@@ -1,0 +1,63 @@
+<ui:composition
+	xmlns:faces="jakarta.faces" xmlns:f="jakarta.faces.core"
+	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets"
+	xmlns:pt="jakarta.faces.passthrough">
+
+
+	<!-- Search Result -->
+	<h:panelGroup id="search_result" layout="block" styleClass="card">
+		<ui:param name="result" value="#{searchController.searchResult}" />
+
+		<h2>
+			<span class="typcn typcn-world-outline"></span> Search Result
+
+			<f:ajax render="page_index_id search_result">
+				<span class="pull-right"><h:commandLink
+						disabled="#{searchController.pageIndex le 0}"
+						actionListener="#{searchController.prevPage()}" immediate="true">
+						<span class="typcn typcn-media-rewind"></span>
+					</h:commandLink>
+					<h:commandLink style="margin-left:10px;"
+						disabled="#{result.size() lt searchController.pageSize}"
+						actionListener="#{searchController.nextPage()}" immediate="true">
+						<span class="typcn typcn-media-fast-forward"></span>
+					</h:commandLink> </span>
+			</f:ajax>
+		</h2> 
+
+
+		<table id="imixsdatatable" class="imixsdatatable" style="width: 100%;">
+			<thead>
+				<tr>
+					<th>UUID</th>
+					<th>Created</th>
+					<th>Modified</th>
+					<th>Type</th>
+					<th>Workflow Status</th>
+					<th>Workflow Summary</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+
+				<ui:repeat var="doc" value="#{result}">
+					<tr>
+						<td style="white-space: nowrap;"><h:link
+								outcome="/document.xhtml?cid=#{jakarta.enterprise.context.conversation.id}">
+								<label>#{doc.uniqueID}</label>
+								<f:param name="id" value="#{doc.uniqueID}" />
+							</h:link></td>
+						<td style="white-space: nowrap;">#{doc.item['$created']}</td>
+						<td style="white-space: nowrap;">#{doc.item['$modified']}</td>
+						<td style="white-space: nowrap;">#{doc.item['type']}</td>
+						<td style="white-space: nowrap;">#{doc.item['$workflowstatus']}</td>
+						<td style="white-space: nowrap;">#{doc.item['$workflowsummary']}</td>
+						<td><a><span class="typcn typcn-trash pull-right error"></span></a></td>
+					</tr>
+				</ui:repeat>
+			</tbody>
+		</table>
+	</h:panelGroup>
+
+
+</ui:composition>

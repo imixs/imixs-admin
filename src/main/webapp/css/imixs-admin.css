@@ -44,46 +44,6 @@ body, html {
 	box-sizing: inherit
 }
 
-.header {
-	background-color: #FFF;
-	border-bottom: 2px solid #e8e8e8;
-	min-height: 80px;
-	color: #263544;
-	height: 86px;
-	padding: 16px 10px;
-	white-space: nowrap;
-}
-
-.header .nav-sidebar ul li {
-	cursor: pointer;
-}
-.header .typcn {
-	font-size: 1.3rem;
-	cursor: pointer;
-}
-
-.header .searchbox {
-	padding: 0;
-}
-
-.header .searchbox input {
-	margin-right: 10px;
-	width: 75%;
-}
-
-.header .searchbox .typcn {
-	font-size: 1.5rem;
-}
-
-.header .linkbox .typcn {
-	color: #263544;
-}
-
-.header .linkbox ul li {
-	list-style: none;
-	margin-right: 20px;
-	display: inline;
-}
 
 .nav-sidebar {
 	height: 100%;
@@ -199,11 +159,31 @@ body, html {
 
 .content {
 	margin-left: 200px;
-	background-color: #F2F7FB;
+	background-color: #F4F7FA;
 }
 
+.header  {
+    margin-bottom: 40px;
+	margin-top: 16px;
+    border-color: #FCB802;
+	border-style: none none solid;
+	border-width: 0 0 2px;
+}
 
-
+.content .help {
+	color:#a0a3a8;
+	font-size: 0.9em;
+	padding-bottom:5px;
+	border-bottom: 1px solid #5194e9;
+}
+.content .help .typcn {
+	 color: #5194e9;
+	 font-size: 1.1em;
+}
+.content .help a {
+	color:#a0a3a8;
+	text-decoration: underline;
+}
 .imixs-form h3 {
 	border-bottom: 1px solid #ddd;
 	line-height: 2em;

@@ -7,13 +7,16 @@
 
 		<f:view>
 
-
+			<div class="header">
+				<h2>
+					<span class="typcn typcn-link-outline"></span> Endpoint
+				</h2>
+			</div>
 			<h:form id="connect_form_id">
+
 				<div class="card">
-					<h2>
-						<span class="typcn typcn-link-outline"></span> Endpoint
-					</h2>
-					<p>Connect to an Imixs-Workflow API endpoint.</p>
+
+					<p class="help"><span class="typcn typcn-lightbulb"></span> Connect to an Imixs-Workflow API endpoint.</p>
 
 
 
@@ -21,7 +24,8 @@
 						<dl style="grid-column-start: span 12;">
 							<dt>URL:</dt>
 							<dd>
-								<h:inputText value="#{connectionController.endpoint}" id="endpoint_input"
+								<h:inputText value="#{connectionController.endpoint}"
+									id="endpoint_input"
 									disabled="#{connectionController.connected}" required="true" />
 
 							</dd>
@@ -65,7 +69,8 @@
 
 
 									<dd>
-										<h:inputText value="#{connectionController.key}" id="userid_input"
+										<h:inputText value="#{connectionController.key}"
+											id="userid_input"
 											disabled="#{connectionController.connected}" />
 
 									</dd>
@@ -99,7 +104,7 @@
 
 					<div class="imixs-form-section">
 						<!-- Error Message -->
-						<h4 style="grid-column-start: span 12;color: red;">
+						<h4 style="grid-column-start: span 12; color: red;">
 							<h:outputText value="#{connectionController.errorMessage}" />
 						</h4>
 
