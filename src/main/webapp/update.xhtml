@@ -1,6 +1,7 @@
 <ui:composition template="/WEB-INF/templates/layout.xhtml"
 	xmlns:faces="jakarta.faces" xmlns:f="jakarta.faces.core"
-	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets">
+	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets"
+	xmlns:pt="jakarta.faces.passthrough">
 
 	<ui:define name="content">
 
@@ -8,19 +9,101 @@
 		<f:view>
 			<h:form id="search_form_id">
 
-			<div class="header">
-				<h2>
-					<span class="typcn typcn-edit"></span> Bulk Update
-				</h2>
-			</div>
-
-				
+				<div class="header">
+					<h2>
+						<span class="typcn typcn-edit"></span> Bulk Update
+					</h2>
+				</div>
 				<!-- Search Query -->
-				<ui:include src="search_query.xhtml" />
+				<ui:include src="search_query.xhtml" >
+					<ui:param name="showSearchButton" value="false" />
+				</ui:include>
 
 
+				<!-- Update Panel -->
+
+				<div class="card">
+					<p class="help">
+						<span class="typcn typcn-lightbulb"></span> Specify the <i>Field Name</i>,
+						the <i>Field Type</i> and the new <i>Values</i>. Multi-Values can be separated by
+						new lines. If you want to add a single value with multiple lines,
+						than add '\n' at the end of a line. Date values have to be
+						formated as 'yyyy-mm-dd'.
+						Optional you can define a workflow event to process workitems during update.
+					</p>
+
+
+					<div class="imixs-form-section">
+						<dl style="grid-column-start: span 4;">
+
+							<dt>Field Name: <span style="color:red;">*</span></dt>
+							<dd>
+
+
+								<h:inputText value="#{updateController.fieldName}"
+									disabled="#{!connectionController.connected}" required="true" />
+
+							</dd>
+						</dl>
+						<dl style="grid-column-start: span 4;">
+							<dt>Field Type: <span style="color:red;">*</span></dt>
+							<dd>
+
+								<h:selectOneMenu id="selectedItem"
+									value="#{updateController.fieldType}"
+									disabled="#{!connectionController.connected}">
+									<f:selectItem itemValue="xs:string" itemLabel="xs:string" />
+									<f:selectItem itemValue="xs:int" itemLabel="xs:int" />
+									<f:selectItem itemValue="xs:long" itemLabel="xs:long" />
+									<f:selectItem itemValue="xs:float" itemLabel="xs:float" />
+									<f:selectItem itemValue="xs:double" itemLabel="xs:double" />
+									<f:selectItem itemValue="xs:boolean" itemLabel="xs:boolean" />
+									<f:selectItem itemValue="xs:dateTime" itemLabel="xs:dateTime" />
+								</h:selectOneMenu>
+
+							</dd>
+						</dl>
+						<dl style="grid-column-start: span 4;">
+							<dt>Workflow Event (optional):</dt>
+							<dd>
+								<h:inputText value="#{updateController.workflowEvent}"
+									disabled="#{!connectionController.connected}" />
+							</dd>
+						</dl>
+					</div>
+					<div class="imixs-form-section">
+						<dl style="grid-column-start: span 8;">
+							<dt>Values:</dt>
+							<dd>
+								<h:inputTextarea value="#{updateController.values}"
+									pt:spellcheck="false" style="width: 100%;height: 7em;"
+									disabled="#{!connectionController.connected}" required="true" />
+							</dd>
+						</dl>
+						<dl style="grid-column-start: span 4;">
+							<dt>Update Mode:</dt>
+
+							<dd>
+								<h:selectBooleanCheckbox
+									value="#{updateController.appendValues}"
+									disabled="#{!connectionController.connected}" />
+								Append Values
+							</dd>
+						</dl>
+
+
+					</div>
+					
+					<h:commandButton value="Start Update" 
+						actionListener="#{updateController.bulkUpdate()}"
+						disabled="#{!connectionController.connected}" 
+				 		onclick="return (confirm('Staring Bulk Update now?\n\nOperation can not be undone!'))" 
+				/>
+				</div>
 				
-
+				
+				<!-- Log -->
+				<ui:include src="log.xhtml" />
 			</h:form>
 		</f:view>
 

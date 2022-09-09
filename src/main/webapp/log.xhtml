@@ -1,0 +1,18 @@
+<ui:composition xmlns:faces="jakarta.faces" xmlns:f="jakarta.faces.core"
+	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets"
+	xmlns:pt="jakarta.faces.passthrough">
+
+
+	<!-- Message Log -->
+	<div class="card">
+		<h3>
+			<span class="typcn typcn-input-checked"></span> Log
+		</h3>
+		<pre>
+			<ui:repeat var="log" value="#{logController.logEntries}">
+				<h:outputText value="#{log}" /><br />
+			</ui:repeat>		
+		</pre>
+
+	</div>
+</ui:composition>
