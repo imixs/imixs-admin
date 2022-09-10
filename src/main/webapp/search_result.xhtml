@@ -14,14 +14,11 @@
 			<f:ajax render="page_index_id search_result">
 				<span class="pull-right"><h:commandLink
 						disabled="#{searchController.pageIndex le 0}"
-						actionListener="#{searchController.prevPage()}" immediate="true">
-						<span class="typcn typcn-media-rewind"></span>
-					</h:commandLink>
-					<h:commandLink style="margin-left:10px;"
+						actionListener="#{searchController.prevPage()}" immediate="true"><span class="typcn typcn-media-rewind"></span>
+					</h:commandLink><h:commandLink style="margin-left:10px;"
 						disabled="#{result.size() lt searchController.pageSize}"
-						actionListener="#{searchController.nextPage()}" immediate="true">
-						<span class="typcn typcn-media-fast-forward"></span>
-					</h:commandLink> </span>
+						actionListener="#{searchController.nextPage()}" immediate="true"><span class="typcn typcn-media-fast-forward"></span>
+					</h:commandLink></span>
 			</f:ajax>
 		</h2> 
 

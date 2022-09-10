@@ -162,13 +162,25 @@ body, html {
 	background-color: #F4F7FA;
 }
 
-.header  {
+.content .header  {
     margin-bottom: 40px;
 	margin-top: 16px;
     border-color: #FCB802;
 	border-style: none none solid;
 	border-width: 0 0 2px;
 }
+.content .header .endpoint  {
+	float: right;
+	font-size:0.5em;
+	line-height:4em;
+	color: #222;
+	padding-right:20px;
+}
+.content .header .endpoint .typcn {
+	font-size:1.3em;
+	color:#4dc24f;
+}
+
 
 .content .help {
 	color:#a0a3a8;
@@ -311,13 +323,16 @@ input[type="text"]:focus, input[type="password"]:focus, textarea:focus,
 	border-radius: 3px;
 }
 
-table {
+.content table {
 	font-size: 14px;
 }
 
-th {
+.content th {
 	font-weight: bold;
+	color: #555;
+	background-color: #efefef;
 }
+
 
 .imixsdatatable a {
 	color: #428bca !important;

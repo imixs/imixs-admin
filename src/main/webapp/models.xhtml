@@ -4,7 +4,49 @@
 
 	<ui:define name="content">
 
+		<f:view>
+			<h:form id="amdinp_form_id">
 
+				<div class="header">
+					<h2>
+						<span class="typcn typcn-flow-merge"></span> Models <span
+							class="endpoint"><span class="typcn typcn-media-record"></span>
+							#{connectionController.endpoint}</span>
+					</h2>
+				</div>
+
+
+				<div class="card">
+					<table id="imixsdatatable" class="imixsdatatable"
+						style="width: 100%;">
+						<thead>
+							<tr>
+								<th>Version</th>
+								<th>Model File</th>
+								<th>Last Update</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<ui:repeat var="model" value="#{modelController.models}">
+								<tr>
+									<td>#{model.item['txtname']} <!--  api/model/xxx-de-1.0/bpmn/ -->
+										<a
+										href="#{connectionController.endpoint}/model/#{model.item['txtname']}/bpmn/"
+										target="_model"><span class="typcn typcn-link" style="font-size:1.3em;"></span></a>
+									</td>
+									<td>#{model.getFileNames().get(0)}</td>
+									<td>#{model.item['$created']}</td>
+									<td><a><span 
+											class="typcn typcn-trash pull-right error"
+											></span></a></td>
+								</tr>
+							</ui:repeat>
+						</tbody>
+					</table>
+				</div>
+			</h:form>
+		</f:view>
 
 	</ui:define>
 </ui:composition>

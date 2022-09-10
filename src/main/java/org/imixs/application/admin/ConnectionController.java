@@ -46,7 +46,7 @@ public class ConnectionController implements Serializable {
     private String type = "FORM";
     private String errorMessage = "";
     private boolean connected;
-    private ItemCollection luceneConfiguration = null;
+    private ItemCollection indexSchema = null;
     private WorkflowClient workflowClient = null;
 
     public boolean isConnected() {
@@ -62,8 +62,8 @@ public class ConnectionController implements Serializable {
 
     /**
      * Starts a new conversation. The method creates a new worklowClient instance
-     * and loads the luceneConfiguration to test if a connection the the Rest API
-     * endpoint can be established.
+     * and loads the index schema to test if a connection the the Rest API endpoint
+     * can be established.
      */
     public void connect() {
         if (endpoint == null) {
@@ -76,9 +76,9 @@ public class ConnectionController implements Serializable {
         workflowClient = getWorkflowClient();
 
         if (workflowClient != null) {
-            luceneConfiguration = loadLuceneConfiguration();
+            indexSchema = loadIndexSchema();
             // test if the configuration was loaded successful
-            connected = (luceneConfiguration != null);
+            connected = (indexSchema != null);
 
             if (connected && conversation.isTransient()) {
                 conversation.setTimeout(
@@ -102,7 +102,7 @@ public class ConnectionController implements Serializable {
             logger.finest("......stopping conversation, id=" + conversation.getId());
             conversation.end();
             connected = false;
-            luceneConfiguration = null;
+            indexSchema = null;
             endpoint = null;
             key = null;
             token = null;
@@ -152,12 +152,12 @@ public class ConnectionController implements Serializable {
     }
 
     /**
-     * Returns the Lucene index schema
+     * Returns the lucene index schema
      *
      * @return
      */
-    public ItemCollection getLuceneConfiguration() {
-        return luceneConfiguration;
+    public ItemCollection getIndexSchema() {
+        return indexSchema;
     }
 
     /**
@@ -190,12 +190,12 @@ public class ConnectionController implements Serializable {
 
     /**
      * This method test if the api endpoint documents/configuration is reachable.
-     * The endpoint represents the LuceneConfiguration. If the configuration could
+     * The endpoint represents the Lucene IndexSchema. If the configuration could
      * not be loaded than something with the Rest API endpoint is wrong.
      *
      * @return true if api call was successful
      */
-    private ItemCollection loadLuceneConfiguration() {
+    private ItemCollection loadIndexSchema() {
         List<ItemCollection> result;
         WorkflowClient workflowClient = getWorkflowClient();
         if (workflowClient != null) {
@@ -209,7 +209,7 @@ public class ConnectionController implements Serializable {
                     errorMessage = "";
                     return result.get(0);
                 } else {
-                    luceneConfiguration = null;
+                    indexSchema = null;
                     errorMessage = "Unable to connect to endpoint!";
                     logger.severe(errorMessage);
                     return null;

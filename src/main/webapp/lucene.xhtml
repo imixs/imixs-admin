@@ -5,6 +5,48 @@
 	<ui:define name="content">
 
 
+		<f:view>
+			<h:form id="amdinp_form_id">
+
+				<div class="header">
+					<h2>
+						<span class="typcn typcn-map"></span> Index Schema 
+						<span class="endpoint"><span class="typcn typcn-media-record"></span> #{connectionController.endpoint}</span>
+					</h2>
+				</div>
+
+				<div class="card">
+					
+					<table style="width: 100%; margin-top: 10px;" class="imixsdatatable">
+							<thead>
+								<tr>
+									<th style="width: 170px;">Schema Group</th>
+									<th>Items</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>index.fields</td>
+									<td>#{connectionController.indexSchema.getItemValue('lucence.fulltextFieldList')}</td>
+								</tr>
+								<tr>
+									<td>index.fields.analyze</td>
+									<td>#{connectionController.indexSchema.getItemValue('lucence.indexFieldListAnalyze')}</td>
+								</tr>
+								<tr>
+									<td>index.fields.noanalyze</td>
+									<td>#{connectionController.indexSchema.getItemValue('lucence.indexFieldListNoAnalyze')}</td>
+								</tr>
+								<tr>
+									<td>index.fields.store</td>
+									<td>#{connectionController.indexSchema.getItemValue('lucence.indexFieldListStore')}</td>
+								</tr>
+							</tbody>
+						</table>
+				</div>
+			</h:form>
+		</f:view>
+
 
 	</ui:define>
 </ui:composition>
