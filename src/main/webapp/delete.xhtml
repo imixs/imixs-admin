@@ -3,8 +3,39 @@
 	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets">
 
 	<ui:define name="content">
+		<f:view>
+			<h:form id="delete_form_id">
+
+				<div class="header">
+					<h2>
+						<span class="typcn typcn-trash"></span> Bulk Delete
+					</h2>
+				</div>
+				<!-- Search Query -->
+				<ui:include src="search_query.xhtml">
+					<ui:param name="showSearchButton" value="false" />
+				</ui:include>
 
 
+				<!-- Update Panel -->
+ 
+				<div class="card">
+					<p class="help">
+						<span class="typcn typcn-lightbulb"></span> Delete current search result. <strong>Attention: </strong> This is a 
+						permanent delete!
+					</p>
+
+					<h:commandButton value="Start Bulk Delete"
+						actionListener="#{deleteController.bulkDelete()}"
+						disabled="#{!connectionController.connected}"
+						onclick="return (confirm('Staring Bulk Delete now?\n\nOperation can not be undone!'))" />
+				</div>
+
+
+				<!-- Log -->
+				<ui:include src="log.xhtml" />
+			</h:form>
+		</f:view>
 
 	</ui:define>
 </ui:composition>

@@ -1,10 +1,212 @@
 <ui:composition template="/WEB-INF/templates/layout.xhtml"
 	xmlns:faces="jakarta.faces" xmlns:f="jakarta.faces.core"
-	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets">
+	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets"
+	xmlns:pt="jakarta.faces.passthrough">
 
 	<ui:define name="content">
 
+		<f:view>
+			<h:form id="amdinp_form_id">
 
+				<div class="header">
+					<h2>
+						<span class="typcn typcn-spanner"></span> Admin-P
+					</h2>
+				</div>
+
+
+				<div class="card">
+					<p class="help">
+						<span class="typcn typcn-lightbulb"></span> The Admin-P is a
+						backend process to execute administrative jobs asynchronous.
+
+					</p>
+
+
+					<div class="imixs-form-section">
+
+						<dl style="grid-column-start: span 3;">
+							<dt>Job:</dt>
+							<dd>
+
+								<h:selectOneMenu id="selectedItem"
+									value="#{adminPController.jobType}"
+									disabled="#{!connectionController.connected}">
+									<f:selectItem itemValue="JOB_REBUILD_INDEX"
+										itemLabel="Rebuild Index" />
+									<f:selectItem itemValue="JOB_RENAME_USER"
+										itemLabel="Rename User" />
+									<f:selectItem itemValue="JOB_UPGRADE" itemLabel="Upgrade" />
+									<f:ajax render="job_details" />
+								</h:selectOneMenu>
+
+							</dd>
+						</dl>
+
+						<dl style="grid-column-start: span 2;">
+							<dt>Blocksize / Interval:</dt>
+							<dd>
+								<h:inputText value="#{adminPController.blockSize}"
+									style="width: 4em;" pt:placeholder="500"
+									disabled="#{!connectionController.connected}" required="true" />
+								/
+								<h:inputText value="#{adminPController.interval}"
+									style="width: 3em;" pt:placeholder="60"
+									disabled="#{!connectionController.connected}" required="true" />
+								sec.
+
+							</dd>
+						</dl>
+
+						<dl style="grid-column-start: span 3;">
+							<dt>Filter by document type:</dt>
+							<dd>
+								<h:inputTextarea value="#{adminPController.filter}"
+									pt:spellcheck="false" style="width: 100%;height: 6em;"
+									disabled="#{!connectionController.connected}" required="true" />
+							</dd>
+						</dl>
+
+
+
+
+
+						<dl style="grid-column-start: span 4;">
+							<dt>Filter by creation date:</dt>
+							<dd>
+								<h:inputText type="date" style="width: 9.5em;"
+									value="#{adminPController.dateFrom}">
+									<f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+								</h:inputText>
+								-
+								<h:inputText type="date" style="width: 9.5em;"
+									value="#{adminPController.dateFrom}">
+									<f:convertDateTime type="localTo" pattern="yyyy-MM-dd" />
+								</h:inputText>
+							</dd>
+						</dl>
+
+
+
+					</div>
+
+
+
+				</div>
+
+				<h:panelGroup id="job_details" layout="block" styleClass="card">
+
+					<!--  Index Job -->
+					<h:panelGroup
+						rendered="#{adminPController.jobType eq 'JOB_REBUILD_INDEX'}">
+
+						<h2>
+							<span class="typcn typcn-arrow-repeat-outline"></span> Rebuild
+							Index
+						</h2>
+						<p class="help">This job rebuilds the Lucene fulltext-index.
+							Rebuilding the index may be necessary after a database restore,
+							or in cases where the index has been deleted or corrupted.
+							Rebuilding the index does not change any data. You can set
+							optional filter criteria to limit the selection of the affected
+							data.</p>
+						<button type="button">Start Job</button>
+					</h:panelGroup>
+
+
+
+					<!--  Rename Job -->
+					<h:panelGroup
+						rendered="#{adminPController.jobType eq 'JOB_RENAME_USER'}">
+
+						<h2>
+							<span class="typcn typcn-group-outline"></span> Rename User
+						</h2>
+						<p class="help">This job updates the access control list (ACL)
+							and permissions data of existing workitems. Data will only be
+							changed in cases the id "From User-ID" is part of an workitem.
+							You can set optional filter criteria to limit the selection of
+							the affected data.</p>
+
+
+						<div class="imixs-form-section">
+
+							<dl style="grid-column-start: span 4;">
+								<dt>From User-ID:</dt>
+								<dd>
+									<h:inputText value="#{adminPController.renameUserFrom}"
+										pt:placeholder="enter userid"
+										disabled="#{!connectionController.connected}" />
+
+								</dd>
+							</dl>
+							<dl style="grid-column-start: span 4;">
+								<dt>To User-ID:</dt>
+								<dd>
+									<h:inputText value="#{adminPController.renameUserTo}"
+										pt:placeholder="enter userid"
+										disabled="#{!connectionController.connected}" />
+								</dd>
+							</dl>
+
+							<dl style="grid-column-start: span 4;">
+								<dt>Full Replace:</dt>
+								<dd>
+									<h:selectBooleanCheckbox
+										value="#{adminPController.renameFullReplace}"
+										disabled="#{!connectionController.connected}" />
+									YES
+								</dd>
+							</dl>
+						</div>
+						<button type="button">Start Job</button>
+					</h:panelGroup>
+
+
+
+
+
+					<!--  Upgrade Job -->
+
+					<h:panelGroup
+						rendered="#{adminPController.jobType eq 'JOB_UPGRADE'}">
+
+						<h2>
+							<span class="typcn typcn-arrow-up-outline"></span> Upgrade
+						</h2>
+						<p class="help">This job upgrades the workflow data of
+							existing workitems. Data will only be changed in cases a workitem
+							was not processed by the current version of the Imixs-Workfow
+							engine used in this instance. You can set optional filter
+							criteria to limit the selection of the affected data.</p>
+						<button type="button">Start Job</button>
+					</h:panelGroup>
+
+
+
+
+
+
+				</h:panelGroup>
+
+
+
+
+
+				<!-- Job List -->
+
+				<div class="card">
+					<div class="header">
+						<h3>
+							<span class="typcn typcn-cog-outline"></span> Jobs
+						</h3>
+					</div>
+
+				</div>
+
+
+			</h:form>
+		</f:view>
 
 	</ui:define>
 </ui:composition>

@@ -98,6 +98,10 @@ public class SearchController implements Serializable {
         }
     }
 
+    public void reset() {
+        searchResult = null;
+    }
+
     /**
      * Computes the search result based on the current query data from the REST
      * endpoint:

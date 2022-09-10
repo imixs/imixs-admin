@@ -70,8 +70,12 @@ input[type="search"] { -webkit-appearance: textfield;-moz-box-sizing: content-bo
 input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webkit-search-decoration { -webkit-appearance: none;}
 button::-moz-focus-inner, input::-moz-focus-inner { border: 0;padding: 0;}
 textarea {overflow: auto;vertical-align: top;}
-select {padding: 0.4em 0.15em;}
+select {padding: 0.4em 0.15em;background: transparent;}
 fieldset {border: 1px solid #ddd; margin-bottom: 1em; padding: 0.35em 0.625em 0.75em;}
+
+input:disabled, select:disabled {
+	background: #E0E0E0;
+}
 
 /*** Default DL Definitonen ****/
 dl {	margin: 0;	vertical-align: top;}

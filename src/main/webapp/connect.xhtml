@@ -16,7 +16,10 @@
 
 				<div class="card">
 
-					<p class="help"><span class="typcn typcn-lightbulb"></span> Connect to an Imixs-Workflow API endpoint.</p>
+					<p class="help">
+						<span class="typcn typcn-lightbulb"></span> Connect to an
+						Imixs-Workflow API endpoint.
+					</p>
 
 
 
@@ -108,14 +111,13 @@
 							<h:outputText value="#{connectionController.errorMessage}" />
 						</h4>
 
-
-						<h:commandButton value="Connect"
-							actionListener="#{connectionController.connect()}"
-							rendered="#{!connectionController.connected}" />
-						<h:commandButton value="Disconnect"
-							rendered="#{connectionController.connected}"
-							actionListener="#{connectionController.disconnect()}" />
-
+						<span style="grid-column-start: span 8;"> <h:commandButton
+								value="Connect"
+								actionListener="#{connectionController.connect()}"
+								rendered="#{!connectionController.connected}" /> <h:commandButton
+								value="Disconnect" rendered="#{connectionController.connected}"
+								actionListener="#{connectionController.disconnect()}" />
+						</span>
 					</div>
 
 

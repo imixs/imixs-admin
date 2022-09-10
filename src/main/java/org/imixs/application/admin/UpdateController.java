@@ -100,6 +100,7 @@ public class UpdateController implements Serializable {
             if (workflowClient != null) {
                 // set items!
                 workflowClient.setItems("$uniqueid,$taskid,$modelversion," + getFieldName());
+                searchController.reset();
                 List<ItemCollection> documents = searchController.getSearchResult();
                 logController.info("..." + documents.size() + " documents selected for bulk update...");
 
@@ -164,6 +165,5 @@ public class UpdateController implements Serializable {
 
         }
     }
-    // no result
 
 }
