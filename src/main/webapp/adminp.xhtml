@@ -14,32 +14,26 @@
 					</h2>
 				</div>
 
-
 				<div class="card">
 					<p class="help">
 						<span class="typcn typcn-lightbulb"></span> The Admin-P is a
 						backend process to execute administrative jobs asynchronous.
-
 					</p>
-
-
 					<div class="imixs-form-section">
 
 						<dl style="grid-column-start: span 3;">
 							<dt>Job:</dt>
 							<dd>
-
 								<h:selectOneMenu id="selectedItem"
 									value="#{adminPController.jobType}"
 									disabled="#{!connectionController.connected}">
+									<f:selectItem itemValue="" itemLabel="" />
 									<f:selectItem itemValue="JOB_REBUILD_INDEX"
 										itemLabel="Rebuild Index" />
-									<f:selectItem itemValue="JOB_RENAME_USER"
-										itemLabel="Rename User" />
-									<f:selectItem itemValue="JOB_UPGRADE" itemLabel="Upgrade" />
+									<f:selectItem itemValue="RENAME_USER" itemLabel="Rename User" />
+									<f:selectItem itemValue="UPGRADE" itemLabel="Upgrade" />
 									<f:ajax render="job_details" />
 								</h:selectOneMenu>
-
 							</dd>
 						</dl>
 
@@ -57,47 +51,13 @@
 
 							</dd>
 						</dl>
-
-						<dl style="grid-column-start: span 3;">
-							<dt>Filter by document type:</dt>
-							<dd>
-								<h:inputTextarea value="#{adminPController.filter}"
-									pt:spellcheck="false" style="width: 100%;height: 6em;"
-									disabled="#{!connectionController.connected}" required="true" />
-							</dd>
-						</dl>
-
-
-
-
-
-						<dl style="grid-column-start: span 4;">
-							<dt>Filter by creation date:</dt>
-							<dd>
-								<h:inputText type="date" style="width: 9.5em;"
-									value="#{adminPController.dateFrom}">
-									<f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
-								</h:inputText>
-								-
-								<h:inputText type="date" style="width: 9.5em;"
-									value="#{adminPController.dateFrom}">
-									<f:convertDateTime type="localTo" pattern="yyyy-MM-dd" />
-								</h:inputText>
-							</dd>
-						</dl>
-
-
-
 					</div>
-
-
-
 				</div>
 
-				<h:panelGroup id="job_details" layout="block" styleClass="card">
+				<h:panelGroup id="job_details">
 
 					<!--  Index Job -->
-					<h:panelGroup
+					<h:panelGroup layout="block" styleClass="card"
 						rendered="#{adminPController.jobType eq 'JOB_REBUILD_INDEX'}">
 
 						<h2>
@@ -110,14 +70,13 @@
 							Rebuilding the index does not change any data. You can set
 							optional filter criteria to limit the selection of the affected
 							data.</p>
-						<button type="button">Start Job</button>
+						<ui:include src="adminp_sub_execute.xhtml" />
+
 					</h:panelGroup>
 
-
-
 					<!--  Rename Job -->
-					<h:panelGroup
-						rendered="#{adminPController.jobType eq 'JOB_RENAME_USER'}">
+					<h:panelGroup layout="block" styleClass="card"
+						rendered="#{adminPController.jobType eq 'RENAME_USER'}">
 
 						<h2>
 							<span class="typcn typcn-group-outline"></span> Rename User
@@ -128,7 +87,6 @@
 							You can set optional filter criteria to limit the selection of
 							the affected data.</p>
 
-
 						<div class="imixs-form-section">
 
 							<dl style="grid-column-start: span 4;">
@@ -137,7 +95,6 @@
 									<h:inputText value="#{adminPController.renameUserFrom}"
 										pt:placeholder="enter userid"
 										disabled="#{!connectionController.connected}" />
-
 								</dd>
 							</dl>
 							<dl style="grid-column-start: span 4;">
@@ -148,7 +105,6 @@
 										disabled="#{!connectionController.connected}" />
 								</dd>
 							</dl>
-
 							<dl style="grid-column-start: span 4;">
 								<dt>Full Replace:</dt>
 								<dd>
@@ -158,18 +114,42 @@
 									YES
 								</dd>
 							</dl>
+
+							<!-- Filter -->
+							<dl style="grid-column-start: span 4;">
+								<dt>Filter by document type:</dt>
+								<dd>
+									<h:inputTextarea value="#{adminPController.filter}"
+										pt:spellcheck="false" style="width: 100%;height: 3.5em;"
+										disabled="#{!connectionController.connected}" />
+									<span style="font-size: 0.8em;">*comma separated list of
+										types</span>
+								</dd>
+							</dl>
+							<dl style="grid-column-start: span 4;">
+								<dt>Filter by creation date:</dt>
+								<dd>
+									<h:inputText type="date" style="width: 9.5em;"
+										value="#{adminPController.dateFrom}">
+										<f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+									</h:inputText>
+									-
+									<h:inputText type="date" style="width: 9.5em;"
+										value="#{adminPController.dateFrom}">
+										<f:convertDateTime type="localTo" pattern="yyyy-MM-dd" />
+									</h:inputText>
+								</dd>
+							</dl>
 						</div>
-						<button type="button">Start Job</button>
+						<ui:include src="adminp_sub_execute.xhtml" />
+
 					</h:panelGroup>
-
-
-
 
 
 					<!--  Upgrade Job -->
 
-					<h:panelGroup
-						rendered="#{adminPController.jobType eq 'JOB_UPGRADE'}">
+					<h:panelGroup layout="block" styleClass="card"
+						rendered="#{adminPController.jobType eq 'UPGRADE'}">
 
 						<h2>
 							<span class="typcn typcn-arrow-up-outline"></span> Upgrade
@@ -179,28 +159,90 @@
 							was not processed by the current version of the Imixs-Workfow
 							engine used in this instance. You can set optional filter
 							criteria to limit the selection of the affected data.</p>
-						<button type="button">Start Job</button>
+
+						<div class="imixs-form-section">
+							<!-- Filter -->
+							<dl style="grid-column-start: span 4;">
+								<dt>Filter by document type:</dt>
+								<dd>
+									<h:inputTextarea value="#{adminPController.filter}"
+										pt:spellcheck="false" style="width: 100%;height: 3.5em;"
+										disabled="#{!connectionController.connected}" />
+									<span style="font-size: 0.8em;">*comma separated list of
+										types</span>
+								</dd>
+							</dl>
+							<dl style="grid-column-start: span 4;">
+								<dt>Filter by creation date:</dt>
+								<dd>
+									<h:inputText type="date" style="width: 9.5em;"
+										value="#{adminPController.dateFrom}">
+										<f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+									</h:inputText>
+									-
+									<h:inputText type="date" style="width: 9.5em;"
+										value="#{adminPController.dateFrom}">
+										<f:convertDateTime type="localTo" pattern="yyyy-MM-dd" />
+									</h:inputText>
+								</dd>
+							</dl>
+						</div>
+
+						<ui:include src="adminp_sub_execute.xhtml" />
 					</h:panelGroup>
-
-
-
-
-
-
 				</h:panelGroup>
 
 
 
-
-
 				<!-- Job List -->
-
 				<div class="card">
 					<div class="header">
 						<h3>
 							<span class="typcn typcn-cog-outline"></span> Jobs
+							
+							<span class="pull-right">
+								<h:commandLink actionListener="#{adminPController.reset()}">
+								<span class="typcn typcn-arrow-sync-outline"></span></h:commandLink>
+							</span>
 						</h3>
 					</div>
+					<table id="imixsdatatable" class="imixsdatatable"
+						style="width: 100%;">
+						<thead>
+							<tr>
+								<th>UUID</th>
+								<th>Job</th>
+								<th>Created</th>
+								<th>Modified</th>
+								<th>Status</th>
+								<th>Processed</th>
+								<th>Updates</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<ui:repeat var="doc" value="#{adminPController.jobs}">
+								<tr>
+
+									<td style="white-space: nowrap;"><h:link
+											outcome="/document.xhtml?cid=#{jakarta.enterprise.context.conversation.id}">
+											<label>#{doc.uniqueID}</label>
+											<f:param name="id" value="#{doc.uniqueID}" />
+										</h:link></td>
+									<td style="white-space: nowrap;">#{doc.item['job']}</td>
+									<td style="white-space: nowrap;">#{doc.item['$created']}</td>
+									<td style="white-space: nowrap;">#{doc.item['$modified']}</td>
+									<td style="white-space: nowrap;">#{doc.item['$workflowstatus']}</td>
+									<td style="white-space: nowrap;">#{doc.item['numprocessed']}</td>
+									<td style="white-space: nowrap;">#{doc.item['numupdates']}</td>
+									<td><a><span
+											class="typcn typcn-trash pull-right error"></span></a></td>
+
+
+								</tr>
+							</ui:repeat>
+						</tbody>
+					</table>
 
 				</div>
 

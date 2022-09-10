@@ -1,0 +1,15 @@
+<ui:composition xmlns:faces="jakarta.faces" xmlns:f="jakarta.faces.core"
+	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets"
+	xmlns:pt="jakarta.faces.passthrough">
+
+	<h:commandButton value="Start Job"
+		actionListener="#{adminPController.executeJob()}"
+		disabled="#{!connectionController.connected}"
+		onclick="return (confirm('Staring Admin-P process?'))" />
+	<h3 style="margin-top:20px;">
+		<span class="typcn typcn-input-checked"></span> Log
+	</h3>
+	<pre><ui:repeat var="log" value="#{logController.logEntries}">
+			<h:outputText value="#{log}" /><br />
+		</ui:repeat></pre>
+</ui:composition>
