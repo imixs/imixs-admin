@@ -30,16 +30,16 @@
 						<tbody>
 							<ui:repeat var="model" value="#{modelController.models}">
 								<tr>
-									<td>#{model.item['txtname']} <!--  api/model/xxx-de-1.0/bpmn/ -->
+									<td>#{model.item['txtname']}</td>
+									<td>
+										<!--  api/model/xxx-de-1.0/bpmn/ -->
 										<a
 										href="#{connectionController.endpoint}/model/#{model.item['txtname']}/bpmn/"
-										target="_model"><span class="typcn typcn-link" style="font-size:1.3em;"></span></a>
+										target="_model">#{model.getFileNames().get(0)}</a>
 									</td>
-									<td>#{model.getFileNames().get(0)}</td>
 									<td>#{model.item['$created']}</td>
-									<td><a><span 
-											class="typcn typcn-trash pull-right error"
-											></span></a></td>
+									<td><a><span
+											class="typcn typcn-trash pull-right error"></span></a></td>
 								</tr>
 							</ui:repeat>
 						</tbody>

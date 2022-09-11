@@ -5,13 +5,11 @@
 	<ui:define name="content">
 		<f:view>
 			<h:form id="delete_form_id">
+				<ui:include src="/WEB-INF/includes/layout/header.xhtml">
+					<ui:param name="title" value="Bulk Delete" />
+					<ui:param name="icon" value="typcn-trash" />
+				</ui:include>
 
-				<div class="header">
-					<h2>
-						<span class="typcn typcn-trash"></span> Bulk Delete
-						<span class="endpoint"><span class="typcn typcn-media-record"></span> #{connectionController.endpoint}</span>
-					</h2>
-				</div>
 				<!-- Search Query -->
 				<ui:include src="search_query.xhtml">
 					<ui:param name="showSearchButton" value="false" />

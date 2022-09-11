@@ -7,15 +7,10 @@
 
 		<f:view>
 			<h:form id="amdinp_form_id">
-
-				<div class="header">
-					<h2>
-						<span class="typcn typcn-th-list"></span> Event Log <span
-							class="endpoint"><span class="typcn typcn-media-record"></span>
-							#{connectionController.endpoint}</span>
-					</h2>
-				</div>
-
+				<ui:include src="/WEB-INF/includes/layout/header.xhtml">
+					<ui:param name="title" value="Event Log" />
+					<ui:param name="icon" value="typcn-th-list" />
+				</ui:include>
 
 				<div class="card">
 					<table class="imixsdatatable">

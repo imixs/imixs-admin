@@ -6,14 +6,10 @@
 	<ui:define name="content">
 		<f:view>
 			<h:form id="search_form_id">
-
-			<div class="header">
-				<h2>
-					<span class="typcn typcn-zoom-outline"></span> Search Query
-					<span class="endpoint"><span class="typcn typcn-media-record"></span> #{connectionController.endpoint}</span>
-				</h2>
-			</div>
-
+				<ui:include src="/WEB-INF/includes/layout/header.xhtml">
+					<ui:param name="title" value="Search Query" />
+					<ui:param name="icon" value="typcn-zoom-outline" />
+				</ui:include>
 				
 				<!-- Search Query -->
 				<ui:include src="search_query.xhtml" >

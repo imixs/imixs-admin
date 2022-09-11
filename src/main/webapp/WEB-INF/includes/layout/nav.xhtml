@@ -89,14 +89,14 @@
 				<hr />
 				<ul>
 					<li class="nav-item"><h:link
-							outcome="/export.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
+							outcome="/dataexport.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
 							disabled="#{!connectionController.connected}">
 							<span class="typcn typcn-upload"></span>
 							<label>Export</label>
 						</h:link></li>
 
 					<li class="nav-item"><h:link
-							outcome="/import.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
+							outcome="/dataimport.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
 							disabled="#{!connectionController.connected}">
 							<span class="typcn typcn-download"></span>
 							<label>Import</label>

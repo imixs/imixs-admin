@@ -8,13 +8,11 @@
 
 		<f:view>
 			<h:form id="update_form_id">
-
-				<div class="header">
-					<h2>
-						<span class="typcn typcn-edit"></span> Bulk Update
-						<span class="endpoint"><span class="typcn typcn-media-record"></span> #{connectionController.endpoint}</span>
-					</h2>
-				</div>
+				<ui:include src="/WEB-INF/includes/layout/header.xhtml">
+					<ui:param name="title" value="Bulk Update" />
+					<ui:param name="icon" value="typcn-edit" />
+				</ui:include>
+				
 				<!-- Search Query -->
 				<ui:include src="search_query.xhtml" >
 					<ui:param name="showSearchButton" value="false" />

@@ -7,13 +7,10 @@
 
 		<f:view>
 			<h:form id="amdinp_form_id">
-
-				<div class="header">
-					<h2>
-						<span class="typcn typcn-map"></span> Index Schema 
-						<span class="endpoint"><span class="typcn typcn-media-record"></span> #{connectionController.endpoint}</span>
-					</h2>
-				</div>
+				<ui:include src="/WEB-INF/includes/layout/header.xhtml">
+					<ui:param name="title" value="Index Schema " />
+					<ui:param name="icon" value="typcn-map" />
+				</ui:include>
 
 				<div class="card">
 					
