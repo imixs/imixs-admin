@@ -10,15 +10,15 @@
 
 				<div class="header">
 					<h2>
-						<span class="typcn typcn-th-list"></span> Event Log
-						<span class="endpoint"><span class="typcn typcn-media-record"></span> #{connectionController.endpoint}</span>
+						<span class="typcn typcn-th-list"></span> Event Log <span
+							class="endpoint"><span class="typcn typcn-media-record"></span>
+							#{connectionController.endpoint}</span>
 					</h2>
 				</div>
 
 
 				<div class="card">
-					<table id="imixsdatatable" class="imixsdatatable"
-						style="width: 100%;">
+					<table class="imixsdatatable">
 						<thead>
 							<tr>
 								<th>Topic</th>
@@ -35,16 +35,18 @@
 									<td>#{entry.item['topic']}</td>
 									<td>#{entry.item['created']}</td>
 									<td>#{entry.item['id']}</td>
-
 									<td><h:link
 											outcome="/document.xhtml?cid=#{jakarta.enterprise.context.conversation.id}">
-											<label>#{entry.uniqueID}</label>
-											<f:param name="id" value="#{doc.uniqueID}" />
+											<label>#{entry.item['ref']}</label>
+											<f:param name="id" value="#{entry.item['ref']}" />
 										</h:link></td>
-
-
-									<td><a><span
-											class="typcn typcn-trash pull-right error"></span></a></td>
+									<!-- delete -->
+									<td><h:commandLink
+											actionListener="#{eventLogController.deleteEventLogEntry(entry.item['id'])}"
+											disabled="#{!connectionController.connected}"
+											onclick="return (confirm('Delete Event Log Entry?\n\nOperation can not be undone!'))">
+											<span class="typcn typcn-trash pull-right error"></span>
+										</h:commandLink></td>
 								</tr>
 							</ui:repeat>
 						</tbody>

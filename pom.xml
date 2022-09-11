@@ -293,7 +293,7 @@
 				</executions>
 			</plugin>
 
-			<!-- Just a test plugin -->
+			<!-- Manik plugin -->
 			<plugin>
 				<groupId>org.imixs.maven</groupId>
 				<artifactId>manik-hotdeploy-maven-plugin</artifactId>

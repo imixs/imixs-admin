@@ -52,6 +52,9 @@ public class AdminPController implements Serializable {
     SearchController searchController;
 
     @Inject
+    DocumentController documentController;
+
+    @Inject
     LogController logController;
 
     public String getFilter() {
@@ -180,6 +183,11 @@ public class AdminPController implements Serializable {
     public void reset() {
         logController.reset();
         jobs = null;
+    }
+
+    public void deleteJob(String id) {
+        documentController.delete(id);
+        reset();
     }
 
     /**

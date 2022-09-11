@@ -43,20 +43,17 @@ public class DocumentController implements Serializable {
         FacesContext fc = FacesContext.getCurrentInstance();
         Map<String, String> params = fc.getExternalContext().getRequestParameterMap();
         String id = params.get("id");
-        load(id);
-
+        if (id != null && !id.isEmpty()) {
+            load(id);
+        }
     }
 
     public ItemCollection getDocument() {
-
         return document;
     }
 
     public void setDocument(ItemCollection document) {
         this.document = document;
-
-        // document.ite
-        // document.getItemNames()
     }
 
     /**
@@ -112,6 +109,23 @@ public class DocumentController implements Serializable {
             // load all items
             workflowClient.setItems(null);
             document = workflowClient.getDocument(id);
+        } catch (RestAPIException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Deletes a document
+     *
+     * @return
+     */
+    public void delete(String id) {
+
+        logger.info("...delete document: " + id);
+        WorkflowClient workflowClient = connectionController.getWorkflowClient();
+        try {
+            // delete document
+            workflowClient.deleteDocument(id);
         } catch (RestAPIException e) {
             e.printStackTrace();
         }

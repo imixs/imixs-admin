@@ -333,9 +333,16 @@ input[type="text"]:focus, input[type="password"]:focus, textarea:focus,
 	background-color: #efefef;
 }
 
-
+.imixsdatatable {
+	width: 100%;
+}
 .imixsdatatable a {
 	color: #428bca !important;
+}
+
+.imixsdatatable td .typcn{
+	font-size:1.25em;
+	line-height: 1.25em;
 }
 
 pre {

@@ -29,7 +29,7 @@ import jakarta.inject.Named;
 @ConversationScoped
 public class SearchController implements Serializable {
 
-    public static final String ITEM_LIST = "$uniqueid,$created,$modified,$workflowstatus,$worklfowsummary,type,name";
+    public static final String ITEM_LIST = "$uniqueid,$created,$modified,$workflowstatus,$workflowsummary,type,name,txtname";
 
     private static final long serialVersionUID = 1L;
 
@@ -39,7 +39,7 @@ public class SearchController implements Serializable {
     private int pageSize = 10;
     private int pageIndex;
     private String sortBy = "$modified";
-    private boolean sortOrder;
+    private boolean sortOrder = true;
     private List<ItemCollection> searchResult = null;
 
     @Inject

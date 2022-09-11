@@ -10,8 +10,9 @@
 
 				<div class="header">
 					<h2>
-						<span class="typcn typcn-spanner"></span> Admin-P
-						<span class="endpoint"><span class="typcn typcn-media-record"></span> #{connectionController.endpoint}</span>
+						<span class="typcn typcn-spanner"></span> Admin-P <span
+							class="endpoint"><span class="typcn typcn-media-record"></span>
+							#{connectionController.endpoint}</span>
 					</h2>
 				</div>
 
@@ -199,16 +200,15 @@
 				<div class="card">
 					<div class="header">
 						<h3>
-							<span class="typcn typcn-cog-outline"></span> Jobs
-							
-							<span class="pull-right">
-								<h:commandLink actionListener="#{adminPController.reset()}">
-								<span class="typcn typcn-arrow-sync-outline"></span></h:commandLink>
+							<span class="typcn typcn-cog-outline"></span> Jobs <span
+								class="pull-right"> <h:commandLink
+									actionListener="#{adminPController.reset()}">
+									<span class="typcn typcn-arrow-sync-outline"></span>
+								</h:commandLink>
 							</span>
 						</h3>
 					</div>
-					<table id="imixsdatatable" class="imixsdatatable"
-						style="width: 100%;">
+					<table class="imixsdatatable">
 						<thead>
 							<tr>
 								<th>UUID</th>
@@ -236,8 +236,13 @@
 									<td style="white-space: nowrap;">#{doc.item['$workflowstatus']}</td>
 									<td style="white-space: nowrap;">#{doc.item['numprocessed']}</td>
 									<td style="white-space: nowrap;">#{doc.item['numupdates']}</td>
-									<td><a><span
-											class="typcn typcn-trash pull-right error"></span></a></td>
+									<!-- delete -->
+									<td><h:commandLink
+											actionListener="#{adminPController.deleteJob(doc.uniqueID)}"
+											disabled="#{!connectionController.connected}"
+											onclick="return (confirm('Delete Job?\n\nOperation can not be undone!'))">
+											<span class="typcn typcn-trash pull-right error"></span>
+										</h:commandLink></td>
 
 
 								</tr>
