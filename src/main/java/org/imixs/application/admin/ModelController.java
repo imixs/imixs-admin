@@ -1,5 +1,7 @@
 package org.imixs.application.admin;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -17,6 +19,7 @@ import org.imixs.workflow.xml.XMLDataCollectionAdapter;
 import jakarta.enterprise.context.ConversationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jakarta.servlet.http.Part;
 
 /**
  * The EventLogController loads the current event log
@@ -39,6 +42,29 @@ public class ModelController implements Serializable {
 
     @Inject
     SearchController searchController;
+
+    private Part file;
+
+    public Part getFile() {
+        return file;
+    }
+
+    public void setFile(Part file) {
+        this.file = file;
+    }
+    
+
+    public void submitModel() throws IOException {
+        System.out.println("Form has been submitted!");
+        System.out.println("file: " + file);
+        if (file != null) {
+            System.out.println("name: " + file.getSubmittedFileName());
+            System.out.println("type: " + file.getContentType());
+            System.out.println("size: " + file.getSize());
+            InputStream content = file.getInputStream();
+            // Write content to disk or DB.
+        }
+    }
 
     /**
      * Reset job list
