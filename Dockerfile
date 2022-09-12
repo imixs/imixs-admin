@@ -30,8 +30,8 @@ ADD wildfly_start.sh $WILDFLY_HOME/
 ADD wildfly_add_admin_user.sh $WILDFLY_HOME/       
 RUN chmod +x $WILDFLY_HOME/wildfly_add_admin_user.sh $WILDFLY_HOME/wildfly_start.sh
 
-# add eclipsliknk configuration 
-#COPY modules/ $WILDFLY_HOME/modules/
+# add imixs-admin.war
+COPY target/imixs-admin.war $WILDFLY_HOME/standalone/deployments/
 
 
 # Expose the ports we're interested in
