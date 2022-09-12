@@ -226,6 +226,15 @@ input[type="button"]:active, input[type="submit"]:active, a.button:active,
 	color: #ddd !important;
 }
 
+input[type="file"] {
+	background: #FCB802;
+	color: #fff !important;
+	font-weight: normal !important;
+	padding: 0.28em 0.75em;
+	margin: 3px 0;
+	line-height: 1.6em;
+}
+
 #imixs-content {
 	padding-bottom: 10px;
 	padding-top: 10px;
@@ -245,7 +254,7 @@ input[type="button"]:active, input[type="submit"]:active, a.button:active,
 	text-align: right;
 }
 #imixs-footer ul li {
-	display:inline list-item;
+	display: inline-block;
 	list-style: none;
 	margin-left: 30px;
 	font-size: 0.9em;

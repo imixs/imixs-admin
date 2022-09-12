@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.imixs.melman.BasicAuthenticator;
+import org.imixs.melman.EventLogClient;
 import org.imixs.melman.FormAuthenticator;
+import org.imixs.melman.ModelClient;
 import org.imixs.melman.RestAPIException;
 import org.imixs.melman.WorkflowClient;
 import org.imixs.workflow.ItemCollection;
@@ -16,6 +18,7 @@ import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.client.ClientRequestFilter;
 
 /**
  * The ConnectionController stores the connection data to an Imixs Workflow
@@ -186,6 +189,42 @@ public class ConnectionController implements Serializable {
 
         return workflowClient;
 
+    }
+
+    /**
+     * Creates a EventLogClient form the worklfowClients authorization filter
+     *
+     * @return
+     */
+    public EventLogClient getEventLogClient() {
+        if (connected) {
+            EventLogClient client = new EventLogClient(getWorkflowClient().getBaseURI());
+            // register all filters from workfow client
+            List<ClientRequestFilter> filterList = getWorkflowClient().getRequestFilterList();
+            for (ClientRequestFilter filter : filterList) {
+                client.registerClientRequestFilter(filter);
+            }
+            return client;
+        }
+        return null;
+    }
+
+    /**
+     * Creates a EventLogClient form the worklfowClients authorization filter
+     *
+     * @return
+     */
+    public ModelClient getModelClient() {
+        if (connected) {
+            ModelClient client = new ModelClient(getWorkflowClient().getBaseURI());
+            // register all filters from workfow client
+            List<ClientRequestFilter> filterList = getWorkflowClient().getRequestFilterList();
+            for (ClientRequestFilter filter : filterList) {
+                client.registerClientRequestFilter(filter);
+            }
+            return client;
+        }
+        return null;
     }
 
     /**

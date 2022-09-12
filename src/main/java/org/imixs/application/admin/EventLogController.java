@@ -69,16 +69,10 @@ public class EventLogController implements Serializable {
      */
     public void deleteEventLogEntry(String id) {
         if (connectionController.isConnected()) {
-            WorkflowClient workflowClient = connectionController.getWorkflowClient();
-            if (workflowClient != null) {
-                EventLogClient client = new EventLogClient(workflowClient.getBaseURI());
-                // register all filters from workfow client
-                List<ClientRequestFilter> filterList = workflowClient.getRequestFilterList();
-                for (ClientRequestFilter filter : filterList) {
-                    client.registerClientRequestFilter(filter);
-                }
+            EventLogClient eventLogClient = connectionController.getEventLogClient();
+            if (eventLogClient != null) {
                 try {
-                    client.deleteEventLogEntry(id);
+                    eventLogClient.deleteEventLogEntry(id);
                 } catch (RestAPIException e) {
                     logger.severe("Rest API Error: " + e.getMessage());
                 }

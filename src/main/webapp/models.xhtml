@@ -39,16 +39,32 @@
 										target="_model">#{model.getFileNames().get(0)}</a>
 									</td>
 									<td>#{model.item['$created']}</td>
-									<td><a><span
-											class="typcn typcn-trash pull-right error"></span></a></td>
+									
+									<!-- delete -->
+									<td><h:commandLink
+											actionListener="#{modelController.deleteModel(model.item['txtname'])}"
+											disabled="#{!connectionController.connected}"
+											onclick="return (confirm('Delete Model #{model.item['txtname']} ?'))">
+											<span class="typcn typcn-trash pull-right error"></span>
+										</h:commandLink></td>
+										
+									
 								</tr>
 							</ui:repeat>
-						</tbody>
+						</tbody> 
 					</table>
 					
-					
-					 <h:inputFile id="file" value="#{modelController.file}"  pt:multiple="true"/>
+					<div class="imixs-form-section">
+						<dl style="grid-column-start: span 12;">
+							<dt>Upload Model:</dt>
+							<dd>
+								 <h:inputFile id="file" value="#{modelController.files}"  pt:multiple="true"/>
 					  <h:commandButton id="submit" value="Submit"  action="#{modelController.submitModel}" />
+							</dd>
+						</dl>
+					</div>
+					
+					
 				</div>
 			</h:form>
 		</f:view>
