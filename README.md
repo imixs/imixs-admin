@@ -1,46 +1,67 @@
-[![CodeQL](https://github.com/imixs/imixs-admin/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/imixs/imixs-admin/actions/workflows/codeql-analysis.yml)
+
 # Imixs-Admin
 
-The Imixs-Admin project provides a web based tool to administrate an Imixs-Workflow instance.  
-Imixs-Admin runs as a self-contained microservice with a modern Web UI based on ['Vue.js'](https://vuejs.org/). The client interacts with the Imxis-Workflow Engine via the Imixs-Rest API and the [Imixs-Melman library](https://github.com/imixs/imixs-melman). 
+The Imixs-Admin project provides a web based administration tool to manage an [Imixs-Workflow](https://www.imixs.org) instance.  
+Imixs-Admin connects to a running Imixs-Workflow instance via the Imixs-Rest API. 
 
 <img src="./imixs-admin-51.png" style="width:75%;"/>
 
+## Features
+
 These are the core features of Imixs-Admin:
 
-* Search documents using Lucene search queries
+* Search documents using Lucene search queries or the Java Persistence Query Language (JPQL)
 * Update or add properties to documents and process instances
 * Process a set of workitems in a batch process
 * Delete a set of documents manually or in batch 
+* Manage BPMN Models
 * Start AdminP Jobs to rebuild the index or upgrade existing data
 * Import and Export workflow data into the file system. 
  
 
 <img src="./imixs-admin-51b.png" style="width:75%;"/>
 
-<br /><br /><img src="./small_h-trans.png" />
+Learn more about the Imixs-Admin Tool on the [Imixs Workflow Project Site](https://www.imixs.org/doc/administration.html).
 
+## Run with Docker
 
-The Imixs-Admin client provides a Docker Image to be used to run the service as a Docker container in a Docker-Swarm or Kubernetes environment. 
+The Imixs-Admin client provides a Docker Image to be used to run the service in any Docker environment or in a Kubernetes cluster. 
 The docker image is available on [DockerHub](https://hub.docker.com/repository/docker/imixs/imixs-admin). 
 
 You can start the latest version of the Imixs-Admin Tool in a docker container running:
 
-	$ docker run -p 8888:8080 imixs/imixs-admin:latest
+	$ docker run --rm --name="wildfly" -it \
+			-p 8080:8080 \
+			-e WILDFLY_PASS="adminadmin" \
+			imixs/wildfly
 
-You can start the application from your browser
+...and load the Imixs-Admin client from your browser
 
-	http://localhost:8888/
+	http://localhost:8080/
 
-## Build Imixs-Admin from sources
 
-Alternatively you can build the imixs-admin client manually from sources and start from your local docker image:
+
+# Development
+
+Imixs-Admin runs as a self-contained microservice with a modern Web UI based on Jakarta EE Faces 4.0. The client interacts with the Imxis-Workflow Engine via the Imixs-Rest API and the [Imixs-Melman library](https://github.com/imixs/imixs-melman). You can adapt or extend the project if needed.
+
+Imixs-Admin is based on Jakarta EE 10 and Wildfly Version 27.0.0. To build the imixs-admin client manually from sources run the maven command:
+
+	$ mvn clean install
+
+The .war file can be deployed into any Jakarta EE Application server.
+
+## Build the Docker Image
+
+To build the imixs-admin Docker image manually run:
 
 	$ mvn clean install -Pdocker
+
+To start it from your local docker environment:
+
 	$ docker-compose up
 
-
-### Changing the RootContext
+## Changing the RootContext
 
 The Imixs-Admin client is installed per default into the root context "/". You can change the root context by changing teh glassfish-web.xml file. The following example set the root-context to "/dev/": 
 
@@ -52,51 +73,19 @@ The Imixs-Admin client is installed per default into the root context "/". You c
 	</glassfish-web-app>
 
 
+## The Maven 'wildfly' Profile
 
-
-## Development
-
-Imixs-Admin is provided as a Maven Web Module and can be build by the maven command:
-
-	$ mvn clean install
-
-The .war file can be deployed into any Jakarta EE Application server.
-
-### The Maven 'wildfly' Profile
-
-During development you can use the docker-compose-dev.yml file. This stack contains a sample application and the Imixs-Admin tool. The deployment is  maped to the src/docker/deployments folder to the wildfly auto deploy directory. 
+During development you can use the docker-compose-dev.yml file. This stack contains a sample application and the Imixs-Admin tool. The deployment is  maped to the docker/deployments folder to the wildfly auto deploy directory. 
 
 	$ mvn clean install -Pwildfly
 	$ docker-compose -f docker-compose-dev.yml up
 	
 you may have to grant the deployment folder first to allow the docker non privileged user to access this location.
 
-	$ sudo chmod 777 src/docker/deployments/
+	$ sudo chmod 777 docker/deployments/
 
 In this mode the deployment directory for wildfly is mapped to '~/git/imixs-admin/src/docker/deployments'
 
-### Build Docker Image
+To build the Docker image directly from the Dockerfile run:
 
-Imixs-Admin is based on Wildfly Version 27.0.0. 
-
-To build the image from the Dockerfile run:
-
-	docker build --tag=imixs/wildfly .
-
-
-To run Imixs-Admin:
-
-	$ docker-compose up
-
-
-To test the Docker image you can optional run the container in an interactive mode:
-
-	$ docker run --rm --name="wildfly" -it \
-			-p 8080:8080 -p 9990:9990 \
-			-e WILDFLY_PASS="adminadmin" \
-			imixs/wildfly
-
-
-
-
-	
+	docker build --tag=imixs/wildfly .	

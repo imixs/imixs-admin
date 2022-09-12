@@ -21,8 +21,6 @@
 						Imixs-Workflow API endpoint.
 					</p>
 
-
-
 					<div class="imixs-form-section">
 						<dl style="grid-column-start: span 12;">
 							<dt>URL:</dt>
@@ -36,8 +34,6 @@
 					</div>
 
 					<div class="imixs-form-section">
-
-
 						<dl style="grid-column-start: span 4;">
 							<dt>Authentication Method:</dt>
 							<dd>
@@ -50,8 +46,6 @@
 									<f:selectItem itemValue="JWT" itemLabel="JWT" />
 									<f:ajax render="key_token_input" />
 								</h:selectOneMenu>
-
-
 							</dd>
 						</dl>
 
@@ -69,7 +63,6 @@
 											rendered="#{connectionController.type eq 'COOKIE'}" />
 
 									</dt>
-
 
 									<dd>
 										<h:inputText value="#{connectionController.key}"
@@ -100,9 +93,6 @@
 							</h:panelGroup>
 						</h:panelGroup>
 
-
-
-
 					</div>
 
 					<div class="imixs-form-section">
@@ -119,12 +109,8 @@
 								actionListener="#{connectionController.disconnect()}" />
 						</span>
 					</div>
-
-
 				</div>
 			</h:form>
 		</f:view>
-
-
 	</ui:define>
 </ui:composition>
