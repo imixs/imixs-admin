@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.imixs.melman.BasicAuthenticator;
+import org.imixs.melman.CookieAuthenticator;
 import org.imixs.melman.EventLogClient;
 import org.imixs.melman.FormAuthenticator;
+import org.imixs.melman.JWTAuthenticator;
 import org.imixs.melman.ModelClient;
 import org.imixs.melman.RestAPIException;
 import org.imixs.melman.WorkflowClient;
@@ -19,6 +21,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.client.ClientRequestFilter;
+import jakarta.ws.rs.core.Cookie;
 
 /**
  * The ConnectionController stores the connection data to an Imixs Workflow
@@ -184,6 +187,16 @@ public class ConnectionController implements Serializable {
                 // register the authenticator
                 workflowClient.registerClientRequestFilter(formAuth);
 
+            }
+            if ("COOKIE".equals(getType())) {
+                logger.info("..set authentication cookie: name=" + getKey() + " value=....");
+                Cookie cookie = new Cookie(getKey(), getToken());
+                CookieAuthenticator cookieAuth = new CookieAuthenticator(cookie);
+                workflowClient.registerClientRequestFilter(cookieAuth);
+            }
+            if ("JWT".equalsIgnoreCase(getType())) {
+                JWTAuthenticator jwtAuht = new JWTAuthenticator(getToken());
+                workflowClient.registerClientRequestFilter(jwtAuht);
             }
         }
 
