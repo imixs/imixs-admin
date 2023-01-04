@@ -71,8 +71,8 @@
 		<maven.compiler.target>11</maven.compiler.target>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
 
-		<org.imixs.workflow.version>6.0.1-SNAPSHOT</org.imixs.workflow.version>
-		<org.imixs.melman.version>2.0.0-SNAPSHOT</org.imixs.melman.version>
+		<org.imixs.workflow.version>6.0.1</org.imixs.workflow.version>
+		<org.imixs.melman.version>2.0.0</org.imixs.melman.version>
 		<org.imixs.jwt.version>1.0.3</org.imixs.jwt.version>
 
 		<!-- Wildfly-Plugin Default settings -->
@@ -347,7 +347,7 @@
 		<dependency>
 			<groupId>jakarta.platform</groupId>
 			<artifactId>jakarta.jakartaee-api</artifactId>
-			<version>9.1.0</version>
+			<version>10.0.0</version>
 			<scope>provided</scope>
 		</dependency>
 
