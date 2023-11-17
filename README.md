@@ -50,16 +50,6 @@ In this mode, the Imixs-Rest Client will install a custom SSL TrustManager that 
 
 **Note:** This feature should only be used in dev and test environments!
 
-# Development
-
-Imixs-Admin runs as a self-contained microservice with a modern Web UI based on Jakarta EE Faces 4.0. The client interacts with the Imxis-Workflow Engine via the Imixs-Rest API and the [Imixs-Melman library](https://github.com/imixs/imixs-melman). You can adapt or extend the project if needed.
-
-Imixs-Admin is based on Jakarta EE 10 and Wildfly Version 27.0.0. To build the imixs-admin client manually from sources run the maven command:
-
-	$ mvn clean install
-
-The .war file can be deployed into any Jakarta EE Application server.
-
 ## Build the Docker Image
 
 To build the imixs-admin Docker image manually run:
@@ -98,3 +88,32 @@ In this mode the deployment directory for wildfly is mapped to '~/git/imixs-admi
 To build the Docker image directly from the Dockerfile run:
 
 	docker build --tag=imixs/wildfly .	
+
+
+
+# Development
+
+Imixs-Admin provides a Docker-Compose stack for development including the Imixs-Process-Manager and a Postgres DB.
+To start the stack run:
+
+	$ docker-compose -f docker-ocmpose-dev.yaml up
+
+you can Access the Admin Client via
+
+	http://localhost:8080
+
+and in a separate browser instance you can access the sample application:
+
+	http://localhost:8081
+
+To connect the Admin client to the sample application use the following internal host address:
+
+	URL: http://imixs-sample-app:8080/api
+	Authentication : Basic
+
+
+Imixs-Admin is based on Jakarta EE 10 and Wildfly Version 27.0.0. To build the imixs-admin client manually from sources run the maven command:
+
+	$ mvn clean install
+
+The .war file can be deployed into any Jakarta EE Application server.
