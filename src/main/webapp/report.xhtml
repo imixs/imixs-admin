@@ -1,0 +1,173 @@
+<ui:composition template="/WEB-INF/templates/layout.xhtml" xmlns:faces="jakarta.faces" xmlns:f="jakarta.faces.core"
+	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets" xmlns:pt="jakarta.faces.passthrough">
+
+	<ui:define name="content">
+
+		<f:view>
+			<h:form id="models_form_id">
+
+				<div class="header">
+					<h2>
+						<span class="typcn typcn-chart-bar-outline"></span> Report <span class="endpoint"><span
+								class="typcn typcn-media-record"></span>
+							#{connectionController.endpoint}</span>
+					</h2>
+				</div>
+
+
+				<div class="card">
+
+
+					<!--  Report Definition -->
+					<h:panelGroup layout="block" styleClass="card">
+
+						<h2>
+							<span class="typcn typcn-edit"></span> Report Definition
+						</h2>
+						<p class="help">A Report Defintion defines a custom data list or a single document
+							transformation object.
+							To search for documents or workitems
+							you can use the <a href="https://www.imixs.org/doc/engine/queries.html"
+								target="_help">Lucene
+								Search Query</a> syntax.
+						</p>
+
+
+
+						<div class="imixs-form-section">
+							<dl style="grid-column-start: span 8;">
+								<dt>Report Name:</dt>
+								<dd>
+									<h:inputText value="#{reportController.report.item['txtname']}" pt:placeholder=""
+										disabled="#{!connectionController.connected}" />
+								</dd>
+							</dl>
+							<dl style="grid-column-start: span 4;">
+								<dt>Contenttype:</dt>
+								<dd>
+									<h:inputText value="#{reportController.report.item['contenttype']}"
+										pt:placeholder="application/xml"
+										disabled="#{!connectionController.connected}" />
+								</dd>
+							</dl>
+
+							<dl style="grid-column-start: span 8;">
+								<dt>Query:</dt>
+								<dd>
+									<h:inputTextarea value="#{reportController.report.item['txtquery']}"
+										pt:spellcheck="false" style="width: 100%;height: 6.7em;"
+										pt:placeholder="enter a query definition"
+										disabled="#{!connectionController.connected}" />
+									<span style="font-size: 0.8em;">Query Definitioncomma separated list of
+										types</span>
+								</dd>
+							</dl>
+
+
+
+							<dl style="grid-column-start: span 4;">
+								<dt>Encoding:</dt>
+								<dd>
+									<h:inputText value="#{reportController.report.item['encoding']}"
+										pt:placeholder="UTF-8" disabled="#{!connectionController.connected}" />
+								</dd>
+							</dl>
+						</div>
+
+					</h:panelGroup>
+
+
+					<!--  Attribute List -->
+					<h:panelGroup layout="block" id="attriubte_list_id" styleClass="card">
+						<h2>
+							<span class="typcn typcn-th-list-outline"></span> Attribute List
+						</h2>
+						<p class="help">List of attributes, converters and agregators.</p>
+
+
+						<table id="imixsdatatable" class="imixsdatatable" style="width: 100%;">
+							<thead>
+								<tr>
+									<th>Item</th>
+									<th>Label</th>
+									<th>Convert</th>
+									<th>Format</th>
+									<th>Aggregate</th>
+									<th />
+								</tr>
+							</thead>
+							<tbody>
+								<ui:repeat var="attr" value="#{reportController.attributeList}">
+									<tr>
+										<td>
+											<h:inputText value="#{attr.item['item']}" style="width: 100%;" />
+										</td>
+										<td>
+											<h:inputText value="#{attr.item['label']}" style="width: 100%;" />
+										</td>
+										<td>
+											<h:inputText value="#{attr.item['convert']}" style="width: 100%;" />
+										</td>
+										<td>
+											<h:inputText value="#{attr.item['format']}" style="width: 100%;" />
+										</td>
+										<td>
+											<h:inputText value="#{attr.item['aggregate']}" style="width: 100%;" />
+										</td>
+
+										<!-- delete -->
+										<td>
+											<h:commandLink
+												actionListener="#{reportController.deleteAttribute(report.item['$uniqueid'])}">
+												<span class="typcn typcn-trash pull-right error"></span>
+											</h:commandLink>
+										</td>
+
+
+									</tr>
+								</ui:repeat>
+							</tbody>
+						</table>
+						<h:commandButton actionListener="#{reportController.addAttribute()}" value="Add"
+							disabled="#{!connectionController.connected}">
+							<f:ajax render="attriubte_list_id" />
+						</h:commandButton>
+					</h:panelGroup>
+
+
+					<!--  XSL -->
+					<h:panelGroup layout="block" styleClass="card">
+
+						<h2>
+							<span class="typcn typcn-code-outline"></span> XSLT
+						</h2>
+						<p class="help">Optional XSLT Template to transform the report output.</p>
+
+
+						<div class="imixs-form-section">
+							<dl style="grid-column-start: span 12;">
+								<dt>Template Code:</dt>
+								<dd>
+									<h:inputTextarea value="#{reportController.report.item['xslResource']}"
+										style="font-family: courier;height: 24em;" pt:spellcheck="false"
+										disabled="#{!connectionController.connected}" />
+								</dd>
+							</dl>
+						</div>
+
+					</h:panelGroup>
+
+
+					<h:commandButton actionListener="#{reportController.submitReport()}" value="Save"
+						disabled="#{!connectionController.connected}" action="reports">
+
+					</h:commandButton>
+
+
+
+				</div>
+			</h:form>
+		</f:view>
+
+	</ui:define>
+</ui:composition>

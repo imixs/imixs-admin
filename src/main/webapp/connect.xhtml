@@ -66,7 +66,7 @@
 
 									<dd>
 										<h:inputText value="#{connectionController.key}"
-											id="userid_input"
+											id="imixsadmin_userid_input" name="imixsadmin_userid_input"
 											disabled="#{connectionController.connected}" />
 
 									</dd>
@@ -86,7 +86,7 @@
 											rendered="#{connectionController.type eq 'JWT'}" />
 									</dt>
 									<dd>
-										<h:inputSecret value="#{connectionController.token}"
+										<h:inputSecret id="imixadmin_connect_secret" name="imixadmin_connect_secret" value="#{connectionController.token}"
 											disabled="#{connectionController.connected}" />
 									</dd>
 								</dl>

@@ -72,6 +72,13 @@
 						</h:link></li>
 
 					<li class="nav-item"><h:link
+						outcome="/reports.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
+						disabled="#{!connectionController.connected}">
+						<span class="typcn typcn-chart-bar-outline"></span>
+						<label>Reports</label>
+					</h:link></li>
+
+					<li class="nav-item"><h:link
 							outcome="/lucene.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
 							disabled="#{!connectionController.connected}">
 							<span class="typcn typcn-map"></span>
