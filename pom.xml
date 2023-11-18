@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.imixs.workflow</groupId>
 	<artifactId>imixs-admin</artifactId>
@@ -56,13 +58,11 @@
 	            <updatePolicy>always</updatePolicy>
 	            <checksumPolicy>warn</checksumPolicy>
 	        </releases>	
-	        -->		
+	        -->
 		</repository>
 	</repositories>
-	
 
-	
-	
+
 	<properties>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -115,7 +115,39 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>debug</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.8</version>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<configuration>
+									<target>
+										<exec executable="docker">
+											<arg value="build" />
+											<arg value="-f" />
+											<arg value="./Dockerfile-Debug" />
+											<arg value="-t" />
+											<arg value="imixs/imixs-admin" />
+											<arg value="." />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
 
+				</plugins>
+			</build>
+		</profile>
 		<profile>
 			<id>docker-hub</id>
 			<build>
@@ -194,11 +226,11 @@
 			</properties>
 
 			<build>
-		<resources>
+				<resources>
 
-		</resources>			
+				</resources>
 				<plugins>
-					
+
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-antrun-plugin</artifactId>
@@ -246,8 +278,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>3.3.2</version>
-			</plugin>		
-						
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
@@ -281,13 +313,13 @@
 				<artifactId>manik-hotdeploy-maven-plugin</artifactId>
 				<version>2.0.0</version>
 				<executions>
-                	<execution>
+					<execution>
 						<phase>install</phase>
 						<goals>
 							<goal>deploy</goal>
 						</goals>
-                	</execution>
-            	</executions>
+					</execution>
+				</executions>
 				<configuration>
 					<!-- List Source and Target folders for Autodeploy and Hotdeploy -->
 					<autodeployments>
@@ -295,14 +327,14 @@
 							<!-- wildcard deployment -->
 							<source>target/*.{war,ear,jar}</source>
 							<target>docker/deployments/</target>
-							<unpack>true</unpack>						
+							<unpack>true</unpack>
 						</deployment>
 					</autodeployments>
 					<hotdeployments>
 						<deployment>
 							<source>src/main/webapp</source>
 							<target>docker/deployments/imixs-admin.war</target>
-						</deployment>						
+						</deployment>
 					</hotdeployments>
 
 				</configuration>

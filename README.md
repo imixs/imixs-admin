@@ -25,7 +25,7 @@ Learn more about the Imixs-Admin Tool on the [Imixs Workflow Project Site](https
 
 ## Run with Docker
 
-The Imixs-Admin client provides a Docker Image to be used to run the service in any Docker environment or in a Kubernetes cluster. 
+Imixs-Admin is based on Jakarta EE 10 and Wildfly Version 27.0.0. The project provides a Docker Image to be used to run the service in any Docker environment or in a Kubernetes cluster. 
 The docker image is available on [DockerHub](https://hub.docker.com/repository/docker/imixs/imixs-admin). 
 
 You can start the latest version of the Imixs-Admin Tool in a docker container running:
@@ -111,9 +111,27 @@ To connect the Admin client to the sample application use the following internal
 	URL: http://imixs-sample-app:8080/api
 	Authentication : Basic
 
+## Build 
 
-Imixs-Admin is based on Jakarta EE 10 and Wildfly Version 27.0.0. To build the imixs-admin client manually from sources run the maven command:
+In the Develoopment mode, the deployment direictory is  maped to `imixs-admin/src/docker/deployments`, this is the wildfly auto deploy directory. 
+You may have to grant the deployment folder first to allow the docker non privileged user to access this location.
 
-	$ mvn clean install
+	$ sudo chmod 777 docker/deployments/
 
+To build the imixs-admin client manually from sources run:
+
+	$ mvn clean install 
+
+An autodeployment will be started using the Maven plugin [Manik Hot-Deploy](https://manik.imixs.org/).
 The .war file can be deployed into any Jakarta EE Application server.
+
+
+## Debug Mode
+
+To build the imixs-admin client manually from sources with debug mode run the maven command:
+
+	$ mvn clean install -Pdebug
+
+This will build a Docker Image exposing the Wildfly Debug Port 8787.
+
+

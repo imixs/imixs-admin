@@ -1,0 +1,13 @@
+{
+  // Wildfly Debug Configuration
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Debug Imixs-Admin",
+      "request": "attach",
+      "hostName": "localhost",
+      "port": "8787",
+      "projectName": "imixs-admin"
+    }
+  ]
+}
