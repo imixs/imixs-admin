@@ -96,7 +96,7 @@ To build the Docker image directly from the Dockerfile run:
 Imixs-Admin provides a Docker-Compose stack for development including the Imixs-Process-Manager and a Postgres DB.
 To start the stack run:
 
-	$ docker-compose -f docker-ocmpose-dev.yaml up
+	$ docker-compose -f docker-compose-dev.yaml up
 
 you can Access the Admin Client via
 
