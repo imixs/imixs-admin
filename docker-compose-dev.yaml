@@ -41,8 +41,6 @@ services:
       POSTGRES_CONNECTION: "jdbc:postgresql://imixs-db/workflowdb"
     ports:
       - "8081:8080"
-      - "8789:8787"
-      - "9991:9990"   
 
 volumes:
   dbsampledata:
