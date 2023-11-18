@@ -87,7 +87,7 @@
 							single item values. Each item of the attriubte list can define
 							an optional label, converter, format and aggregator.</p>
 
-						<table id="imixsdatatable" class="imixsdatatable" style="width: 100%;">
+						<table id="imixsdatatable" class="imixsdatatable edit" style="width: 100%;">
 							<thead>
 								<tr>
 									<th style="width: 20px;min-width: 20px;" />
@@ -141,7 +141,7 @@
 						</table>
 						<h:commandButton actionListener="#{reportController.addAttribute()}" value="Add"
 							disabled="#{!connectionController.connected}">
-							<f:ajax render="attriubte_list_id" />
+							<f:ajax render="attriubte_list_id" execute="attriubte_list_id" />
 						</h:commandButton>
 					</h:panelGroup>
 

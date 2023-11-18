@@ -50,6 +50,7 @@ public class ReportController implements Serializable {
         report = new ItemCollection();
         report.setItemValue(WorkflowKernel.UNIQUEID, WorkflowKernel.generateUniqueID());
         report.setType("ReportEntity");
+        attributeList = new ArrayList<ItemCollection>();
         logger.fine("new Report Object created");
     }
 
@@ -87,37 +88,14 @@ public class ReportController implements Serializable {
     }
 
     /**
-     * Returns the attribute list for the current report. Item, Label, Convert,
-     * Aggregate.
-     *
-     * Each element has an attriubte 'pos' indicating the positon starting by 1
-     *
-     * @return attribute list or null if no report is selected.
-     */
-    private void readAttributes() {
-
-        // test if a itemList is provided or defined in the current report...
-        List<List<String>> attributes = (List<List<String>>) report.getItemValue("attributes");
-        attributeList = new ArrayList<ItemCollection>();
-        for (List<String> attribute : attributes) {
-            ItemCollection attr = new ItemCollection();
-            attr.setItemValue("item", attribute.get(0));
-            attr.setItemValue("label", attribute.get(1));
-            attr.setItemValue("convert", attribute.get(2));
-            attr.setItemValue("format", attribute.get(3));
-            attr.setItemValue("aggregate", attribute.get(4));
-            attr.setItemValue("pos", attributeList.size() + 1);
-            attributeList.add(attr);
-        }
-
-    }
-
-    /**
      * Returns the attribute list of the current report
      *
      * @return
      */
     public List<ItemCollection> getAttributeList() {
+        if (attributeList == null) {
+            attributeList = new ArrayList<ItemCollection>();
+        }
         return attributeList;
     }
 
@@ -125,11 +103,10 @@ public class ReportController implements Serializable {
      * Adds a new attriubet to the attributelist of the current report
      */
     public void addAttribute() {
-        // updateAttributeList();
+        // refreshAttributeList();
         ItemCollection attr = new ItemCollection();
         attr.setItemValue("pos", attributeList.size() + 1);
         attributeList.add(attr);
-        refreshAttributeList();
     }
 
     /**
@@ -149,6 +126,37 @@ public class ReportController implements Serializable {
             }
         }
         report.setItemValue("attributes", attributes);
+    }
+
+    /**
+     * Returns the attribute list for the current report. Item, Label, Convert,
+     * Aggregate.
+     *
+     * Each element has an attriubte 'pos' indicating the positon starting by 1
+     *
+     * @return attribute list or null if no report is selected.
+     */
+    private void readAttributes() {
+
+        // test if a itemList is provided or defined in the current report...
+        List<List<String>> attributes = (List<List<String>>) report.getItemValue("attributes");
+        attributeList = new ArrayList<ItemCollection>();
+        for (List<String> attribute : attributes) {
+            ItemCollection attr = new ItemCollection();
+            if (attribute.size() > 0)
+                attr.setItemValue("item", attribute.get(0));
+            if (attribute.size() > 1)
+                attr.setItemValue("label", attribute.get(1));
+            if (attribute.size() > 2)
+                attr.setItemValue("convert", attribute.get(2));
+            if (attribute.size() > 3)
+                attr.setItemValue("format", attribute.get(3));
+            if (attribute.size() > 4)
+                attr.setItemValue("aggregate", attribute.get(4));
+            attr.setItemValue("pos", attributeList.size() + 1);
+            attributeList.add(attr);
+        }
+
     }
 
     /**
