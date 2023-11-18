@@ -82,23 +82,27 @@
 						<h2>
 							<span class="typcn typcn-th-list-outline"></span> Attribute List
 						</h2>
-						<p class="help">List of attributes, converters and agregators.</p>
-
+						<p class="help">Optional item list of the report result. A item list reduces the size of a
+							report result and can adapt
+							single item values. Each item of the attriubte list can define
+							an optional label, converter, format and aggregator.</p>
 
 						<table id="imixsdatatable" class="imixsdatatable" style="width: 100%;">
 							<thead>
 								<tr>
-									<th>Item</th>
-									<th>Label</th>
-									<th>Convert</th>
-									<th>Format</th>
+									<th style="width: 20px;min-width: 20px;" />
+									<th style="width: 200px;">Item</th>
+									<th style="width: 150px;">Label</th>
+									<th style="width: 150px;">Convert</th>
+									<th style="min-width: 400px;">Format</th>
 									<th>Aggregate</th>
-									<th />
+									<th style="width: 70px;min-width: 70px;" />
 								</tr>
 							</thead>
 							<tbody>
 								<ui:repeat var="attr" value="#{reportController.attributeList}">
 									<tr>
+										<td>#{attr.item['pos']}</td>
 										<td>
 											<h:inputText value="#{attr.item['item']}" style="width: 100%;" />
 										</td>
@@ -117,13 +121,20 @@
 
 										<!-- delete -->
 										<td>
+											<h:commandLink disabled="#{1 eq attr.item['pos']}"
+												actionListener="#{reportController.moveAttributeUp(attr.item['pos'])}">
+												<span class="typcn typcn-arrow-sorted-up"></span>
+											</h:commandLink>
 											<h:commandLink
-												actionListener="#{reportController.deleteAttribute(report.item['$uniqueid'])}">
-												<span class="typcn typcn-trash pull-right error"></span>
+												disabled="#{reportController.attributeList.size() eq attr.item['pos']}"
+												actionListener="#{reportController.moveAttributeDown(attr.item['pos'])}">
+												<span class="typcn typcn-arrow-sorted-down"></span>
+											</h:commandLink>
+											<h:commandLink
+												actionListener="#{reportController.deleteAttribute(attr.item['pos'])}">
+												<span class="typcn typcn-times "></span>
 											</h:commandLink>
 										</td>
-
-
 									</tr>
 								</ui:repeat>
 							</tbody>
@@ -148,7 +159,7 @@
 							<dl style="grid-column-start: span 12;">
 								<dt>Template Code:</dt>
 								<dd>
-									<h:inputTextarea value="#{reportController.report.item['xslResource']}"
+									<h:inputTextarea value="#{reportController.report.item['xsl']}"
 										style="font-family: courier;height: 24em;" pt:spellcheck="false"
 										disabled="#{!connectionController.connected}" />
 								</dd>

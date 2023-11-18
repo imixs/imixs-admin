@@ -61,6 +61,7 @@ public class ReportController implements Serializable {
         if (report != null) {
             WorkflowClient workflowClient = connectionController.getWorkflowClient();
             try {
+                updateAttributeList();
                 workflowClient.saveDocument(report);
                 logger.info("Report '" + report.getUniqueID() + "' updated");
             } catch (RestAPIException e) {
@@ -86,9 +87,11 @@ public class ReportController implements Serializable {
     }
 
     /**
-     * Returns the attribute list for the current report.
-     * Item, Label, Convert, Aggregate
-     * 
+     * Returns the attribute list for the current report. Item, Label, Convert,
+     * Aggregate.
+     *
+     * Each element has an attriubte 'pos' indicating the positon starting by 1
+     *
      * @return attribute list or null if no report is selected.
      */
     private void readAttributes() {
@@ -98,11 +101,12 @@ public class ReportController implements Serializable {
         attributeList = new ArrayList<ItemCollection>();
         for (List<String> attribute : attributes) {
             ItemCollection attr = new ItemCollection();
-            attr.setItemValue("name", attribute.get(0));
+            attr.setItemValue("item", attribute.get(0));
             attr.setItemValue("label", attribute.get(1));
             attr.setItemValue("convert", attribute.get(2));
-            attr.setItemValue("aggregate", attribute.get(3));
-
+            attr.setItemValue("format", attribute.get(3));
+            attr.setItemValue("aggregate", attribute.get(4));
+            attr.setItemValue("pos", attributeList.size() + 1);
             attributeList.add(attr);
         }
 
@@ -110,7 +114,7 @@ public class ReportController implements Serializable {
 
     /**
      * Returns the attribute list of the current report
-     * 
+     *
      * @return
      */
     public List<ItemCollection> getAttributeList() {
@@ -121,7 +125,30 @@ public class ReportController implements Serializable {
      * Adds a new attriubet to the attributelist of the current report
      */
     public void addAttribute() {
-        attributeList.add(new ItemCollection());
+        // updateAttributeList();
+        ItemCollection attr = new ItemCollection();
+        attr.setItemValue("pos", attributeList.size() + 1);
+        attributeList.add(attr);
+        refreshAttributeList();
+    }
+
+    /**
+     * This methdo updates the item 'attriburtes' of the current report
+     */
+    private void updateAttributeList() {
+        List<List<String>> attributes = new ArrayList<List<String>>();
+        if (attributeList != null) {
+            for (ItemCollection attr : attributeList) {
+                List<String> attribute = new ArrayList<>();
+                attribute.add(attr.getItemValueString("item"));
+                attribute.add(attr.getItemValueString("label"));
+                attribute.add(attr.getItemValueString("convert"));
+                attribute.add(attr.getItemValueString("format"));
+                attribute.add(attr.getItemValueString("aggregate"));
+                attributes.add(attribute);
+            }
+        }
+        report.setItemValue("attributes", attributes);
     }
 
     /**
@@ -139,6 +166,47 @@ public class ReportController implements Serializable {
         }
         // reset current report list
         reset();
+    }
+
+    /**
+     * move the attribute at pos up in the attribute list
+     *
+     * @param pos
+     */
+    public void moveAttributeDown(int pos) {
+        ItemCollection attribute = attributeList.remove(pos - 1); // Remove the element
+        attributeList.add(pos, attribute); // Add the element at the new position
+
+        refreshAttributeList();
+    }
+
+    /**
+     * Helper method to update the attribues and refresh the attriubteList
+     */
+    private void refreshAttributeList() {
+        updateAttributeList();
+        readAttributes();
+    }
+
+    /**
+     * move the attribute at pos down in the attribute list
+     *
+     * @param pos
+     */
+    public void moveAttributeUp(int pos) {
+        ItemCollection attribute = attributeList.remove(pos - 1); // Remove the element
+        attributeList.add(pos - 2, attribute); // Add the element at the new position
+        refreshAttributeList();
+    }
+
+    /**
+     * delete the attribute at pos from the attribute list
+     *
+     * @param pos
+     */
+    public void deleteAttribute(int pos) {
+        attributeList.remove(pos - 1); // Remove the element
+        refreshAttributeList();
     }
 
     /**
