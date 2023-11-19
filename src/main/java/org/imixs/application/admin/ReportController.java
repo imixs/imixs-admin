@@ -1,5 +1,7 @@
 package org.imixs.application.admin;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,10 +13,13 @@ import org.imixs.melman.WorkflowClient;
 import org.imixs.workflow.ItemCollection;
 import org.imixs.workflow.ItemCollectionComparator;
 import org.imixs.workflow.WorkflowKernel;
+import org.imixs.workflow.xml.XMLDocument;
+import org.imixs.workflow.xml.XMLDocumentAdapter;
 
 import jakarta.enterprise.context.ConversationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jakarta.servlet.http.Part;
 
 /**
  * The ReportController loads and udpate the report list
@@ -36,6 +41,8 @@ public class ReportController implements Serializable {
     List<ItemCollection> reports = null;
     ItemCollection report = null;
     List<ItemCollection> attributeList = null;
+
+    private List<Part> files;
 
     @Inject
     ConnectionController connectionController;
@@ -245,4 +252,55 @@ public class ReportController implements Serializable {
         return reports;
     }
 
+    public List<Part> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<Part> files) {
+        this.files = files;
+    }
+
+    /**
+     * This method extracts all uploaded Report xml files and post the reports ot
+     * the documents api endpoint
+     *
+     * @throws IOException
+     */
+    public void uploadReport() throws IOException {
+        if (files != null) {
+            try {
+                logger.info(" uploading " + files.size() + " files");
+                for (Part file : files) {
+
+                    logger.info("name: " + file.getSubmittedFileName());
+                    logger.info("type: " + file.getContentType());
+                    logger.info("size: " + file.getSize());
+                    InputStream content = file.getInputStream();
+                    byte[] targetArray = new byte[content.available()];
+                    content.read(targetArray);
+
+                    XMLDocument xmlDoc = XMLDocumentAdapter.readXMLDocument(targetArray);
+
+                    ItemCollection uploadReport = XMLDocumentAdapter.putDocument(xmlDoc);
+                    if (!"ReportEntity".equals(uploadReport.getType())) {
+                        throw new IOException("Invalid Fileformat. Not a Imixs Report Object!");
+                    }
+                    // post model - /bpmn/{filename
+
+                    WorkflowClient workflowClient = connectionController.getWorkflowClient();
+                    workflowClient.postXMLDocument("documents", xmlDoc);
+
+                    // BPMNModel model = new BPMNModel();
+                    // model.setRawData(targetArray);
+                    // ModelClient modelClient = connectionController.getModelClient();
+                    // modelClient.postModel(model);
+                }
+            } catch (Exception e) {
+                logger.severe("Failed to read files: " + e.getMessage());
+                e.printStackTrace();
+            }
+            // reset current model list
+            reset();
+        }
+    }
 }

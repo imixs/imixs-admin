@@ -4,7 +4,7 @@
 	<ui:define name="content">
 
 		<f:view>
-			<h:form id="models_form_id">
+			<h:form id="models_form_id" enctype="multipart/form-data">
 
 				<div class="header">
 					<h2>
@@ -19,11 +19,11 @@
 					<table id="imixsdatatable" class="imixsdatatable" style="width: 100%;">
 						<thead>
 							<tr>
-								<th>Name</th>
-								<th>Content Type</th>
-								<th>Encoding</th>
-								<th>Last Update</th>
-								<th></th>
+								<th>Report Name</th>
+								<th style="width:200px;">Content Type</th>
+								<th style="width:120px;">Encoding</th>
+								<th style="width:240px;">Last Update</th>
+								<th style="width:55px;min-width:55px;"></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -43,13 +43,19 @@
 
 									<td>#{report.item['$modified']}</td>
 
-									<!-- delete -->
+									<!-- download/delete -->
 									<td>
+										<ui:param name="downloadName"
+											value="#{report.getItemValueString('txtname').concat('.xml')}" />
+										<h:commandLink value="" title="#{downloadName}"
+											action="#{documentController.downloadDocument(report.item['$uniqueid'],downloadName)}">
+											<span class="typcn typcn-download"></span>
+										</h:commandLink>
 										<h:commandLink
 											actionListener="#{reportController.deleteReport(report.item['$uniqueid'])}"
 											disabled="#{!connectionController.connected}"
 											onclick="return (confirm('Delete Report #{report.item['txtname']} ?'))">
-											<span class="typcn typcn-trash pull-right error"></span>
+											<span class="typcn typcn-trash error"></span>
 										</h:commandLink>
 									</td>
 
@@ -59,10 +65,23 @@
 						</tbody>
 					</table>
 
-					<h:commandButton actionListener="#{reportController.createReport()}" value="Add"
+					<h:commandButton actionListener="#{reportController.createReport()}" value="Create new Report"
 						disabled="#{!connectionController.connected}" action="report">
 
 					</h:commandButton>
+
+					<div class="imixs-form-section">
+						<dl style="grid-column-start: span 12;">
+							<dt>
+								<h4>Upload Report:</h4>
+							</dt>
+							<dd>
+								<h:inputFile id="file" value="#{reportController.files}" pt:multiple="true" />
+								<h:commandButton id="submit" value="Submit" action="#{reportController.uploadReport}" />
+							</dd>
+						</dl>
+					</div>
+
 
 
 

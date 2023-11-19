@@ -7,7 +7,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -66,7 +65,7 @@ public class ModelController implements Serializable {
      *
      * @throws IOException
      */
-    public void submitModel() throws IOException {
+    public void uploadModel() throws IOException {
         if (files != null) {
             try {
                 logger.info(" uploading " + files.size() + " files");

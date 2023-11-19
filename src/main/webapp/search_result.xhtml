@@ -1,6 +1,5 @@
-<ui:composition xmlns:faces="jakarta.faces" xmlns:f="jakarta.faces.core"
-	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets"
-	xmlns:pt="jakarta.faces.passthrough">
+<ui:composition xmlns:faces="jakarta.faces" xmlns:f="jakarta.faces.core" xmlns:h="jakarta.faces.html"
+	xmlns:ui="jakarta.faces.facelets" xmlns:pt="jakarta.faces.passthrough">
 
 
 	<!-- Search Result -->
@@ -11,15 +10,16 @@
 			<span class="typcn typcn-world-outline"></span> Search Result
 
 			<f:ajax render="page_index_id search_result">
-				<span class="pull-right"><h:commandLink
-						disabled="#{searchController.pageIndex le 0}"
+				<span class="pull-right">
+					<h:commandLink disabled="#{searchController.pageIndex le 0}"
 						actionListener="#{searchController.prevPage()}" immediate="true">
 						<span class="typcn typcn-media-rewind"></span>
-					</h:commandLink> <h:commandLink style="margin-left:10px;"
-						disabled="#{result.size() lt searchController.pageSize}"
+					</h:commandLink>
+					<h:commandLink style="margin-left:10px;" disabled="#{result.size() lt searchController.pageSize}"
 						actionListener="#{searchController.nextPage()}" immediate="true">
 						<span class="typcn typcn-media-fast-forward"></span>
-					</h:commandLink></span>
+					</h:commandLink>
+				</span>
 			</f:ajax>
 		</h2>
 
@@ -33,7 +33,7 @@
 					<th>Type</th>
 					<th>Status</th>
 					<th>Summary</th>
-					<th></th>
+					<th style="width:55px;min-width:55px;"></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -41,33 +41,42 @@
 				<ui:repeat var="doc" value="#{result}">
 					<tr>
 
-						<td style="white-space: nowrap;"><h:link
-								outcome="/document.xhtml?cid=#{jakarta.enterprise.context.conversation.id}">
+						<td style="white-space: nowrap;">
+							<h:link outcome="/document.xhtml?cid=#{jakarta.enterprise.context.conversation.id}">
 								<label>#{doc.uniqueID}</label>
 								<f:param name="id" value="#{doc.uniqueID}" />
-							</h:link></td>
-						<td style="white-space: nowrap;"><h:outputText
-								value="#{doc.item['$created']}">
+							</h:link>
+						</td>
+						<td style="white-space: nowrap;">
+							<h:outputText value="#{doc.item['$created']}">
 								<f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm:ss" />
-							</h:outputText></td>
-						<td style="white-space: nowrap;"><h:outputText
-								value="#{doc.item['$modified']}">
+							</h:outputText>
+						</td>
+						<td style="white-space: nowrap;">
+							<h:outputText value="#{doc.item['$modified']}">
 								<f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm:ss" />
-							</h:outputText></td>
+							</h:outputText>
+						</td>
 						<td>#{doc.item['type']}</td>
 						<td>#{doc.item['$workflowstatus']}</td>
 						<td style="font-size: 0.90em; color: #888;">
-							<!-- Summary, fallback name,txtname --> <h:outputText
-								encoding="false"
+							<!-- Summary, fallback name,txtname -->
+							<h:outputText encoding="false"
 								value="#{!empty doc.item['$workflowsummary']?doc.item['$workflowsummary']:(!empty doc.item['name']?doc.item['name']:doc.item['txtname'])}" />
 						</td>
-						<!-- delete -->
-						<td><h:commandLink  
-								actionListener="#{documentController.delete(doc.uniqueID)}"
+						<!-- download / delete -->
+						<td>
+							<ui:param name="downloadName" value="#{doc.uniqueID.concat('.xml')}" />
+							<h:commandLink value="" title="#{downloadName}"
+								action="#{documentController.downloadDocument(doc.uniqueID,downloadName)}">
+								<span class="typcn typcn-download"></span>
+							</h:commandLink>
+							<h:commandLink actionListener="#{documentController.delete(doc.uniqueID)}"
 								disabled="#{!connectionController.connected}"
 								onclick="return (confirm('Delete Document?\n\nOperation can not be undone!'))">
 								<span class="typcn typcn-trash pull-right error"></span>
-							</h:commandLink></td>
+							</h:commandLink>
+						</td>
 					</tr>
 				</ui:repeat>
 			</tbody>

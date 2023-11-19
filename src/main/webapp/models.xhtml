@@ -1,7 +1,5 @@
-<ui:composition template="/WEB-INF/templates/layout.xhtml"
-	xmlns:faces="jakarta.faces" xmlns:f="jakarta.faces.core"
-	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets"
-	xmlns:pt="jakarta.faces.passthrough">
+<ui:composition template="/WEB-INF/templates/layout.xhtml" xmlns:faces="jakarta.faces" xmlns:f="jakarta.faces.core"
+	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets" xmlns:pt="jakarta.faces.passthrough">
 
 	<ui:define name="content">
 
@@ -10,16 +8,15 @@
 
 				<div class="header">
 					<h2>
-						<span class="typcn typcn-flow-merge"></span> Models <span
-							class="endpoint"><span class="typcn typcn-media-record"></span>
+						<span class="typcn typcn-flow-merge"></span> Models <span class="endpoint"><span
+								class="typcn typcn-media-record"></span>
 							#{connectionController.endpoint}</span>
 					</h2>
 				</div>
 
 
 				<div class="card">
-					<table id="imixsdatatable" class="imixsdatatable"
-						style="width: 100%;">
+					<table id="imixsdatatable" class="imixsdatatable" style="width: 100%;">
 						<thead>
 							<tr>
 								<th>Version</th>
@@ -34,37 +31,40 @@
 									<td>#{model.item['txtname']}</td>
 									<td>
 										<!--  api/model/xxx-de-1.0/bpmn/ -->
-										<a
-										href="#{connectionController.endpoint}/model/#{model.item['txtname']}/bpmn/"
-										target="_model">#{model.getFileNames().get(0)}</a>
+										<a href="#{connectionController.endpoint}/model/#{model.item['txtname']}/bpmn/"
+											target="_model">#{model.getFileNames().get(0)}</a>
 									</td>
 									<td>#{model.item['$created']}</td>
-									
+
 									<!-- delete -->
-									<td><h:commandLink
+									<td>
+										<h:commandLink
 											actionListener="#{modelController.deleteModel(model.item['txtname'])}"
 											disabled="#{!connectionController.connected}"
 											onclick="return (confirm('Delete Model #{model.item['txtname']} ?'))">
 											<span class="typcn typcn-trash pull-right error"></span>
-										</h:commandLink></td>
-										
-									
+										</h:commandLink>
+									</td>
+
+
 								</tr>
 							</ui:repeat>
-						</tbody> 
+						</tbody>
 					</table>
-					
+
 					<div class="imixs-form-section">
 						<dl style="grid-column-start: span 12;">
-							<dt>Upload Model:</dt>
+							<dt>
+								<h4>Upload Model:</h4>
+							</dt>
 							<dd>
-								 <h:inputFile id="file" value="#{modelController.files}"  pt:multiple="true"/>
-					  <h:commandButton id="submit" value="Submit"  action="#{modelController.submitModel}" />
+								<h:inputFile id="file" value="#{modelController.files}" pt:multiple="true" />
+								<h:commandButton id="submit" value="Submit" action="#{modelController.uploadModel}" />
 							</dd>
 						</dl>
 					</div>
-					
-					
+
+
 				</div>
 			</h:form>
 		</f:view>
