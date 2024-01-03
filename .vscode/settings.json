@@ -1,7 +1,7 @@
 {
     // Organize Java Imports
     "editor.codeActionsOnSave": {
-      "source.organizeImports": true,
+      "source.organizeImports": "explicit"
     },
     // Format with Checkstyle
     "java.checkstyle.configuration": "https://raw.githubusercontent.com/imixs/imixs-workflow/master/imixs-checkstyle-8.44.xml",
