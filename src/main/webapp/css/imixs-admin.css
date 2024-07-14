@@ -388,6 +388,15 @@ select:focus {
 	line-height: 1.25em;
 }
 
+.query-type table {
+	width: 170px;
+	border: none;
+}
+
+.query-type table tbody tr td {
+	border: none;
+}
+
 pre {
 	overflow-wrap: break-word;
 	white-space: pre-wrap;

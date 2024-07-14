@@ -2,7 +2,8 @@ package org.imixs.application.admin;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -36,6 +37,7 @@ public class SearchController implements Serializable {
     private static Logger logger = Logger.getLogger(SearchController.class.getName());
 
     private String query = "(type:workitem)";// default query
+    private String queryType = "LUCENE";// default lucene query
     private int pageSize = 10;
     private int pageIndex;
     private String sortBy = "$modified";
@@ -98,6 +100,14 @@ public class SearchController implements Serializable {
         }
     }
 
+    public String getQueryType() {
+        return queryType;
+    }
+
+    public void setQueryType(String queryType) {
+        this.queryType = queryType;
+    }
+
     public void reset() {
         searchResult = null;
     }
@@ -124,8 +134,17 @@ public class SearchController implements Serializable {
                     workflowClient.setSortBy(getSortBy());
                     workflowClient.setSortOrder(getSortBy(), isSortOrder());
                     workflowClient.setItems(ITEM_LIST);
-                    // result = workflowClient.getCustomResource("/documents/search/" + getQuery());
-                    searchResult = workflowClient.searchDocuments(getQuery());
+
+                    // determine if we have a
+                    if ("JPQL".equals(getQueryType())) {
+                        String query = getQuery();
+                        query = URLEncoder.encode(query, StandardCharsets.UTF_8.toString());
+
+                        logger.info("JQPL Statement=" + query);
+                        searchResult = workflowClient.queryDocuments(query);
+                    } else {
+                        searchResult = workflowClient.searchDocuments(getQuery());
+                    }
                     logger.info("...found " + searchResult.size() + " results in " + (System.currentTimeMillis() - l)
                             + "ms");
                 } catch (RestAPIException | UnsupportedEncodingException e) {

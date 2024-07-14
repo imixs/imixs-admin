@@ -182,10 +182,16 @@ public class ConnectionController implements Serializable {
                 workflowClient.registerClientRequestFilter(basicAuth);
             }
             if ("FORM".equals(getType())) {
-                // Create a authenticator
-                FormAuthenticator formAuth = new FormAuthenticator(getEndpoint(), getKey(), getToken());
-                // register the authenticator
-                workflowClient.registerClientRequestFilter(formAuth);
+                try {
+                    // Create a authenticator
+                    FormAuthenticator formAuth;
+                    formAuth = new FormAuthenticator(getEndpoint(), getKey(), getToken());
+                    // register the authenticator
+                    workflowClient.registerClientRequestFilter(formAuth);
+                } catch (RestAPIException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
 
             }
             if ("COOKIE".equals(getType())) {
