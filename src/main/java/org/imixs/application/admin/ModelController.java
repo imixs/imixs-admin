@@ -1,7 +1,6 @@
 package org.imixs.application.admin;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -15,7 +14,7 @@ import org.imixs.melman.RestAPIException;
 import org.imixs.melman.WorkflowClient;
 import org.imixs.workflow.ItemCollection;
 import org.imixs.workflow.ItemCollectionComparator;
-import org.imixs.workflow.bpmn.BPMNModel;
+import org.imixs.workflow.exceptions.ModelException;
 import org.imixs.workflow.xml.XMLDataCollection;
 import org.imixs.workflow.xml.XMLDataCollectionAdapter;
 
@@ -65,29 +64,50 @@ public class ModelController implements Serializable {
      *
      * @throws IOException
      */
-    public void uploadModel() throws IOException {
-        if (files != null) {
-            try {
-                logger.info(" uploading " + files.size() + " files");
-                for (Part file : files) {
+    // @Deprecated
+    // public void uploadModel() throws IOException {
+    // if (files != null) {
+    // try {
+    // logger.info(" uploading " + files.size() + " files");
+    // for (Part file : files) {
 
-                    logger.info("name: " + file.getSubmittedFileName());
-                    logger.info("type: " + file.getContentType());
-                    logger.info("size: " + file.getSize());
-                    InputStream content = file.getInputStream();
-                    byte[] targetArray = new byte[content.available()];
-                    content.read(targetArray);
-                    // post model - /bpmn/{filename
-                    BPMNModel model = new BPMNModel();
-                    model.setRawData(targetArray);
+    // logger.info("name: " + file.getSubmittedFileName());
+    // logger.info("type: " + file.getContentType());
+    // logger.info("size: " + file.getSize());
+    // InputStream content = file.getInputStream();
+    // byte[] targetArray = new byte[content.available()];
+    // content.read(targetArray);
+    // // post model - /bpmn/{filename
+    // BPMNModel model = new BPMNModel();
+    // model.setRawData(targetArray);
+    // ModelClient modelClient = connectionController.getModelClient();
+    // modelClient.postModel(model);
+    // }
+    // } catch (RestAPIException e) {
+    // logger.severe("Failed to read BPMN files: " + e.getMessage());
+    // e.printStackTrace();
+    // }
+    // // reset current model list
+    // reset();
+    // }
+    // }
+
+    public void uploadModel() throws ModelException {
+        if (files != null) {
+            logger.info("├── uploading " + files.size() + " files");
+            for (Part file : files) {
+                try {
+                    logger.info("│   ├── Processing file: " + file.getSubmittedFileName());
+
                     ModelClient modelClient = connectionController.getModelClient();
-                    modelClient.postModel(model);
+                    modelClient.postModel(file.getInputStream());
+
+                } catch (RestAPIException | IOException e) {
+                    throw new ModelException(ModelException.INVALID_MODEL,
+                            "Unable to read model file: " + file.getSubmittedFileName(), e);
                 }
-            } catch (RestAPIException e) {
-                logger.severe("Failed to read BPMN files: " + e.getMessage());
-                e.printStackTrace();
             }
-            // reset current model list
+            // Nach erfolgreicher Verarbeitung die Model-Liste aktualisieren
             reset();
         }
     }

@@ -285,15 +285,10 @@ public class ReportController implements Serializable {
                     if (!"ReportEntity".equals(uploadReport.getType())) {
                         throw new IOException("Invalid Fileformat. Not a Imixs Report Object!");
                     }
-                    // post model - /bpmn/{filename
 
                     WorkflowClient workflowClient = connectionController.getWorkflowClient();
                     workflowClient.postXMLDocument("documents", xmlDoc);
 
-                    // BPMNModel model = new BPMNModel();
-                    // model.setRawData(targetArray);
-                    // ModelClient modelClient = connectionController.getModelClient();
-                    // modelClient.postModel(model);
                 }
             } catch (Exception e) {
                 logger.severe("Failed to read files: " + e.getMessage());
