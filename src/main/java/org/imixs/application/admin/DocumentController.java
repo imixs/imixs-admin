@@ -146,6 +146,8 @@ public class DocumentController implements Serializable {
      * in the browser.
      */
     public void downloadDocument(String id, String filename) {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
         try {
             // load report
             WorkflowClient workflowClient = connectionController.getWorkflowClient();
@@ -153,10 +155,8 @@ public class DocumentController implements Serializable {
             XMLDocument xmlDocument = XMLDocumentAdapter.getDocument(downloadDocument);
 
             // set Content-Type and Header for Download
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
             response.setContentType("application/octet-stream");
-            response.setHeader("Content-Disposition", "attachment;filename=" + filename);
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
 
             // marshal xmlObject...
             JAXBContext jaxbContext = JAXBContext.newInstance(xmlDocument.getClass());
@@ -175,7 +175,21 @@ public class DocumentController implements Serializable {
             facesContext.responseComplete();
         } catch (IOException | JAXBException | RestAPIException e) {
             e.printStackTrace();
+        } finally {
+            // Ensure the output stream is closed
+            try {
+                if (response.getOutputStream() != null) {
+                    response.getOutputStream().close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    public String getDownloadUrl(String id, String filename) {
+        // Beispiel: Erstellen Sie die REST-URL für den Download
+        return "/api/download?fileId=" + id + "&filename=" + filename;
     }
 
 }

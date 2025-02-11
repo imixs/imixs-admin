@@ -36,30 +36,25 @@
 											disabled="#{!connectionController.connected}">
 										</h:commandLink>
 									</td>
-
 									<td>#{report.item['contenttype']}</td>
-
 									<td>#{report.item['encoding']}</td>
-
 									<td>#{report.item['$modified']}</td>
 
 									<!-- download/delete -->
 									<td>
 										<ui:param name="downloadName"
-											value="#{report.getItemValueString('txtname').concat('.xml')}" />
-										<h:commandLink value="" title="#{downloadName}"
-											action="#{documentController.downloadDocument(report.item['$uniqueid'],downloadName)}">
+											value="#{report.getItemValueString('txtname').concat('.imixs-report')}" />
+										<h:outputLink value="#{documentController.getDownloadUrl(report.item['$uniqueid'], downloadName)}"
+													title="#{downloadName}">
 											<span class="typcn typcn-download"></span>
-										</h:commandLink>
+										</h:outputLink>
 										<h:commandLink
 											actionListener="#{reportController.deleteReport(report.item['$uniqueid'])}"
 											disabled="#{!connectionController.connected}"
 											onclick="return (confirm('Delete Report #{report.item['txtname']} ?'))">
 											<span class="typcn typcn-trash error"></span>
-										</h:commandLink>
+										</h:commandLink>										
 									</td>
-
-
 								</tr>
 							</ui:repeat>
 						</tbody>
@@ -67,7 +62,6 @@
 
 					<h:commandButton actionListener="#{reportController.createReport()}" value="Create new Report"
 						disabled="#{!connectionController.connected}" action="report">
-
 					</h:commandButton>
 
 					<div class="imixs-form-section">
@@ -81,9 +75,6 @@
 							</dd>
 						</dl>
 					</div>
-
-
-
 
 				</div>
 			</h:form>
