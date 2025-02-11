@@ -1,5 +1,6 @@
 <ui:composition template="/WEB-INF/templates/layout.xhtml"
 	xmlns:faces="jakarta.faces" xmlns:f="jakarta.faces.core"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets">
 
 	<ui:define name="content">
@@ -26,9 +27,9 @@
 							<dt>URL:</dt>
 							<dd>
 								<h:inputText value="#{connectionController.endpoint}"
-									id="endpoint_input"
+									id="endpoint_input" pt:autocomplete="off" 
 									disabled="#{connectionController.connected}" required="true" />
-
+									<h:inputText id="endpoint_suggestions" style="display:none;" />
 							</dd>
 						</dl>
 					</div>
@@ -112,5 +113,53 @@
 				</div>
 			</h:form>
 		</f:view>
+
+
+		<script type="text/javascript">
+		/*<![CDATA[*/
+
+			let connected='#{connectionController.connected}';
+            // load stored endpoints as suggestion
+            document.addEventListener("DOMContentLoaded", function() {
+				if (connected==='true') {
+					const connectedEndpoint=document.getElementById('connect_form_id:endpoint_input').value;
+					// alert('save endpoint: '+connectedEndpoint);
+					saveEndpoint(connectedEndpoint);
+				} else {
+					// alert('load endpoints ');
+					let endpoints = loadEndpoints();
+					let inputField = document.getElementById('connect_form_id:endpoint_input');
+					let suggestionField = document.getElementById('connect_form_id:endpoint_suggestions');
+					if (endpoints.length > 0) {
+						inputField.setAttribute('list', 'endpoint_suggestions');
+						let datalist = document.createElement('datalist');
+						datalist.id = 'endpoint_suggestions';
+						endpoints.forEach(function(endpoint) {
+							let option = document.createElement('option');
+							option.value = endpoint;
+							datalist.appendChild(option);
+						});
+						document.body.appendChild(datalist);
+					}
+				}
+            });
+
+			function saveEndpoint(endpoint) {
+				let endpoints = JSON.parse(localStorage.getItem('endpoints')) || [];
+				// remove endpoint if exits
+				endpoints = endpoints.filter(e => e !== endpoint);
+				// store new endpoint
+				endpoints.unshift(endpoint);
+				if (endpoints.length > 10) {
+					endpoints = endpoints.slice(0, 10);
+				}
+				localStorage.setItem('endpoints', JSON.stringify(endpoints));
+			}
+
+			function loadEndpoints() {
+				return JSON.parse(localStorage.getItem('endpoints')) || [];
+			}			
+		/*]]>*/
+		</script>	
 	</ui:define>
 </ui:composition>
