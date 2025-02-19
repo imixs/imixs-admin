@@ -77,7 +77,7 @@ public class ConnectionController implements Serializable {
             return;
         }
 
-        logger.info("...conecting: " + endpoint);
+        logger.info("...connecting: " + endpoint);
 
         // get JSESSIONID
         workflowClient = getWorkflowClient();
