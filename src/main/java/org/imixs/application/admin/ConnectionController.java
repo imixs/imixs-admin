@@ -15,7 +15,7 @@ import org.imixs.melman.WorkflowClient;
 import org.imixs.workflow.ItemCollection;
 
 import jakarta.enterprise.context.Conversation;
-import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.context.ConversationScoped;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -39,8 +39,8 @@ import jakarta.ws.rs.core.Cookie;
  *
  */
 @Named
-// @ConversationScoped
-@SessionScoped
+@ConversationScoped
+// @SessionScoped
 public class ConnectionController implements Serializable {
 
     private static final long serialVersionUID = 7027147503119012594L;
@@ -92,7 +92,7 @@ public class ConnectionController implements Serializable {
                         ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest())
                                 .getSession().getMaxInactiveInterval() * 1000);
                 conversation.begin();
-                logger.finest("......start new conversation, id=" + conversation.getId());
+                logger.info("......start new conversation, id=" + conversation.getId());
             }
         } else {
             connected = false;
@@ -106,7 +106,7 @@ public class ConnectionController implements Serializable {
      */
     public void disconnect() {
         if (!conversation.isTransient()) {
-            logger.finest("......stopping conversation, id=" + conversation.getId());
+            logger.info("......stopping conversation, id=" + conversation.getId());
             conversation.end();
             connected = false;
             indexSchema = null;
