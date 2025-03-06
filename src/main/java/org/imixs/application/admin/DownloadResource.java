@@ -1,12 +1,16 @@
 package org.imixs.application.admin;
 
+import java.util.logging.Logger;
+
 import org.imixs.melman.RestAPIException;
 import org.imixs.melman.WorkflowClient;
 import org.imixs.workflow.ItemCollection;
 import org.imixs.workflow.xml.XMLDocument;
 import org.imixs.workflow.xml.XMLDocumentAdapter;
 
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
@@ -21,11 +25,16 @@ import jakarta.xml.bind.Marshaller;
  * endpoint is used for download links
  *
  */
+@Named
+@RequestScoped
 @Path("/download")
 public class DownloadResource {
 
     @Inject
     ConnectionController connectionController;
+    private static final long serialVersionUID = 1L;
+
+    private static Logger logger = Logger.getLogger(DownloadResource.class.getName());
 
     @GET
     public Response downloadFile(@QueryParam("fileId") String fileId, @QueryParam("filename") String filename) {
@@ -66,8 +75,12 @@ public class DownloadResource {
     public XMLDocument getXmlDocument(String id) {
         XMLDocument xmlDocument = null;
         try {
+            logger.info("...start xmldownload id=" + id);
             // load document
             WorkflowClient workflowClient = connectionController.getWorkflowClient();
+            if (workflowClient == null) {
+                logger.info("workflow client is null!");
+            }
             ItemCollection downloadDocument = workflowClient.getDocument(id);
             xmlDocument = XMLDocumentAdapter.getDocument(downloadDocument);
         } catch (RestAPIException e) {

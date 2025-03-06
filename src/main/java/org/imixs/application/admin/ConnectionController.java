@@ -15,7 +15,7 @@ import org.imixs.melman.WorkflowClient;
 import org.imixs.workflow.ItemCollection;
 
 import jakarta.enterprise.context.Conversation;
-import jakarta.enterprise.context.ConversationScoped;
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -39,8 +39,8 @@ import jakarta.ws.rs.core.Cookie;
  *
  */
 @Named
-@ConversationScoped
-// @SessionScoped
+// @ConversationScoped
+@SessionScoped
 public class ConnectionController implements Serializable {
 
     private static final long serialVersionUID = 7027147503119012594L;
@@ -174,6 +174,7 @@ public class ConnectionController implements Serializable {
      */
     public WorkflowClient getWorkflowClient() {
         if (workflowClient == null && getEndpoint() != null) {
+            logger.info("init new worklfow client");
             // Init the workflowClient with a basis URL
             workflowClient = new WorkflowClient(getEndpoint());
             if ("BASIC".equals(getType())) {
