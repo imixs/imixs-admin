@@ -24,6 +24,7 @@ public class LogController implements Serializable {
 
     public static final int LOG_INFO = 1;
     public static final int LOG_WARNING = 2;
+    public static final int LOG_SEVERE = 3;
 
     private static Logger logger = Logger.getLogger(LogController.class.getName());
     String pattern = " HH:mm:ss.SSSZ";
@@ -42,6 +43,10 @@ public class LogController implements Serializable {
         add(LOG_WARNING, message);
     }
 
+    public void severe(String message) {
+        add(LOG_SEVERE, message);
+    }
+
     /**
      * Logs a new message to the message log
      *
@@ -56,6 +61,11 @@ public class LogController implements Serializable {
         if (type == LOG_WARNING) {
             entry = entry + "[WARNING] ";
             logger.warning(message);
+        }
+        if (type == LOG_SEVERE) {
+            entry = entry + "[ERROR]   ";
+            logger.warning(message);
+
         } else {
             entry = entry + "[INFO]    ";
             logger.info(message);

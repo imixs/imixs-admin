@@ -96,20 +96,22 @@
 
 					</div>
 
-					<div class="imixs-form-section">
-						<!-- Error Message -->
-						<h4 style="grid-column-start: span 12; color: red;">
-							<h:outputText value="#{connectionController.errorMessage}" />
-						</h4>
-
-						<span style="grid-column-start: span 8;"> <h:commandButton
+					<div class="card" style="min-height: 80px;display: flex; align-items: center;gap: 20px;">
+						<span>
+							<h:commandButton
 								value="Connect"
 								actionListener="#{connectionController.connect()}"
-								rendered="#{!connectionController.connected}" /> <h:commandButton
+								rendered="#{!connectionController.connected}" /> 
+							<h:commandButton
 								value="Disconnect" rendered="#{connectionController.connected}"
 								actionListener="#{connectionController.disconnect()}" />
+								<!-- Error Message -->
 						</span>
+						<span><h4 style="color: rgb(221, 19, 19); font-weight: bold;margin-top:5px;">#{connectionController.errorMessage}</h4></span>
+						
 					</div>
+					<!-- Log -->
+					<ui:include src="log.xhtml" />
 				</div>
 			</h:form>
 		</f:view>

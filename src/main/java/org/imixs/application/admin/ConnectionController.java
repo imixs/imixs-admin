@@ -56,6 +56,12 @@ public class ConnectionController implements Serializable {
     private ItemCollection indexSchema = null;
     private WorkflowClient workflowClient = null;
 
+    @Inject
+    private Conversation conversation;
+
+    @Inject
+    LogController logController;
+
     public boolean isConnected() {
         return connected;
     }
@@ -63,9 +69,6 @@ public class ConnectionController implements Serializable {
     public void setConnected(boolean connected) {
         this.connected = connected;
     }
-
-    @Inject
-    private Conversation conversation;
 
     /**
      * Starts a new conversation. The method creates a new worklowClient instance
@@ -76,25 +79,33 @@ public class ConnectionController implements Serializable {
         if (endpoint == null) {
             return;
         }
+        logController.reset();
+        logController.info("├── connecting...");
 
-        logger.info("...connecting: " + endpoint);
-
-        // get JSESSIONID
+        // reset current client
+        workflowClient = null;
+        // reconnect....
         workflowClient = getWorkflowClient();
 
         if (workflowClient != null) {
-            indexSchema = loadIndexSchema();
-            // test if the configuration was loaded successful
-            connected = (indexSchema != null);
+            try {
+                indexSchema = loadIndexSchema();
+                // test if the configuration was loaded successful
+                connected = (indexSchema != null);
 
-            if (connected && conversation.isTransient()) {
-                conversation.setTimeout(
-                        ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest())
-                                .getSession().getMaxInactiveInterval() * 1000);
-                conversation.begin();
-                logger.info("......start new conversation, id=" + conversation.getId());
+                if (connected && conversation.isTransient()) {
+                    conversation.setTimeout(
+                            ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest())
+                                    .getSession().getMaxInactiveInterval() * 1000);
+                    conversation.begin();
+                    logController.info("├── started new connection!");
+                }
+            } catch (Exception e) {
+                logController.severe("├── connection failed: " + e.getMessage());
+                connected = false;
             }
         } else {
+            logController.severe("├── connection failed!");
             connected = false;
         }
     }
@@ -105,8 +116,9 @@ public class ConnectionController implements Serializable {
      * the disconnect() method in a actionListener on any JSF navigation action.
      */
     public void disconnect() {
+        logController.info("├── disconnecting: '" + endpoint + "' ...");
         if (!conversation.isTransient()) {
-            logger.info("......stopping conversation, id=" + conversation.getId());
+
             conversation.end();
             connected = false;
             indexSchema = null;
@@ -114,6 +126,7 @@ public class ConnectionController implements Serializable {
             key = null;
             token = null;
             workflowClient = null;
+            logController.info("├── connection closed!");
         }
 
     }
@@ -174,7 +187,9 @@ public class ConnectionController implements Serializable {
      */
     public WorkflowClient getWorkflowClient() {
         if (workflowClient == null && getEndpoint() != null) {
-            logger.info("init new worklfow client");
+            logController.info("│   ├── init new workflow client");
+            logController.info("│   ├── endpoint: '" + endpoint + "' ...");
+            logController.info("│   ├── connection type= " + getType());
             // Init the workflowClient with a basis URL
             workflowClient = new WorkflowClient(getEndpoint());
             if ("BASIC".equals(getType())) {
@@ -197,7 +212,7 @@ public class ConnectionController implements Serializable {
 
             }
             if ("COOKIE".equals(getType())) {
-                logger.info("..set authentication cookie: name=" + getKey() + " value=....");
+                logController.info("│   ├── set authentication cookie: name=" + getKey() + " value=....");
                 Cookie cookie = new Cookie(getKey(), getToken());
                 CookieAuthenticator cookieAuth = new CookieAuthenticator(cookie);
                 workflowClient.registerClientRequestFilter(cookieAuth);
@@ -270,13 +285,13 @@ public class ConnectionController implements Serializable {
                     return result.get(0);
                 } else {
                     indexSchema = null;
-                    errorMessage = "Unable to connect to endpoint!";
-                    logger.severe(errorMessage);
+                    errorMessage = "Connection failed!";
+                    logController.severe("├── " + errorMessage);
                     return null;
                 }
             } catch (RestAPIException e) {
-                errorMessage = "Unable to connect to endpoint!";
-                logger.severe("Unable to connect to endpoint: " + e.getMessage());
+                errorMessage = "Connection failed!";
+                logController.severe("├── Connection failed: " + e.getMessage());
             }
         }
         return null;
