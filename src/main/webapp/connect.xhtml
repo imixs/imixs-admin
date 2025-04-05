@@ -104,7 +104,8 @@
 								rendered="#{!connectionController.connected}" /> 
 							<h:commandButton
 								value="Disconnect" rendered="#{connectionController.connected}"
-								actionListener="#{connectionController.disconnect()}" />
+								actionListener="#{connectionController.disconnect()}"
+								action="connect" />
 								<!-- Error Message -->
 						</span>
 						<span><h4 style="color: rgb(221, 19, 19); font-weight: bold;margin-top:5px;">#{connectionController.errorMessage}</h4></span>
