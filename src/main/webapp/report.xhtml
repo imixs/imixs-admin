@@ -35,7 +35,7 @@
 
 
 						<div class="imixs-form-section">
-							<dl style="grid-column-start: span 8;">
+							<dl style="grid-column-start: span 4;">
 								<dt>Report Name:</dt>
 								<dd>
 									<h:inputText value="#{reportController.report.item['txtname']}" pt:placeholder=""
@@ -51,7 +51,25 @@
 								</dd>
 							</dl>
 
-							<dl style="grid-column-start: span 8;">
+							<dl style="grid-column-start: span 4;">
+								<dt>Encoding:</dt>
+								<dd>
+									<h:inputText value="#{reportController.report.item['encoding']}"
+										pt:placeholder="UTF-8" disabled="#{!connectionController.connected}" />
+								</dd>
+							</dl>
+
+							<dl style="grid-column-start: span 12;">
+								<dt>Description:</dt>
+								<dd>
+									<h:inputTextarea value="#{reportController.report.item['txtdescription']}"
+										pt:spellcheck="false" style="width: 100%;height: 3.7em;"
+										pt:placeholder="enter a query definition"
+										disabled="#{!connectionController.connected}" />
+								</dd>
+							</dl>
+
+							<dl style="grid-column-start: span 12;">
 								<dt>Query:</dt>
 								<dd>
 									<h:inputTextarea value="#{reportController.report.item['txtquery']}"
@@ -65,13 +83,7 @@
 
 
 
-							<dl style="grid-column-start: span 4;">
-								<dt>Encoding:</dt>
-								<dd>
-									<h:inputText value="#{reportController.report.item['encoding']}"
-										pt:placeholder="UTF-8" disabled="#{!connectionController.connected}" />
-								</dd>
-							</dl>
+						
 						</div>
 
 					</h:panelGroup>
@@ -80,11 +92,11 @@
 					<!--  Attribute List -->
 					<h:panelGroup layout="block" id="attriubte_list_id" styleClass="card">
 						<h2>
-							<span class="typcn typcn-th-list-outline"></span> Attribute List
+							<span class="typcn typcn-th-list-outline"></span> Attributes
 						</h2>
-						<p class="help">Optional item list of the report result. A item list reduces the size of a
+						<p class="help">Optional attribute definition for the report result. A attributes reduces the size of a
 							report result and can adapt
-							single item values. Each item of the attriubte list can define
+							single item values. Each item of the attribute list can define
 							an optional label, converter, format and aggregator.</p>
 
 						<table id="imixsdatatable" class="imixsdatatable edit" style="width: 100%;">

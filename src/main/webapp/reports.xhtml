@@ -23,7 +23,7 @@
 								<th style="width:200px;">Content Type</th>
 								<th style="width:120px;">Encoding</th>
 								<th style="width:240px;">Last Update</th>
-								<th style="width:55px;min-width:55px;"></th>
+								<th style="width:75px;min-width:75px;"></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -35,7 +35,10 @@
 											actionListener="#{reportController.loadReport(report.item['$uniqueid'])}"
 											disabled="#{!connectionController.connected}">
 										</h:commandLink>
+										<br />
+										<pre>#{report.item['txtdescription']}</pre>
 									</td>
+									
 									<td>#{report.item['contenttype']}</td>
 									<td>#{report.item['encoding']}</td>
 									<td>#{report.item['$modified']}</td>
@@ -48,6 +51,15 @@
 													title="#{downloadName}">
 											<span class="typcn typcn-download"></span>
 										</h:outputLink>
+										<!-- copy -->
+										<h:commandLink
+											actionListener="#{reportController.copyReport(report.item['$uniqueid'])}"
+											action="reports"
+											disabled="#{!connectionController.connected}"
+											onclick="return (confirm('Copy Report #{report.item['txtname']} ?'))">
+											<span class="typcn typcn-clipboard"></span>
+										</h:commandLink>	
+										<!-- delete -->
 										<h:commandLink
 											actionListener="#{reportController.deleteReport(report.item['$uniqueid'])}"
 											disabled="#{!connectionController.connected}"
