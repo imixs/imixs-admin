@@ -184,6 +184,33 @@ public class ReportController implements Serializable {
     }
 
     /**
+     * Copy a Report Definition
+     */
+    public void copyReport(String id) {
+        try {
+            logger.info(" copy report " + id);
+            WorkflowClient workflowClient = connectionController.getWorkflowClient();
+
+            report = workflowClient.getDocument(id);
+
+            ItemCollection reportClone = (ItemCollection) report.clone();
+            reportClone.removeItem(WorkflowKernel.UNIQUEID);
+            // change name
+            String name = reportClone.getItemValueString("txtname");
+            name = name + "_copy_" + System.currentTimeMillis();
+            reportClone.setItemValue("txtname", name);
+            workflowClient.saveDocument(reportClone);
+            reset();
+
+        } catch (RestAPIException e) {
+            logger.severe("Failed to delete report definition: " + e.getMessage());
+            e.printStackTrace();
+        }
+        // reset current report list
+
+    }
+
+    /**
      * move the attribute at pos up in the attribute list
      *
      * @param pos
@@ -261,37 +288,41 @@ public class ReportController implements Serializable {
     }
 
     /**
-     * This method extracts all uploaded Report xml files and post the reports ot
-     * the documents api endpoint
+     * This method extracts all uploaded Report xml files and post the reports to
+     * the documents api endpoint.
+     *
+     * If no type attribute is set the type defaults to 'ReportEntity'
      *
      * @throws IOException
      */
     public void uploadReport() throws IOException {
         if (files != null) {
             try {
-                logger.info(" uploading " + files.size() + " files");
+                logger.info("├── uploading " + files.size() + " imixs-report files");
                 for (Part file : files) {
-
-                    logger.info("name: " + file.getSubmittedFileName());
-                    logger.info("type: " + file.getContentType());
-                    logger.info("size: " + file.getSize());
+                    logger.info("│   ├── name: " + file.getSubmittedFileName());
+                    logger.info("│   ├── type: " + file.getContentType());
+                    logger.info("│   └── size: " + file.getSize());
                     InputStream content = file.getInputStream();
                     byte[] targetArray = new byte[content.available()];
                     content.read(targetArray);
 
                     XMLDocument xmlDoc = XMLDocumentAdapter.readXMLDocument(targetArray);
-
                     ItemCollection uploadReport = XMLDocumentAdapter.putDocument(xmlDoc);
+                    if (!uploadReport.hasItem("type")) {
+                        // set default type
+                        uploadReport.setType("ReportEntity");
+                    }
                     if (!"ReportEntity".equals(uploadReport.getType())) {
                         throw new IOException("Invalid Fileformat. Not a Imixs Report Object!");
                     }
-
                     WorkflowClient workflowClient = connectionController.getWorkflowClient();
-                    workflowClient.postXMLDocument("documents", xmlDoc);
+                    workflowClient.postXMLDocument("documents", XMLDocumentAdapter.getDocument(uploadReport));
 
                 }
+                logger.info("├── upload completed");
             } catch (Exception e) {
-                logger.severe("Failed to read files: " + e.getMessage());
+                logger.severe("├── failed to read files: " + e.getMessage());
                 e.printStackTrace();
             }
             // reset current model list
