@@ -1,6 +1,5 @@
-<ui:composition xmlns:f="jakarta.faces.core"
-	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets">
-	
+<ui:composition xmlns:f="jakarta.faces.core" xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets">
+
 	<nav>
 		<h:form>
 			<!-- Sidebar -->
@@ -18,90 +17,100 @@
 				</div>
 				<hr />
 				<ul>
-					<li class="nav-item"><h:link
-							outcome="/connect.xhtml">
+					<li class="nav-item">
+						<h:link outcome="/connect.xhtml?cid=#{jakarta.enterprise.context.conversation.id}">
 							<span class="typcn typcn-link"></span>
 							<label>Endpoint</label>
 						</h:link> <span class="typcn typcn-media-record-outline"
-						style="#{connectionController.connected?'color:#4dc24f':'color:#dc2929'}"></span>
+							style="#{connectionController.connected?'color:#4dc24f':'color:#dc2929'}"></span>
 					</li>
 				</ul>
 				<hr />
 				<ul>
-					<li class="nav-item"><h:link
-							outcome="/search.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
+					<li class="nav-item">
+						<h:link outcome="/search.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
 							disabled="#{!connectionController.connected}">
 							<span class="typcn typcn-zoom-outline"></span>
 							<label>Search</label>
-						</h:link></li>
+						</h:link>
+					</li>
 				</ul>
 				<hr />
 				<ul>
-					<li class="nav-item"><h:link
-							outcome="/update.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
+					<li class="nav-item">
+						<h:link outcome="/update.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
 							disabled="#{!connectionController.connected}">
 							<span class="typcn typcn-edit"></span>
 							<label>Update</label>
-						</h:link></li>
+						</h:link>
+					</li>
 
-					<li class="nav-item"><h:link
-							outcome="/delete.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
+					<li class="nav-item">
+						<h:link outcome="/delete.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
 							disabled="#{!connectionController.connected}">
 							<span class="typcn typcn-trash"></span>
 							<label>Delete</label>
-						</h:link></li>
+						</h:link>
+					</li>
 
-					<li class="nav-item"><h:link
-							outcome="/adminp.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
+					<li class="nav-item">
+						<h:link outcome="/adminp.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
 							disabled="#{!connectionController.connected}">
 							<span class="typcn typcn-spanner"></span>
 							<label>Admin-P</label>
-						</h:link></li>
+						</h:link>
+					</li>
 
-					<li class="nav-item"><h:link
-							outcome="/models.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
+					<li class="nav-item">
+						<h:link outcome="/models.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
 							disabled="#{!connectionController.connected}">
 							<span class="typcn typcn-flow-merge"></span>
 							<label>Models</label>
-						</h:link></li>
+						</h:link>
+					</li>
 
-					<li class="nav-item"><h:link
-						outcome="/reports.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
-						disabled="#{!connectionController.connected}">
-						<span class="typcn typcn-chart-bar-outline"></span>
-						<label>Reports</label>
-					</h:link></li>
+					<li class="nav-item">
+						<h:link outcome="/reports.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
+							disabled="#{!connectionController.connected}">
+							<span class="typcn typcn-chart-bar-outline"></span>
+							<label>Reports</label>
+						</h:link>
+					</li>
 
-					<li class="nav-item"><h:link
-							outcome="/lucene.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
+					<li class="nav-item">
+						<h:link outcome="/lucene.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
 							disabled="#{!connectionController.connected}">
 							<span class="typcn typcn-map"></span>
 							<label>Index</label>
-						</h:link></li>
+						</h:link>
+					</li>
 
-					<li class="nav-item"><h:link
-							outcome="/event-log.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
+					<li class="nav-item">
+						<h:link outcome="/event-log.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
 							disabled="#{!connectionController.connected}">
 							<span class="typcn typcn-th-list"></span>
 							<label>Event-Log</label>
-						</h:link></li>
+						</h:link>
+					</li>
 
 				</ul>
 				<hr />
 				<ul>
-					<li class="nav-item"><h:link
-							outcome="/dataexport.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
+					<li class="nav-item">
+						<h:link outcome="/dataexport.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
 							disabled="#{!connectionController.connected}">
 							<span class="typcn typcn-upload"></span>
 							<label>Export</label>
-						</h:link></li>
+						</h:link>
+					</li>
 
-					<li class="nav-item"><h:link
-							outcome="/dataimport.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
+					<li class="nav-item">
+						<h:link outcome="/dataimport.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
 							disabled="#{!connectionController.connected}">
 							<span class="typcn typcn-download"></span>
 							<label>Import</label>
-						</h:link></li>
+						</h:link>
+					</li>
 				</ul>
 
 
@@ -111,5 +120,3 @@
 	</nav>
 
 </ui:composition>
-
-
