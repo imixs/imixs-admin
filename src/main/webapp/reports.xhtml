@@ -38,7 +38,7 @@
 										<br />
 										<pre>#{report.item['txtdescription']}</pre>
 									</td>
-									
+
 									<td>#{report.item['contenttype']}</td>
 									<td>#{report.item['encoding']}</td>
 									<td>#{report.item['$modified']}</td>
@@ -47,25 +47,25 @@
 									<td>
 										<ui:param name="downloadName"
 											value="#{report.getItemValueString('txtname').concat('.imixs-report')}" />
-										<h:outputLink value="#{documentController.getDownloadUrl(report.item['$uniqueid'], downloadName)}"
-													title="#{downloadName}">
+										<h:outputLink
+											value="#{documentController.getDownloadUrl(report.item['$uniqueid'], jakarta.enterprise.context.conversation.id, downloadName)}"
+											title="#{downloadName}">
 											<span class="typcn typcn-download"></span>
 										</h:outputLink>
 										<!-- copy -->
 										<h:commandLink
 											actionListener="#{reportController.copyReport(report.item['$uniqueid'])}"
-											action="reports"
-											disabled="#{!connectionController.connected}"
+											action="reports" disabled="#{!connectionController.connected}"
 											onclick="return (confirm('Copy Report #{report.item['txtname']} ?'))">
 											<span class="typcn typcn-clipboard"></span>
-										</h:commandLink>	
+										</h:commandLink>
 										<!-- delete -->
 										<h:commandLink
 											actionListener="#{reportController.deleteReport(report.item['$uniqueid'])}"
 											disabled="#{!connectionController.connected}"
 											onclick="return (confirm('Delete Report #{report.item['txtname']} ?'))">
 											<span class="typcn typcn-trash error"></span>
-										</h:commandLink>										
+										</h:commandLink>
 									</td>
 								</tr>
 							</ui:repeat>

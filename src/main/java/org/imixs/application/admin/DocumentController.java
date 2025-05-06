@@ -187,9 +187,9 @@ public class DocumentController implements Serializable {
         }
     }
 
-    public String getDownloadUrl(String id, String filename) {
+    public String getDownloadUrl(String id, String cid, String filename) {
         // Beispiel: Erstellen Sie die REST-URL für den Download
-        return "/api/download?fileId=" + id + "&filename=" + filename;
+        return "/api/download?cid=" + cid + "&fileId=" + id + "&filename=" + filename;
     }
 
 }
