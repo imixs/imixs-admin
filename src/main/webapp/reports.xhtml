@@ -49,20 +49,21 @@
 											value="#{report.getItemValueString('txtname').concat('.imixs-report')}" />
 										<h:outputLink
 											value="#{documentController.getDownloadUrl(report.item['$uniqueid'], jakarta.enterprise.context.conversation.id, downloadName)}"
-											title="#{downloadName}">
+											title="Download #{downloadName}">
 											<span class="typcn typcn-download"></span>
 										</h:outputLink>
 										<!-- copy -->
 										<h:commandLink
 											actionListener="#{reportController.copyReport(report.item['$uniqueid'])}"
 											action="reports" disabled="#{!connectionController.connected}"
+											title="Copy #{downloadName}"
 											onclick="return (confirm('Copy Report #{report.item['txtname']} ?'))">
 											<span class="typcn typcn-clipboard"></span>
 										</h:commandLink>
 										<!-- delete -->
 										<h:commandLink
 											actionListener="#{reportController.deleteReport(report.item['$uniqueid'])}"
-											disabled="#{!connectionController.connected}"
+											disabled="#{!connectionController.connected}" title="Delete #{downloadName}"
 											onclick="return (confirm('Delete Report #{report.item['txtname']} ?'))">
 											<span class="typcn typcn-trash error"></span>
 										</h:commandLink>
