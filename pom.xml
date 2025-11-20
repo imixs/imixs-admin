@@ -45,23 +45,19 @@
 		</license>
 	</licenses>
 
-
 	<repositories>
-		<!-- Sonatype Snapshot repository -->
 		<repository>
-			<id>sonatype-snaptshots</id>
-			<name>Sonatype Snapshot repository</name>
-			<url>http://oss.sonatype.org/content/repositories/snapshots</url>
-			<!--
+			<id>central-portal-snapshots</id>
+			<name>Central Portal Snapshots</name>
+			<url>https://central.sonatype.com/repository/maven-snapshots/</url>
 			<releases>
-	            <enabled>false</enabled>
-	            <updatePolicy>always</updatePolicy>
-	            <checksumPolicy>warn</checksumPolicy>
-	        </releases>	
-	        -->
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
-
 
 	<properties>
 
@@ -71,6 +67,7 @@
 		<maven.compiler.target>17</maven.compiler.target>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
 
+		<!-- Imixs Workflow Versions -->
 		<org.imixs.workflow.version>6.2.4</org.imixs.workflow.version>
 		<org.imixs.melman.version>2.1.0</org.imixs.melman.version>
 		<org.imixs.jwt.version>1.0.3</org.imixs.jwt.version>
@@ -81,10 +78,7 @@
 		<wildfly.hostname>127.0.0.1</wildfly.hostname>
 	</properties>
 
-
 	<profiles>
-
-
 		<profile>
 			<id>docker</id>
 			<build>
@@ -144,7 +138,6 @@
 							</execution>
 						</executions>
 					</plugin>
-
 				</plugins>
 			</build>
 		</profile>
@@ -182,7 +175,6 @@
 				</plugins>
 			</build>
 		</profile>
-
 		<profile>
 			<id>docker-hub-latest</id>
 			<build>
@@ -217,7 +209,6 @@
 				</plugins>
 			</build>
 		</profile>
-
 		<!-- wildfly profile (development - unpacking war) -->
 		<profile>
 			<id>wildfly</id>
@@ -226,11 +217,7 @@
 			</properties>
 
 			<build>
-				<resources>
-
-				</resources>
 				<plugins>
-
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-antrun-plugin</artifactId>
@@ -257,7 +244,6 @@
 							</execution>
 						</executions>
 					</plugin>
-
 				</plugins>
 			</build>
 		</profile>
@@ -336,9 +322,7 @@
 							<target>docker/deployments/imixs-admin.war</target>
 						</deployment>
 					</hotdeployments>
-
 				</configuration>
-
 			</plugin>
 
 		</plugins>
@@ -349,31 +333,28 @@
 				<directory>${project.parent.basedir}/src/model</directory>
 			</testResource>
 		</testResources>
-
-
 		<finalName>imixs-admin</finalName>
 	</build>
 
 	<dependencies>
+
+		<!-- Imixs Workflow -->
 		<dependency>
 			<groupId>org.imixs.workflow</groupId>
 			<artifactId>imixs-workflow-core</artifactId>
 			<version>${org.imixs.workflow.version}</version>
 			<scope>compile</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.imixs.workflow</groupId>
 			<artifactId>imixs-melman</artifactId>
 			<version>${org.imixs.melman.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.imixs.jwt</groupId>
 			<artifactId>imixs-jwt</artifactId>
 			<version>${org.imixs.jwt.version}</version>
 		</dependency>
-
 
 		<!-- Java EE dependencies -->
 		<dependency>
@@ -383,23 +364,17 @@
 			<scope>provided</scope>
 		</dependency>
 
-
 	</dependencies>
 
-
-	<!-- Distributen Management oss.sonatype.org -->
+	<!-- Distribution Management central.sonatype.org -->
 	<distributionManagement>
 		<snapshotRepository>
-			<id>sonatype-nexus-snapshots</id>
-			<name>Sonatype Nexus Snapshots</name>
-			<url>http://oss.sonatype.org/content/repositories/snapshots</url>
+			<id>central</id>
+			<url>https://central.sonatype.com/repository/maven-snapshots/</url>
 		</snapshotRepository>
 		<repository>
-			<id>sonatype-nexus-staging</id>
-			<name>Nexus Release Repository</name>
-			<url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+			<id>central</id>
+			<url>https://central.sonatype.com</url>
 		</repository>
 	</distributionManagement>
-
-
 </project>
