@@ -93,6 +93,14 @@
 						</h:link>
 					</li>
 
+					<li class="nav-item">
+						<h:link outcome="/scheduler.xhtml?cid=#{jakarta.enterprise.context.conversation.id}"
+							disabled="#{!connectionController.connected}">
+							<span class="typcn typcn-time"></span>
+							<label>Scheduler</label>
+						</h:link>
+					</li>
+
 				</ul>
 				<hr />
 				<ul>

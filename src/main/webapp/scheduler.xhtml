@@ -1,0 +1,197 @@
+<ui:composition template="/WEB-INF/templates/layout.xhtml" xmlns:faces="jakarta.faces" xmlns:f="jakarta.faces.core"
+	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets" xmlns:pt="jakarta.faces.passthrough">
+
+	<ui:define name="content">
+
+
+		<f:view>
+			<h:form id="amdinp_form_id">
+				<ui:include src="/WEB-INF/includes/layout/header.xhtml">
+					<ui:param name="title" value="Workflow Scheduler " />
+					<ui:param name="icon" value="typcn-time" />
+				</ui:include>
+
+				<div class="card">
+
+					<p class="help">
+						<span class="typcn typcn-lightbulb"></span> The Imixs-Workflow Scheduler is responsible for the
+						automated processing of scheduled events. A scheduled event is a BPMN event assigned to a BPMN
+						task. FInd more on <a href="https://www.imixs.org/doc/engine/workflowscheduler.html"
+							target="_help">www.imixs.org</a>
+					</p>
+
+
+					<div class="imixs-form-section">
+						Settings:
+						<dl style="grid-column-start: span 4;">
+							<dd>
+								<h:inputTextarea value="#{schedulerController.timerSettings}" pt:spellcheck="false"
+									pt:placeholder="hour=*" style="width: 100%;height: 7em;"
+									disabled="#{!connectionController.connected}" required="true" />
+							</dd>
+						</dl>
+						<dl style="grid-column-start: span 6;">
+							<dd>
+								<h:commandButton value="Update Status" actionListener="#{deleteController.bulkDelete()}"
+									disabled="#{!connectionController.connected}" style="width: 200px;" />
+							</dd>
+							<dd>
+								<h:commandButton value="Start Scheduler"
+									actionListener="#{schedulerController.startScheduler()}"
+									disabled="#{!connectionController.connected}" style="width: 200px;"
+									onclick="return (confirm('Start Scheduler?'))" />
+							</dd>
+							<dd>
+								<h:commandButton value="Stop Scheduler"
+									actionListener="#{deleteController.bulkDelete()}"
+									disabled="#{!connectionController.connected}" style="width: 200px;"
+									onclick="return (confirm('Stop Scheduler?'))" />
+							</dd>
+						</dl>
+					</div>
+
+				</div>
+
+				<!-- Message Log -->
+				<div class="card">
+					<h3>
+						<span class="typcn typcn-input-checked"></span> Help
+					</h3>
+					<p>
+						The Imixs Workflow Scheduler uses a Unix cron based syntax.
+					</p>
+					<table border="0" class="bodyTable" style="width: 100%;">
+						<thead>
+
+							<tr class="a">
+								<th>Attribute</th>
+								<th>Description</th>
+								<th>Possible Values</th>
+								<th>Default Value</th>
+							</tr>
+						</thead>
+						<tbody>
+
+							<tr class="b">
+								<td align="left">second</td>
+								<td>One or more seconds within a minute</td>
+								<td>[0,59]</td>
+								<td>0</td>
+							</tr>
+							<tr class="a">
+								<td align="left">minute</td>
+								<td>One or more minutes within a hour</td>
+								<td>[0,59]</td>
+								<td>0</td>
+							</tr>
+							<tr class="b">
+								<td align="left">hour</td>
+								<td>One or more hours within a day</td>
+								<td>[0,23]</td>
+								<td>0</td>
+							</tr>
+							<tr class="a">
+								<td align="left">dayOfMonth</td>
+								<td>One or more days <br />within a month</td>
+								<td>[1,31] or &#x201c;1st&#x201d;,&#x201c;2nd&#x201d;,&#x201c;3rd&#x201d;,&#x2026;.
+									<br />or
+									&#x201c;Sun&#x201d;,&#x201c;Mon&#x201d;,&#x201c;Tue&#x201d;,&#x201c;Wed&#x201d;,&#x201c;Thu&#x201d;,&#x201c;Fri&#x201d;,&#x201c;Sat&#x201d;
+									<br />or &#x201c;Last&#x201d; (the last day in month) <br />or -x (means x day(s)
+									before the last day of <br /> or the month
+								</td>
+								<td>*</td>
+							</tr>
+							<tr class="b">
+								<td align="left">month</td>
+								<td>One or more month within a year</td>
+								<td>[1,12] or
+									&#x201c;Jan&#x201d;,&#x201c;Feb&#x201d;,&#x201c;Mar&#x201d;,&#x201c;Apr&#x201d;,&#x201c;May&#x201d;,<br />
+									&#x201c;Jun&#x201d;,&#x201c;Jul&#x201d;,&#x201c;Aug&#x201d;,&#x201c;Sep&#x201d;,&#x201c;Oct&#x201d;,&#x201c;Nov&#x201d;,&#x201c;Dec&#x201d;
+								</td>
+								<td>*</td>
+							</tr>
+							<tr class="a">
+								<td align="left">dayOfWeek</td>
+								<td>One or more days within a week</td>
+								<td>[1,7] or
+									&#x201c;Sun&#x201d;,Mon&quot;,&#x201c;Thu&#x201d;,&#x201c;Wed&#x201d;,&#x201c;Thu&#x201d;,&#x201c;Fri&#x201d;,&#x201c;Sat&#x201d;
+									&#x201c;0&#x201d; and &#x201c;7&#x201d; refer to Sunday!</td>
+								<td>*</td>
+							</tr>
+							<tr class="b">
+								<td align="left">year</td>
+								<td>A paticular year</td>
+								<td>4 digit calendar year</td>
+								<td>*</td>
+							</tr>
+							<tr class="a">
+								<td align="left">timezone</td>
+								<td>A specific time zone</td>
+								<td>see time zoneinof (or tz) database</td>
+								<td>*</td>
+							</tr>
+							<tr class="b">
+								<td align="left">start</td>
+								<td>Start date</td>
+								<td>yyyy/mm/dd</td>
+								<td> </td>
+							</tr>
+							<tr class="a">
+								<td align="left">end</td>
+								<td>End date</td>
+								<td>yyyy/mm/dd</td>
+								<td> </td>
+							</tr>
+						</tbody>
+					</table>
+					<p>Each attribute of an expression supports values in different formats. For example you can define
+						a list of days or a range of years. The the following table with suported value formats:</p>
+					<table border="0" class="bodyTable" style="width: 100%;">
+						<thead>
+
+							<tr class="a">
+								<th>Format</th>
+								<th>Description</th>
+								<th>Example</th>
+							</tr>
+						</thead>
+						<tbody>
+
+							<tr class="b">
+								<td align="left">Single Value</td>
+								<td>only one possible value</td>
+								<td>year=&#x201c;2009&#x201d; or month=&#x201c;May&#x201d;</td>
+							</tr>
+							<tr class="a">
+								<td align="left">Wildcard</td>
+								<td>all possible values</td>
+								<td>year=&#x201c;_&#x201d; or dayOfWeek=&#x201c;_&#x201d;</td>
+							</tr>
+							<tr class="b">
+								<td align="left">List</td>
+								<td>two or more values</td>
+								<td>year=&#x201c;2014,2015&#x201d; or dayOfWeek=&#x201c;Sat,Sun&#x201d;</td>
+							</tr>
+							<tr class="a">
+								<td align="left">Range</td>
+								<td>range of values</td>
+								<td>second=&#x201c;1-10&#x201d; or dayOfWeek=&#x201c;Mon-Fri&#x201d;</td>
+							</tr>
+							<tr class="b">
+								<td align="left">Increments</td>
+								<td>startignpoint and increment</td>
+								<td>minute=&#x201c;*/15&#x201d; or second=&#x201c;30/10&#x201d;</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+
+				<!-- Log -->
+				<ui:include src="log.xhtml" />
+			</h:form>
+		</f:view>
+
+
+	</ui:define>
+</ui:composition>
