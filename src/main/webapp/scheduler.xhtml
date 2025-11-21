@@ -3,7 +3,7 @@
 
 	<ui:define name="content">
 
-
+		<!-- refresh on load : #{schedulerController.load()} -->
 		<f:view>
 			<h:form id="amdinp_form_id">
 				<ui:include src="/WEB-INF/includes/layout/header.xhtml">
@@ -26,31 +26,79 @@
 						<dl style="grid-column-start: span 4;">
 							<dd>
 								<h:inputTextarea value="#{schedulerController.timerSettings}" pt:spellcheck="false"
-									pt:placeholder="hour=*" style="width: 100%;height: 7em;"
+									pt:placeholder="hour=*" style="width: 100%;height: 8.5em;font-size: 0.8em;"
 									disabled="#{!connectionController.connected}" required="true" />
 							</dd>
 						</dl>
 						<dl style="grid-column-start: span 6;">
+
 							<dd>
-								<h:commandButton value="Update Status" actionListener="#{deleteController.bulkDelete()}"
-									disabled="#{!connectionController.connected}" style="width: 200px;" />
-							</dd>
-							<dd>
-								<h:commandButton value="Start Scheduler"
-									actionListener="#{schedulerController.startScheduler()}"
+								<h:commandButton value="Start Scheduler" actionListener="#{schedulerController.start()}"
 									disabled="#{!connectionController.connected}" style="width: 200px;"
 									onclick="return (confirm('Start Scheduler?'))" />
 							</dd>
 							<dd>
-								<h:commandButton value="Stop Scheduler"
-									actionListener="#{deleteController.bulkDelete()}"
+								<h:commandButton value="Stop Scheduler" actionListener="#{schedulerController.stop()}"
 									disabled="#{!connectionController.connected}" style="width: 200px;"
 									onclick="return (confirm('Stop Scheduler?'))" />
 							</dd>
+							<dd>
+								<h:commandButton value="Update Status" actionListener="#{schedulerController.load()}"
+									disabled="#{!connectionController.connected}" style="width: 200px;" />
+							</dd>
 						</dl>
 					</div>
-
 				</div>
+
+				<div class="card">
+					<h3><span class="typcn typcn-stopwatch"></span><span> Status: </span>
+						<ui:fragment
+							rendered="#{'true' eq schedulerController.schedulerConfig.item['_scheduler_enabled']}">
+							#{schedulerController.schedulerConfig.item['_scheduler_status']}</ui:fragment>
+					</h3>
+					<table border="0" class="bodyTable" style="width: 100%;">
+
+						<tbody>
+							<tr class="b">
+								<td align="left" style="background-color: #efefef; font-weight: bold;width: 160px;">
+									Timer Service</td>
+								<td>
+									<ui:fragment
+										rendered="#{'true' eq schedulerController.schedulerConfig.item['_scheduler_enabled']}">
+										<span class="typcn typcn-media-record" style="color: #4dc24f;"></span>
+										<span> running</span>
+									</ui:fragment>
+
+									<ui:fragment
+										rendered="#{'true' ne schedulerController.schedulerConfig.item['_scheduler_enabled']}">
+										<span class="typcn typcn-media-record" style="color: #dc2929;"></span>
+										<span> stopped</span>
+									</ui:fragment>
+								</td>
+							</tr>
+							<tr class="b">
+								<td align="left" style="background-color: #efefef; font-weight: bold;">Next Timeout</td>
+								<td style="padding-left: 10px;">
+									#{schedulerController.schedulerConfig.item['nextTimeout']}</td>
+							</tr>
+							<tr class="b">
+								<td align="left" style="background-color: #efefef; font-weight: bold;">Time Remaining
+								</td>
+								<td style="padding-left: 10px;">
+									#{schedulerController.millisToShortDHMS(schedulerController.schedulerConfig.item['timeRemaining'])}
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<h3 style="margin-top:10px;"><span class="typcn typcn-input-checked"></span> Log: </h3>
+					<pre>
+						<ui:repeat var="log" value="#{schedulerController.schedulerConfig.itemList['_scheduler_logmessage']}">
+							<h:outputText value="#{log}" /><br />
+						</ui:repeat>	
+			 		</pre>
+				</div>
+
 
 				<!-- Message Log -->
 				<div class="card">
@@ -187,8 +235,7 @@
 				</div>
 
 
-				<!-- Log -->
-				<ui:include src="log.xhtml" />
+
 			</h:form>
 		</f:view>
 

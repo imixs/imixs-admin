@@ -19,4 +19,8 @@
 		<session-timeout>180</session-timeout>
 	</session-config>
 
+	<error-page>
+		<error-code>500</error-code>
+		<location>/connect.xhtml</location>
+	</error-page>
 </web-app>
