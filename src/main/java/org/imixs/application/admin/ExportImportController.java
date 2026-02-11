@@ -96,20 +96,17 @@ public class ExportImportController implements Serializable {
         if (connectionController.isConnected()) {
             WorkflowClient workflowClient = connectionController.getWorkflowClient();
             if (workflowClient != null) {
-
-                logController.info("starting import....");
-
-                logController.info("target=" + filePath);
-                // String uri = "documents/backup/" + encode(query) + "?filepath=" + filepath;
+                logController.info("├── starting import....");
+                logController.info("│   ├── source=" + filePath);
                 try {
                     String uri = "documents/restore?filepath=" + filePath;
                     // create put for backup ...
                     WebTarget target = workflowClient.getWebTarget(uri);
-                    // here we create a dummmy object
+                    // here we create a dummy object
                     target.request().get();
-                    logController.info("import successful!");
+                    logController.info("├── import successful!");
                 } catch (RestAPIException e) {
-                    logController.warning("import failed. " + e.getMessage());
+                    logController.warning("├── import failed. " + e.getMessage());
                 }
             }
             searchController.reset();
