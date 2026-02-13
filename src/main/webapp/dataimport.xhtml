@@ -1,9 +1,7 @@
-<ui:composition template="/WEB-INF/templates/layout.xhtml"
-	xmlns:faces="jakarta.faces" xmlns:f="jakarta.faces.core"
+<ui:composition template="/WEB-INF/templates/layout.xhtml" xmlns:faces="jakarta.faces" xmlns:f="jakarta.faces.core"
 	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets">
 
 	<ui:define name="content">
-
 
 		<f:view>
 			<h:form id="amdinp_form_id">
@@ -12,18 +10,13 @@
 					<ui:param name="title" value="Import" />
 					<ui:param name="icon" value="typcn-download-outline" />
 				</ui:include>
-
-
-
 				<div class="card">
-
 					<p class="help">
-						<span class="typcn typcn-lightbulb"></span> Import a data set form the given
-						server directory.
-						<strong>Note: </strong>all existing data will be overwritten!
+						<span class="typcn typcn-lightbulb"></span> Import a data set from the given
+						server directory. The data can be a XML dataset or a serialized data stream.
+						<br />
+						<strong>⚠️ Note: </strong>All existing data will be overwritten!
 					</p>
-
-
 					<div class="imixs-form-section">
 						<dl style="grid-column-start: span 6;">
 							<dt>Filepath:</dt>
@@ -33,13 +26,10 @@
 							</dd>
 						</dl>
 					</div>
-
 					<h:commandButton value="Import Data"
-					    onclick="return (confirm('Staring Data Import now?\n\nExisting data will be overwritten!'))" 
+						onclick="return (confirm('Staring Data Import now?\n\nExisting data will be overwritten!'))"
 						actionListener="#{exportImportController.importData()}"
 						disabled="#{!connectionController.connected}" />
-
-
 				</div>
 
 				<!-- Log -->

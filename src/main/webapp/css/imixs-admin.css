@@ -400,8 +400,9 @@ select:focus {
 pre {
 	overflow-wrap: break-word;
 	white-space: pre-wrap;
-	font-family: Menlo, Consolas, monaco, monospace;
-	font-size: 0.75em;
+	font-family: Menlo, Consolas, Monaco, monospace;
+	font-size: 0.85em;
+	line-height: 1.2em;
 }
 
 .danger-zone {

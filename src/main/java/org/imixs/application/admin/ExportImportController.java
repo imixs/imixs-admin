@@ -13,6 +13,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Response;
 
 /**
  * The ExportImportController provides methods to export or import data sets
@@ -96,17 +97,26 @@ public class ExportImportController implements Serializable {
         if (connectionController.isConnected()) {
             WorkflowClient workflowClient = connectionController.getWorkflowClient();
             if (workflowClient != null) {
-                logController.info("├── starting import....");
+                logController.info("├── ⚙️ starting import....");
                 logController.info("│   ├── source=" + filePath);
                 try {
                     String uri = "documents/restore?filepath=" + filePath;
                     // create put for backup ...
                     WebTarget target = workflowClient.getWebTarget(uri);
                     // here we create a dummy object
-                    target.request().get();
-                    logController.info("├── import successful!");
+                    Response response = target.request().get();
+
+                    logController.info("│   ├── response status=" + response.getStatus());
+
+                    if (response.getStatus() < 200 || response.getStatus() > 299) {
+                        String errorMessage = response.readEntity(String.class);
+                        logController
+                                .info("└── ⚠️ import failed - response: " + response.getStatus() + " " + errorMessage);
+                    } else {
+                        logController.info("└── ✅ import successful!");
+                    }
                 } catch (RestAPIException e) {
-                    logController.warning("├── import failed. " + e.getMessage());
+                    logController.warning("└── import failed. " + e.getMessage());
                 }
             }
             searchController.reset();
