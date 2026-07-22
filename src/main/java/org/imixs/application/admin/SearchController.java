@@ -30,7 +30,7 @@ import jakarta.inject.Named;
 @ConversationScoped
 public class SearchController implements Serializable {
 
-    public static final String ITEM_LIST = "$uniqueid,$created,$modified,$workflowstatus,$workflowsummary,type,name,txtname";
+    public static final String ITEM_LIST = "$uniqueid,$created,$modified,$workflowstatus,$workflowsummary,type,name,txtname,$modelversion,$workflowgroup";
 
     private static final long serialVersionUID = 1L;
 

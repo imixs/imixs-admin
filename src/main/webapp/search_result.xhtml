@@ -31,7 +31,9 @@
 					<th>Created</th>
 					<th>Modified</th>
 					<th>Type</th>
+					<th>Workflowgroup</th>
 					<th>Status</th>
+					<th>Modellversion</th>
 					<th>Summary</th>
 					<th style="width:55px;min-width:55px;"></th>
 				</tr>
@@ -58,7 +60,10 @@
 							</h:outputText>
 						</td>
 						<td>#{doc.item['type']}</td>
+
+						<td>#{doc.item['$workflowgroup']}</td>
 						<td>#{doc.item['$workflowstatus']}</td>
+						<td>#{doc.item['$modelversion']}</td>
 						<td style="font-size: 0.90em; color: #888;">
 							<!-- Summary, fallback name,txtname -->
 							<h:outputText encoding="false"
