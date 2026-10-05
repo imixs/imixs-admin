@@ -2,8 +2,6 @@ package org.imixs.application.admin;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +20,7 @@ import jakarta.enterprise.context.ConversationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.Part;
+import jakarta.ws.rs.core.UriBuilder;
 
 /**
  * The ModelController loads and udpate the model list
@@ -122,12 +121,9 @@ public class ModelController implements Serializable {
                 WorkflowClient workflowClient = connectionController.getWorkflowClient();
                 if (workflowClient != null) {
                     String query = "SELECT document FROM Document AS document WHERE document.type='model'";
-                    try {
-                        query = URLEncoder.encode(query, "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                    XMLDataCollection result = workflowClient.getCustomResourceXML("documents/jpql/" + query);
+                    String encodedQuery = UriBuilder.fromPath("{q}").build(query).getRawPath();
+
+                    XMLDataCollection result = workflowClient.getCustomResourceXML("documents/jpql/" + encodedQuery);
                     models = XMLDataCollectionAdapter.putDataCollection(result);
                 }
             } catch (RestAPIException e) {
