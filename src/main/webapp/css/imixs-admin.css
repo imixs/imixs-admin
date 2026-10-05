@@ -48,7 +48,7 @@ html {
 
 .nav-sidebar {
 	height: 100%;
-	width: 200px;
+	width: 210px;
 	background-color: #263544;
 	color: #f1f7ff;
 	position: fixed !important;
@@ -159,7 +159,7 @@ html {
 }
 
 .content {
-	margin-left: 200px;
+	margin-left: 210px;
 	background-color: #F4F7FA;
 }
 
