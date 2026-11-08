@@ -1,7 +1,5 @@
-<ui:composition template="/WEB-INF/templates/layout.xhtml"
-	xmlns:faces="jakarta.faces" xmlns:f="jakarta.faces.core"
-	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets"
-	xmlns:pt="jakarta.faces.passthrough">
+<ui:composition template="/WEB-INF/templates/layout.xhtml" xmlns:faces="jakarta.faces" xmlns:f="jakarta.faces.core"
+	xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets" xmlns:pt="jakarta.faces.passthrough">
 
 	<ui:define name="content">
 
@@ -12,7 +10,7 @@
 					<ui:param name="title" value="Admin-P" />
 					<ui:param name="icon" value="typcn-spanner" />
 				</ui:include>
-			
+
 				<div class="card">
 					<p class="help">
 						<span class="typcn typcn-lightbulb"></span> The Admin-P is a
@@ -23,15 +21,14 @@
 						<dl style="grid-column-start: span 3;">
 							<dt>Job:</dt>
 							<dd>
-								<h:selectOneMenu id="selectedItem"
-									value="#{adminPController.jobType}"
+								<h:selectOneMenu id="selectedItem" value="#{adminPController.jobType}"
 									disabled="#{!connectionController.connected}">
 									<f:selectItem itemValue="" itemLabel="" />
-									<f:selectItem itemValue="JOB_REBUILD_INDEX"
-										itemLabel="Rebuild Index" />
+									<f:selectItem itemValue="JOB_REBUILD_INDEX" itemLabel="Rebuild Index" />
+									<f:selectItem itemValue="UPDATE_WORKITEMS" itemLabel="Update Workitems" />
 									<f:selectItem itemValue="RENAME_USER" itemLabel="Rename User" />
-									<f:selectItem itemValue="UPGRADE" itemLabel="Upgrade" />
-									<f:ajax render="job_details" />
+									<f:selectItem itemValue="UPGRADE" itemLabel="Upgrade Workflow Engine" />
+									<f:ajax render="job_details job_settings" />
 								</h:selectOneMenu>
 							</dd>
 						</dl>
@@ -39,14 +36,16 @@
 						<dl style="grid-column-start: span 2;">
 							<dt>Blocksize / Interval:</dt>
 							<dd>
-								<h:inputText value="#{adminPController.blockSize}"
-									style="width: 4em;" pt:placeholder="500"
-									disabled="#{!connectionController.connected}" required="true" />
-								/
-								<h:inputText value="#{adminPController.interval}"
-									style="width: 3em;" pt:placeholder="60"
-									disabled="#{!connectionController.connected}" required="true" />
-								sec.
+								<h:panelGroup id="job_settings">
+									<h:inputText value="#{adminPController.blockSize}" style="width: 4em;"
+										pt:placeholder="500" disabled="#{!connectionController.connected}"
+										required="true" />
+									/
+									<h:inputText value="#{adminPController.interval}" style="width: 3em;"
+										pt:placeholder="60" disabled="#{!connectionController.connected}"
+										required="true" />
+									sec.
+								</h:panelGroup>
 
 							</dd>
 						</dl>
@@ -92,23 +91,20 @@
 								<dt>From User-ID:</dt>
 								<dd>
 									<h:inputText value="#{adminPController.renameUserFrom}"
-										pt:placeholder="enter userid"
-										disabled="#{!connectionController.connected}" />
+										pt:placeholder="enter userid" disabled="#{!connectionController.connected}" />
 								</dd>
 							</dl>
 							<dl style="grid-column-start: span 4;">
 								<dt>To User-ID:</dt>
 								<dd>
-									<h:inputText value="#{adminPController.renameUserTo}"
-										pt:placeholder="enter userid"
+									<h:inputText value="#{adminPController.renameUserTo}" pt:placeholder="enter userid"
 										disabled="#{!connectionController.connected}" />
 								</dd>
 							</dl>
 							<dl style="grid-column-start: span 4;">
 								<dt>Full Replace:</dt>
 								<dd>
-									<h:selectBooleanCheckbox
-										value="#{adminPController.renameFullReplace}"
+									<h:selectBooleanCheckbox value="#{adminPController.renameFullReplace}"
 										disabled="#{!connectionController.connected}" />
 									YES
 								</dd>
@@ -118,8 +114,8 @@
 							<dl style="grid-column-start: span 4;">
 								<dt>Filter by document type:</dt>
 								<dd>
-									<h:inputTextarea value="#{adminPController.filter}"
-										pt:spellcheck="false" style="width: 100%;height: 3.5em;"
+									<h:inputTextarea value="#{adminPController.filter}" pt:spellcheck="false"
+										style="width: 100%;height: 3.5em;"
 										disabled="#{!connectionController.connected}" />
 									<span style="font-size: 0.8em;">*comma separated list of
 										types</span>
@@ -128,14 +124,12 @@
 							<dl style="grid-column-start: span 4;">
 								<dt>Filter by creation date:</dt>
 								<dd>
-									<h:inputText type="date" style="width: 9.5em;"
-										value="#{adminPController.dateFrom}">
-										<f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+									<h:inputText type="date" style="width: 9.5em;" value="#{adminPController.dateFrom}">
+										<f:convertDateTime type="date" pattern="yyyy-MM-dd" />
 									</h:inputText>
 									-
-									<h:inputText type="date" style="width: 9.5em;"
-										value="#{adminPController.dateFrom}">
-										<f:convertDateTime type="localTo" pattern="yyyy-MM-dd" />
+									<h:inputText type="date" style="width: 9.5em;" value="#{adminPController.dateTo}">
+										<f:convertDateTime type="date" pattern="yyyy-MM-dd" />
 									</h:inputText>
 								</dd>
 							</dl>
@@ -147,8 +141,7 @@
 
 					<!--  Upgrade Job -->
 
-					<h:panelGroup layout="block" styleClass="card"
-						rendered="#{adminPController.jobType eq 'UPGRADE'}">
+					<h:panelGroup layout="block" styleClass="card" rendered="#{adminPController.jobType eq 'UPGRADE'}">
 
 						<h2>
 							<span class="typcn typcn-arrow-up-outline"></span> Upgrade
@@ -164,8 +157,8 @@
 							<dl style="grid-column-start: span 4;">
 								<dt>Filter by document type:</dt>
 								<dd>
-									<h:inputTextarea value="#{adminPController.filter}"
-										pt:spellcheck="false" style="width: 100%;height: 3.5em;"
+									<h:inputTextarea value="#{adminPController.filter}" pt:spellcheck="false"
+										style="width: 100%;height: 3.5em;"
 										disabled="#{!connectionController.connected}" />
 									<span style="font-size: 0.8em;">*comma separated list of
 										types</span>
@@ -174,15 +167,105 @@
 							<dl style="grid-column-start: span 4;">
 								<dt>Filter by creation date:</dt>
 								<dd>
-									<h:inputText type="date" style="width: 9.5em;"
-										value="#{adminPController.dateFrom}">
-										<f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+									<h:inputText type="date" style="width: 9.5em;" value="#{adminPController.dateFrom}">
+										<f:convertDateTime type="date" pattern="yyyy-MM-dd" />
 									</h:inputText>
 									-
-									<h:inputText type="date" style="width: 9.5em;"
-										value="#{adminPController.dateFrom}">
-										<f:convertDateTime type="localTo" pattern="yyyy-MM-dd" />
+									<h:inputText type="date" style="width: 9.5em;" value="#{adminPController.dateTo}">
+										<f:convertDateTime type="date" pattern="yyyy-MM-dd" />
 									</h:inputText>
+								</dd>
+							</dl>
+						</div>
+
+						<ui:include src="adminp_sub_execute.xhtml" />
+					</h:panelGroup>
+
+					<!--  Update Workitems Job -->
+					<h:panelGroup layout="block" styleClass="card"
+						rendered="#{adminPController.jobType eq 'UPDATE_WORKITEMS'}">
+
+						<h2>
+							<span class="typcn typcn-edit"></span> Update Workitems
+						</h2>
+						<p class="help">
+							<span class="typcn typcn-lightbulb"></span> This job updates
+							a single item in all workitems selected by the search query.
+							Specify the <i>Item Name</i>, the <i>Item Type</i> and the new
+							<i>Values</i>. Multi-Values can be separated by new lines. If you
+							want to add a single value with multiple lines, than add '\n' at
+							the end of a line. Date values have to be formated as
+							'yyyy-mm-dd'. Optional you can define a workflow event to process
+							workitems during update. Updated workitems are marked in the item
+							'$migration' with the job id. The job stops on the first error.
+						</p>
+
+						<div class="imixs-form-section">
+							<dl style="grid-column-start: span 8;">
+								<dt>
+									Search Query: <span style="color: red;">*</span>
+								</dt>
+								<dd>
+									<h:inputTextarea value="#{adminPController.query}" pt:spellcheck="false"
+										style="width: 100%;height: 5em;" pt:placeholder="($taskid:1000)"
+										disabled="#{!connectionController.connected}" />
+									<span style="font-size: 0.8em;">*Lucene search query.
+										Immutable workitems must be excluded.</span>
+								</dd>
+							</dl>
+						</div>
+
+						<div class="imixs-form-section">
+							<dl style="grid-column-start: span 4;">
+								<dt>
+									Item Name: <span style="color: red;">*</span>
+								</dt>
+								<dd>
+									<h:inputText value="#{adminPController.itemName}"
+										disabled="#{!connectionController.connected}" />
+								</dd>
+							</dl>
+							<dl style="grid-column-start: span 4;">
+								<dt>
+									Item Type: <span style="color: red;">*</span>
+								</dt>
+								<dd>
+									<h:selectOneMenu id="itemType" value="#{adminPController.itemType}"
+										disabled="#{!connectionController.connected}">
+										<f:selectItem itemValue="xs:string" itemLabel="xs:string" />
+										<f:selectItem itemValue="xs:int" itemLabel="xs:int" />
+										<f:selectItem itemValue="xs:long" itemLabel="xs:long" />
+										<f:selectItem itemValue="xs:float" itemLabel="xs:float" />
+										<f:selectItem itemValue="xs:double" itemLabel="xs:double" />
+										<f:selectItem itemValue="xs:boolean" itemLabel="xs:boolean" />
+										<f:selectItem itemValue="xs:dateTime" itemLabel="xs:dateTime" />
+									</h:selectOneMenu>
+								</dd>
+							</dl>
+							<dl style="grid-column-start: span 4;">
+								<dt>Workflow Event (optional):</dt>
+								<dd>
+									<h:inputText value="#{adminPController.eventId}"
+										disabled="#{!connectionController.connected}" />
+								</dd>
+							</dl>
+						</div>
+
+						<div class="imixs-form-section">
+							<dl style="grid-column-start: span 8;">
+								<dt>Values:</dt>
+								<dd>
+									<h:inputTextarea value="#{adminPController.itemValues}" pt:spellcheck="false"
+										style="width: 100%;height: 7em;"
+										disabled="#{!connectionController.connected}" />
+								</dd>
+							</dl>
+							<dl style="grid-column-start: span 4;">
+								<dt>Update Mode:</dt>
+								<dd>
+									<h:selectBooleanCheckbox value="#{adminPController.append}"
+										disabled="#{!connectionController.connected}" />
+									Append Values
 								</dd>
 							</dl>
 						</div>
@@ -197,9 +280,8 @@
 				<div class="card">
 					<div class="header">
 						<h3>
-							<span class="typcn typcn-cog-outline"></span> Jobs <span
-								class="pull-right"> <h:commandLink
-									actionListener="#{adminPController.reset()}">
+							<span class="typcn typcn-cog-outline"></span> Jobs <span class="pull-right">
+								<h:commandLink actionListener="#{adminPController.reset()}">
 									<span class="typcn typcn-arrow-sync-outline"></span>
 								</h:commandLink>
 							</span>
@@ -222,11 +304,13 @@
 							<ui:repeat var="doc" value="#{adminPController.jobs}">
 								<tr>
 
-									<td style="white-space: nowrap;"><h:link
+									<td style="white-space: nowrap;">
+										<h:link
 											outcome="/document.xhtml?cid=#{jakarta.enterprise.context.conversation.id}">
 											<label>#{doc.uniqueID}</label>
 											<f:param name="id" value="#{doc.uniqueID}" />
-										</h:link></td>
+										</h:link>
+									</td>
 									<td style="white-space: nowrap;">#{doc.item['job']}</td>
 									<td style="white-space: nowrap;">#{doc.item['$created']}</td>
 									<td style="white-space: nowrap;">#{doc.item['$modified']}</td>
@@ -234,12 +318,13 @@
 									<td style="white-space: nowrap;">#{doc.item['numprocessed']}</td>
 									<td style="white-space: nowrap;">#{doc.item['numupdates']}</td>
 									<!-- delete -->
-									<td><h:commandLink
-											actionListener="#{adminPController.deleteJob(doc.uniqueID)}"
+									<td>
+										<h:commandLink actionListener="#{adminPController.deleteJob(doc.uniqueID)}"
 											disabled="#{!connectionController.connected}"
 											onclick="return (confirm('Delete Job?\n\nOperation can not be undone!'))">
 											<span class="typcn typcn-trash pull-right error"></span>
-										</h:commandLink></td>
+										</h:commandLink>
+									</td>
 
 
 								</tr>
