@@ -278,7 +278,7 @@ public class ConnectionController implements Serializable {
                 workflowClient.setPageSize(1);
                 // documents/configuration
                 result = workflowClient.getCustomResource("documents/configuration");
-                // a valid result object contains the item lucence.fulltextFieldList'
+                // a valid result object contains the item index.fields'
                 if (result != null && result.size() > 0) {
                     errorMessage = "";
                     return result.get(0);

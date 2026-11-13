@@ -144,7 +144,7 @@ public class SchedulerController implements Serializable {
 
                 List<ItemCollection> result = workflowClient
                         .getCustomResource("scheduler/org.imixs.workflow.scheduler");
-                // a valid result object contains the item lucence.fulltextFieldList'
+                // a valid result object contains the item index.fields'
                 if (result == null || result.size() == 0) {
                     logController.info("│   ├──  Create new Workflow Scheduler default configuration");
                     createDefaultConfiguration();
